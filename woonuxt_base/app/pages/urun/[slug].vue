@@ -2,8 +2,8 @@
 import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#woo';
 
 const route = useRoute();
-const { storeSettings } = useAppConfig();
-const { arraysEqual, formatArray, checkForVariationTypeOfAny } = useHelpers();
+const { storeSettings, siteName } = useAppConfig();
+const { arraysEqual, formatArray, checkForVariationTypeOfAny, frontEndUrl } = useHelpers();
 const { addToCart, isUpdatingCart } = useCart();
 const { t } = useI18n();
 const slug = route.params.slug as string;
@@ -83,6 +83,46 @@ const disabledAddToCart = computed(() => {
   const isValidActiveVariation = isVariableProduct.value ? !!activeVariation.value : true;
   return isInvalidType || isOutOfStock || isCartUpdating || !isValidActiveVariation;
 });
+
+// BreadcrumbList JSON-LD for product page
+const primaryCategory = computed(() => product.value?.productCategories?.nodes?.[0] || null);
+const productUrl = computed(() => `${frontEndUrl}/urun/${product.value?.slug}`);
+const categoryUrl = computed(() => (primaryCategory.value ? `${frontEndUrl}/urun-kategorisi/${primaryCategory.value.slug}` : `${frontEndUrl}/urunler`));
+const breadcrumbJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Ana Sayfa',
+          item: frontEndUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: primaryCategory.value?.name || 'Ürünler',
+          item: categoryUrl.value,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: product.value?.name,
+          item: productUrl.value,
+        },
+      ],
+    },
+    null,
+    2,
+  ),
+);
+useHead(() => ({
+  script: [
+    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
+  ],
+}));
 </script>
 
 <template>

@@ -14,6 +14,10 @@ export default defineNuxtConfig({
    * @property {boolean} failOnError - This stops the build from failing but the page will not be statically generated
    */
   nitro: {
+    routeRules: {
+      '/sitemap.xml': { prerender: true },
+      '/robots.txt': { prerender: true },
+    },
     prerender: {
       concurrency: 10,
       interval: 1000,

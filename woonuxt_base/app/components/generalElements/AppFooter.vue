@@ -88,8 +88,8 @@ const { wishlistLink } = useAuth();
     <div class="container border-t flex items-center justify-center mb-4">
       <div class="copywrite">
         <p class="py-4 text-xs text-center">
-          <a href="https://woonuxt.com" :title="`WooNuxt v${wooNuxtVersionInfo}`">{{ `WooNuxt v${wooNuxtVersionInfo}` }}</a> - by
-          <a href="https://scottyzen.com" title="Scott Kennedy - Web Developer" target="_blank">Scott Kennedy</a>
+          <a href="https://netasolutions.com" :title="`NetaCommerce v${wooNuxtVersionInfo}`">{{ `NetaCommerce v${wooNuxtVersionInfo}` }}</a> - by
+          
         </p>
       </div>
       <SocialIcons class="ml-auto" />

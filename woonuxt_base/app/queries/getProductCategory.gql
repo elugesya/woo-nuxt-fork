@@ -1,0 +1,9 @@
+query getProductCategory($slug: ID!) {
+  productCategory(id: $slug, idType: SLUG) {
+    id
+    name
+    slug
+    uri
+    description
+  }
+}

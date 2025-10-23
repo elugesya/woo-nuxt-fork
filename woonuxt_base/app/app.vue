@@ -2,7 +2,10 @@
 const route = useRoute();
 const { isShowingCart, toggleCart } = useCart();
 const { isShowingMobileMenu, toggleMobileMenu, addBodyClass, removeBodyClass } = useHelpers();
-const { siteName } = useAppConfig();
+const runtimeConfig = useRuntimeConfig();
+
+const siteName = runtimeConfig.public.SITE_NAME || 'WooNuxt';
+const frontEndUrl = runtimeConfig.public.FRONT_END_URL || 'http://localhost:3000';
 
 const closeCartAndMenu = () => {
   toggleCart(false);
@@ -20,6 +23,60 @@ watch(
 
 useHead({
   titleTemplate: `%s - ${siteName}`,
+});
+
+// Organization + WebSite JSON-LD site-wide (dynamic from env)
+const logoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
+const logoUrl = logoPath.startsWith('http') ? logoPath : `${frontEndUrl}${logoPath}`;
+const contactEmail = runtimeConfig.public.ORGANIZATION_CONTACT_EMAIL;
+const contactPhone = runtimeConfig.public.ORGANIZATION_PHONE;
+const socialFacebook = runtimeConfig.public.ORGANIZATION_SOCIAL_FACEBOOK;
+const socialTwitter = runtimeConfig.public.ORGANIZATION_SOCIAL_TWITTER;
+const socialInstagram = runtimeConfig.public.ORGANIZATION_SOCIAL_INSTAGRAM;
+
+const organizationJsonLd = JSON.stringify(
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: siteName,
+    url: frontEndUrl,
+    logo: logoUrl,
+    contactPoint: contactEmail || contactPhone ? {
+      '@type': 'ContactPoint',
+      email: contactEmail || undefined,
+      telephone: contactPhone || undefined,
+      contactType: 'customer service',
+    } : undefined,
+    sameAs: [socialFacebook, socialTwitter, socialInstagram].filter(Boolean),
+  },
+  null,
+  2,
+);
+
+const websiteJsonLd = JSON.stringify(
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteName,
+    url: frontEndUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${frontEndUrl}/urunler?search={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  },
+  null,
+  2,
+);
+
+useHead({
+  script: [
+    { type: 'application/ld+json', children: organizationJsonLd },
+    { type: 'application/ld+json', children: websiteJsonLd },
+  ],
 });
 </script>
 

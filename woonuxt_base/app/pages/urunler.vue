@@ -2,10 +2,11 @@
 const { setProducts, updateProductList } = useProducts();
 const route = useRoute();
 const { storeSettings } = useAppConfig();
-const { isQueryEmpty } = useHelpers();
+const { isQueryEmpty, frontEndUrl } = useHelpers();
 
 const { data } = await useAsyncGql('getProducts');
 const allProducts = data.value?.products?.nodes as Product[];
+const pageInfo = data.value?.products?.pageInfo;
 setProducts(allProducts);
 
 const hasProducts = computed<boolean>(() => Array.isArray(allProducts) && allProducts.length > 0);
@@ -22,10 +23,30 @@ watch(
   },
 );
 
-useHead({
+// Pagination prev/next links (if route has pageNumber param)
+const currentPage = computed(() => {
+  const pageNum = Number(route.params.pageNumber);
+  return pageNum > 0 ? pageNum : 1;
+});
+const hasNextPage = computed(() => pageInfo?.hasNextPage || false);
+const prevUrl = computed(() => {
+  if (currentPage.value <= 1) return null;
+  if (currentPage.value === 2) return `${frontEndUrl}/urunler`;
+  return `${frontEndUrl}/urunler/sayfa/${currentPage.value - 1}`;
+});
+const nextUrl = computed(() => {
+  if (!hasNextPage.value) return null;
+  return `${frontEndUrl}/urunler/sayfa/${currentPage.value + 1}`;
+});
+
+useHead(() => ({
   title: `Products`,
   meta: [{ name: 'description', content: 'Discover our products' }],
-});
+  link: [
+    prevUrl.value ? { rel: 'prev', href: prevUrl.value } : undefined,
+    nextUrl.value ? { rel: 'next', href: nextUrl.value } : undefined,
+  ].filter(Boolean) as any,
+}));
 </script>
 
 <template>
