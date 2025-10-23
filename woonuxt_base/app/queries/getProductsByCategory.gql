@@ -1,0 +1,39 @@
+query getProductsByCategory($categorySlug: String!, $first: Int = 9999, $orderby: ProductsOrderByEnum = DATE) {
+  products(
+    first: $first
+    where: { 
+      taxonomyFilter: {
+        filters: [
+          {
+            taxonomy: PRODUCT_CAT
+            terms: [$categorySlug]
+            operator: IN
+          }
+        ]
+      }
+      visibility: VISIBLE
+      minPrice: 0
+      orderby: { field: $orderby, order: DESC }
+      status: "publish"
+    }
+  ) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    nodes {
+      name
+      slug
+      type
+      databaseId
+      id
+      averageRating
+      reviewCount
+      ...Terms
+      ...ProductCategories
+      ...SimpleProduct
+      ...VariableProduct
+      ...ExternalProduct
+    }
+  }
+}
