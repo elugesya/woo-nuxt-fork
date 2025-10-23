@@ -26,21 +26,21 @@ const { wishlistLink } = useAuth();
         <div class="mb-1 font-semibold">{{ $t('general.products') }}</div>
         <div class="text-sm">
           <ClientOnly>
-            <NuxtLink to="/products" class="py-1.5 block">{{ $t('shop.newArrivals') }}</NuxtLink>
+            <NuxtLink to="/urunler" class="py-1.5 block">{{ $t('shop.newArrivals') }}</NuxtLink>
             <template #fallback>
-              <a href="/products" class="py-1.5 block">{{ $t('shop.newArrivals') }}</a>
+              <a href="/urunler" class="py-1.5 block">{{ $t('shop.newArrivals') }}</a>
             </template>
           </ClientOnly>
           <ClientOnly>
-            <NuxtLink to="/products?filter=sale[true]" class="py-1.5 block">{{ $t('shop.onSale') }}</NuxtLink>
+            <NuxtLink to="/urunler?filter=sale[true]" class="py-1.5 block">{{ $t('shop.onSale') }}</NuxtLink>
             <template #fallback>
-              <a href="/products?filter=sale[true]" class="py-1.5 block">{{ $t('shop.onSale') }}</a>
+              <a href="/urunler?filter=sale[true]" class="py-1.5 block">{{ $t('shop.onSale') }}</a>
             </template>
           </ClientOnly>
           <ClientOnly>
-            <NuxtLink to="/products?orderby=rating&order=ASC&filter=rating[1]" class="py-1.5 block">{{ $t('shop.topRated') }}</NuxtLink>
+            <NuxtLink to="/urunler?orderby=rating&order=ASC&filter=rating[1]" class="py-1.5 block">{{ $t('shop.topRated') }}</NuxtLink>
             <template #fallback>
-              <a href="/products?orderby=rating&order=ASC&filter=rating[1]" class="py-1.5 block">{{ $t('shop.topRated') }}</a>
+              <a href="/urunler?orderby=rating&order=ASC&filter=rating[1]" class="py-1.5 block">{{ $t('shop.topRated') }}</a>
             </template>
           </ClientOnly>
           <a href="/" class="py-1.5 block">{{ $t('shop.giftCards') }}</a>
@@ -50,9 +50,9 @@ const { wishlistLink } = useAuth();
         <div class="mb-1 font-semibold">{{ $t('general.customerService') }}</div>
         <div class="text-sm">
           <ClientOnly>
-            <NuxtLink to="/contact" class="py-1.5 block">{{ $t('general.contactUs') }}</NuxtLink>
+            <NuxtLink to="/iletisim" class="py-1.5 block">{{ $t('general.contactUs') }}</NuxtLink>
             <template #fallback>
-              <a href="/contact" class="py-1.5 block">{{ $t('general.contactUs') }}</a>
+              <a href="/iletisim" class="py-1.5 block">{{ $t('general.contactUs') }}</a>
             </template>
           </ClientOnly>
           <a href="/" class="py-1.5 block">{{ $t('general.shippingReturns') }}</a>
@@ -64,21 +64,21 @@ const { wishlistLink } = useAuth();
         <div class="mb-1 font-semibold">{{ $t('account.myAccount') }}</div>
         <div class="text-sm">
           <ClientOnly>
-            <NuxtLink to="/my-account/" class="py-1.5 block">{{ $t('account.myAccount') }}</NuxtLink>
+            <NuxtLink to="/hesabim/" class="py-1.5 block">{{ $t('account.myAccount') }}</NuxtLink>
             <template #fallback>
-              <a href="/my-account/" class="py-1.5 block">{{ $t('account.myAccount') }}</a>
+              <a href="/hesabim/" class="py-1.5 block">{{ $t('account.myAccount') }}</a>
             </template>
           </ClientOnly>
           <ClientOnly>
-            <NuxtLink to="/my-account/?tab=orders" class="py-1.5 block">{{ $t('shop.orderHistory') }}</NuxtLink>
+            <NuxtLink to="/hesabim/?tab=orders" class="py-1.5 block">{{ $t('shop.orderHistory') }}</NuxtLink>
             <template #fallback>
-              <a href="/my-account/?tab=orders" class="py-1.5 block">{{ $t('shop.orderHistory') }}</a>
+              <a href="/hesabim/?tab=orders" class="py-1.5 block">{{ $t('shop.orderHistory') }}</a>
             </template>
           </ClientOnly>
           <ClientOnly>
             <NuxtLink :to="wishlistLink" class="py-1.5 block">{{ $t('shop.wishlist') }}</NuxtLink>
             <template #fallback>
-              <a href="/wishlist" class="py-1.5 block">{{ $t('shop.wishlist') }}</a>
+              <a href="/istek-listesi" class="py-1.5 block">{{ $t('shop.wishlist') }}</a>
             </template>
           </ClientOnly>
           <a href="/" class="py-1.5 block">{{ $t('general.newsletter') }}</a>

@@ -105,7 +105,7 @@ const payNow = async () => {
           elements: elements.value,
           clientSecret: stripeClientSecret.value,
           confirmParams: {
-            return_url: `${window.location.origin}/checkout/order-received`,
+            return_url: `${window.location.origin}/odeme/siparis-alindi`,
             payment_method_data: {
               billing_details: {
                 name: `${customer.value?.billing?.firstName || ''} ${customer.value?.billing?.lastName || ''}`.trim() || undefined,
@@ -278,7 +278,7 @@ useSeoMeta({
         <h2 class="text-2xl font-bold mb-2">{{ $t('shop.cartEmpty') }}</h2>
         <span class="text-gray-400 mb-4">{{ $t('shop.addProductsInYourCart') }}</span>
         <NuxtLink
-          to="/products"
+          to="/urunler"
           class="flex items-center justify-center gap-3 p-2 px-3 mt-4 font-semibold text-center text-white rounded-lg shadow-lg bg-primary hover:bg-primary-dark">
           {{ $t('shop.browseOurProducts') }}
         </NuxtLink>
@@ -290,7 +290,7 @@ useSeoMeta({
           <div v-if="!viewer && customer?.billing">
             <h2 class="w-full mb-2 text-2xl font-semibold leading-none">Contact Information</h2>
             <p class="mt-1 text-sm text-gray-500">
-              Already have an account? <NuxtLink to="/my-account" @click="navigateToLogin('/checkout')" class="text-primary text-semibold">Log in</NuxtLink>.
+              Already have an account? <NuxtLink to="/hesabim" @click="navigateToLogin('/odeme')" class="text-primary text-semibold">Log in</NuxtLink>.
             </p>
             <div class="w-full mt-4">
               <label for="email">{{ $t('billing.email') }}</label>

@@ -87,7 +87,7 @@ useSeoMeta({
         <template v-if="isSummaryPage">
           <div class="flex items-center gap-4">
             <NuxtLink
-              to="/my-account?tab=orders"
+              to="/hesabim?tab=orders"
               class="inline-flex items-center justify-center p-2 border rounded-md"
               title="Back to orders"
               aria-label="Back to orders">
@@ -138,7 +138,7 @@ useSeoMeta({
 
           <div class="grid gap-2">
             <div v-for="item in order.lineItems.nodes" :key="item.id" class="flex items-center justify-between gap-8">
-              <NuxtLink v-if="item.product?.node" :to="`/product/${item.product.node.slug}`">
+              <NuxtLink v-if="item.product?.node" :to="`/urun/${item.product.node.slug}`">
                 <NuxtImg
                   class="w-16 h-16 rounded-xl"
                   :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl || '/images/placeholder.png'"

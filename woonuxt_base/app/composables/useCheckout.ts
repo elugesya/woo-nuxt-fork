@@ -57,8 +57,8 @@ export function useCheckout() {
     const frontEndUrl = window.location.origin;
     let redirectUrl = checkout?.redirect ?? '';
 
-    const payPalReturnUrl = `${frontEndUrl}/checkout/order-received/${orderId}/?key=${orderKey}&from_paypal=true`;
-    const payPalCancelUrl = `${frontEndUrl}/checkout/?cancel_order=true&from_paypal=true`;
+    const payPalReturnUrl = `${frontEndUrl}/odeme/siparis-alindi/${orderId}/?key=${orderKey}&from_paypal=true`;
+    const payPalCancelUrl = `${frontEndUrl}/odeme/?cancel_order=true&from_paypal=true`;
 
     redirectUrl = replaceQueryParam('return', payPalReturnUrl, redirectUrl);
     redirectUrl = replaceQueryParam('cancel_return', payPalCancelUrl, redirectUrl);
@@ -67,7 +67,7 @@ export function useCheckout() {
     const isPayPalWindowClosed = await openPayPalWindow(redirectUrl);
 
     if (isPayPalWindowClosed) {
-      router.push(`/checkout/order-received/${orderId}/?key=${orderKey}&fetch_delay=true`);
+      router.push(`/odeme/siparis-alindi/${orderId}/?key=${orderKey}&fetch_delay=true`);
     }
   };
 
@@ -166,7 +166,7 @@ export function useCheckout() {
         await handlePayPalRedirect(checkout, String(orderId), orderKey);
       } else {
         // Standard redirect to order received page
-        router.push(`/checkout/order-received/${orderId}/?key=${orderKey}`);
+        router.push(`/odeme/siparis-alindi/${orderId}/?key=${orderKey}`);
       }
 
       // Finalize the checkout (this will also clear cart for PayPal)

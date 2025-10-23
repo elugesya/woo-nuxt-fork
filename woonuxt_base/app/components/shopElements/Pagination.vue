@@ -21,29 +21,29 @@ const numberOfPages = computed<number>(() => Math.ceil(products.value.length / p
 
 const prevSrc = (pageNumber: number) => {
   if (currentQuery.value === '') {
-    return decodeURIComponent(`/products/page/${pageNumber > 1 ? pageNumber - 1 : pageNumber}`);
+    return decodeURIComponent(`/urunler/sayfa/${pageNumber > 1 ? pageNumber - 1 : pageNumber}`);
   } else {
     return decodeURIComponent(
-      pageNumber > 1 ? `/products/page/${pageNumber - 1}/?${currentQuery.value}` : `/products/page/${pageNumber}/?${currentQuery.value}`,
+      pageNumber > 1 ? `/urunler/sayfa/${pageNumber - 1}/?${currentQuery.value}` : `/urunler/sayfa/${pageNumber}/?${currentQuery.value}`,
     );
   }
 };
 
 const nextSrc = (pageNumber: number) => {
   if (currentQuery.value === '') {
-    return decodeURIComponent(`/products/page/${pageNumber < numberOfPages.value ? pageNumber + 1 : pageNumber}`);
+    return decodeURIComponent(`/urunler/sayfa/${pageNumber < numberOfPages.value ? pageNumber + 1 : pageNumber}`);
   } else {
     return decodeURIComponent(
-      pageNumber < numberOfPages.value ? `/products/page/${pageNumber + 1}/?${currentQuery.value}` : `/products/page/${pageNumber}/?${currentQuery.value}`,
+      pageNumber < numberOfPages.value ? `/urunler/sayfa/${pageNumber + 1}/?${currentQuery.value}` : `/urunler/sayfa/${pageNumber}/?${currentQuery.value}`,
     );
   }
 };
 
 const numberSrc = (pageNumber: number) => {
   if (currentQuery.value === '') {
-    return decodeURIComponent(`/products/page/${pageNumber}`);
+    return decodeURIComponent(`/urunler/sayfa/${pageNumber}`);
   } else {
-    return decodeURIComponent(`/products/page/${pageNumber}/?${currentQuery.value}`);
+    return decodeURIComponent(`/urunler/sayfa/${pageNumber}/?${currentQuery.value}`);
   }
 };
 </script>

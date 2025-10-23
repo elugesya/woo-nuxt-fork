@@ -52,18 +52,18 @@ export default defineNuxtConfig({
         pages.push({ name, path, file: resolve(`./app/pages/${file}`) });
       };
 
-      addPage('product-page-pager', '/products/page/:pageNumber', 'products.vue');
-      addPage('product-category-page', '/product-category/:categorySlug', 'product-category/[slug].vue');
-      addPage('product-category-page-pager', '/product-category/:categorySlug/page/:pageNumber', 'product-category/[slug].vue');
-      addPage('order-received', '/checkout/order-received/:orderId', 'order-summary.vue');
-      addPage('order-summary', '/order-summary/:orderId', 'order-summary.vue');
+      addPage('product-page-pager', '/urunler/sayfa/:pageNumber', 'urunler.vue');
+      addPage('product-category-page', '/urun-kategorisi/:categorySlug', 'urun-kategorisi/[slug].vue');
+      addPage('product-category-page-pager', '/urun-kategorisi/:categorySlug/sayfa/:pageNumber', 'urun-kategorisi/[slug].vue');
+      addPage('order-received', '/odeme/siparis-alindi/:orderId', 'siparis-ozeti.vue');
+      addPage('order-summary', '/siparis-ozeti/:orderId', 'siparis-ozeti.vue');
     },
   },
 
   nitro: {
     routeRules: {
-      '/checkout/order-received/**': { prerender: false },
-      '/order-summary/**': { prerender: false },
+      '/odeme/siparis-alindi/**': { prerender: false },
+      '/siparis-ozeti/**': { prerender: false },
     },
   },
 

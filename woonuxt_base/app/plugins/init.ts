@@ -56,7 +56,7 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const isDev = process.env.NODE_ENV === 'development';
 
     // Check if the current route path is one of the pages that need immediate initialization
-    const pagesToInitializeRightAway = ['/checkout', '/my-account', '/order-summary'];
+    const pagesToInitializeRightAway = ['/odeme', '/hesabim', '/siparis-ozeti'];
     const isPathThatRequiresInit = pagesToInitializeRightAway.some((page) => useRoute().path.includes(page));
 
     const shouldInit = isDev || isPathThatRequiresInit || !storeSettings.initStoreOnUserActionToReduceServerLoad;

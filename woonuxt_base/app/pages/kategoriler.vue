@@ -5,7 +5,7 @@ const productCategories = (data.value?.productCategories?.nodes as ProductCatego
 useHead({
   title: `Categories`,
   meta: [{ name: 'description', content: 'All product categories' }],
-  link: [{ rel: 'canonical', href: 'https://v3.woonuxt.com/categories' }],
+  link: [{ rel: 'canonical', href: 'https://v3.woonuxt.com/kategoriler' }],
 });
 </script>
 

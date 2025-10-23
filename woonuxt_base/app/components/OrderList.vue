@@ -12,7 +12,7 @@ const refresh = () => {
 };
 
 const goToOrder = (orderNumber: string): void => {
-  router.push(`/order-summary/${orderNumber}`);
+  router.push(`/siparis-ozeti/${orderNumber}`);
 };
 </script>
 

@@ -4,10 +4,10 @@ const runtimeConfig = useRuntimeConfig();
 const { product } = defineProps<{ product: Product }>();
 
 // TODO fetch perma link from WP API
-const productCategoryPermallink = runtimeConfig?.public?.PRODUCT_CATEGORY_PERMALINK || '/product-category/';
+const productCategoryPermallink = runtimeConfig?.public?.PRODUCT_CATEGORY_PERMALINK || '/urun-kategorisi/';
 const primaryCategory = computed(() => product.productCategories?.nodes[0]);
 const format = computed(() => [
-  { name: 'Products', slug: '/products' },
+  { name: 'Products', slug: '/urunler' },
   {
     name: primaryCategory.value?.name,
     slug: `${String(productCategoryPermallink)}${primaryCategory.value?.slug}`,

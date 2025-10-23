@@ -38,18 +38,18 @@ export const useAuth = () => {
     const route = currentRoute || (typeof window !== 'undefined' ? window.location.pathname + window.location.search : '');
 
     // Only store return URL if it's not already the login page
-    if (route && route !== '/my-account') {
+    if (route && route !== '/hesabim') {
       setReturnUrl(route);
     }
 
     // Navigate to login page
-    return navigateTo('/my-account');
+    return navigateTo('/hesabim');
   };
 
   // High-level function to handle post-login redirect
   const handlePostLoginRedirect = () => {
     const returnUrl = getReturnUrl();
-    if (returnUrl && returnUrl !== '/my-account') {
+    if (returnUrl && returnUrl !== '/hesabim') {
       clearReturnUrl();
       return navigateTo(returnUrl);
     }
@@ -133,8 +133,8 @@ export const useAuth = () => {
       return { success: false, error: errorMsg };
     } finally {
       updateViewer(null);
-      if (router.currentRoute.value.path === '/my-account' && viewer.value === null) {
-        router.push('/my-account');
+      if (router.currentRoute.value.path === '/hesabim' && viewer.value === null) {
+        router.push('/hesabim');
       } else {
         router.push('/');
       }
@@ -238,7 +238,7 @@ export const useAuth = () => {
   };
 
   const avatar = computed(() => viewer.value?.avatar?.url ?? null);
-  const wishlistLink = computed<string>(() => (viewer.value ? '/my-account?tab=wishlist' : '/wishlist'));
+  const wishlistLink = computed<string>(() => (viewer.value ? '/hesabim?tab=wishlist' : '/istek-listesi'));
 
   return {
     viewer,

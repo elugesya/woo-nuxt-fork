@@ -11,7 +11,7 @@ const isPending = ref(false);
 const isInvalidLink = ref(false);
 
 if (!route.query.key && !route.query.login) {
-  router.push('/my-account?action=forgotPassword');
+  router.push('/hesabim?action=forgotPassword');
 }
 
 const handlePasswordReset = async () => {
@@ -48,7 +48,7 @@ const handlePasswordReset = async () => {
       }
     }
 
-    router.push('/my-account');
+    router.push('/hesabim');
   } catch (error: any) {
     errorMessage.value = error.message || t('error.general');
   } finally {
@@ -87,7 +87,7 @@ useHead({
       <Transition name="scale-y" mode="out-in">
         <div v-if="errorMessage" class="text-sm mb-4">
           <span class="text-red-500" v-html="errorMessage"></span>
-          <NuxtLink v-if="isInvalidLink" class="underline cursor-pointer pl-1" to="/my-account?action=forgotPassword">{{
+          <NuxtLink v-if="isInvalidLink" class="underline cursor-pointer pl-1" to="/hesabim?action=forgotPassword">{{
             $t('account.requestNewLink')
           }}</NuxtLink>
         </div>
@@ -100,7 +100,7 @@ useHead({
     </form>
 
     <div class="my-8 text-center cursor-pointer">
-      <NuxtLink to="/my-account">{{ $t('account.backToLogin') }}</NuxtLink>
+      <NuxtLink to="/hesabim">{{ $t('account.backToLogin') }}</NuxtLink>
     </div>
   </div>
 </template>
