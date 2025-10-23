@@ -1,0 +1,6 @@
+{
+    "i18n-ally.localesPaths": [
+        "woonuxt_base/i18n",
+        "woonuxt_base/i18n/locales"
+    ]
+}
