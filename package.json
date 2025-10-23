@@ -10,7 +10,6 @@
     "dev:ssl": "NODE_TLS_REJECT_UNAUTHORIZED=0 nuxt dev --https --ssl-cert localhost.pem --ssl-key localhost-key.pem",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "prepare": "nuxt prepare",
     "serve": "nuxi generate && npx serve .output/public -l 8080"
   },
   "dependencies": {
