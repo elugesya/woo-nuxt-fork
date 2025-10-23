@@ -1,0 +1,29 @@
+name: Scheduled Build (Deploy Hook)
+
+on:
+  schedule:
+    - cron: "0 0,12 * * *"  # Every day at 00:00 and 12:00 UTC
+  workflow_dispatch: {}
+
+jobs:
+  trigger-deploy-hook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Deploy Hook (Coolify preferred)
+        run: |
+          if [ -n "${{ secrets.COOLIFY_DEPLOY_HOOK }}" ]; then
+            echo "Triggering Coolify deploy hook..."
+            curl -sS -X POST -H 'Content-Type: application/json' -d '{}' "${{ secrets.COOLIFY_DEPLOY_HOOK }}"
+            echo "Coolify deploy hook triggered."
+            exit 0
+          fi
+
+          if [ -n "${{ secrets.NETLIFY_BUILD_HOOK }}" ]; then
+            echo "Triggering Netlify build hook (fallback)..."
+            curl -sS -X POST -H 'Content-Type: application/json' -d '{}' "${{ secrets.NETLIFY_BUILD_HOOK }}"
+            echo "Netlify build hook triggered."
+            exit 0
+          fi
+
+          echo "No deploy hook configured. Please add COOLIFY_DEPLOY_HOOK (preferred) or NETLIFY_BUILD_HOOK to repo secrets." >&2
+          exit 1

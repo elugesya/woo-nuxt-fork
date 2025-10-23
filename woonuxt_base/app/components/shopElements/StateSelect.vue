@@ -3,6 +3,7 @@
 const props = defineProps({
   modelValue: { type: String, default: '' },
   countryCode: { type: String, default: '' },
+  disabled: { type: Boolean, default: false },
 });
 
 const { getStatesForCountry, countryStatesDict } = useCountry();
@@ -31,11 +32,11 @@ watch(
 </script>
 
 <template>
-  <select @change="select" v-if="countryStatesDict[props.countryCode]?.length" class="h-[42px]">
+  <select @change="select" v-if="countryStatesDict[props.countryCode]?.length" class="h-[42px]" :disabled="props.disabled">
     <option value="" :selected="!props.modelValue">Select a state</option>
     <option v-for="state in countryStatesDict[props.countryCode]" :key="state.code" :value="state.code" :selected="state.code === props.modelValue">
       {{ state.name }}
     </option>
   </select>
-  <input v-else type="text" @change="select" placeholder="State" />
+  <input v-else type="text" @change="select" placeholder="State" :disabled="props.disabled" />
 </template>

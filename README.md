@@ -26,6 +26,12 @@ You can find some common errors and how to fix them [here](https://woonuxt.com/f
 
 [![button](https://user-images.githubusercontent.com/5116925/218880214-a16287a7-fd8c-4299-9e65-0871136f0771.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/scottyzen/woonuxt) [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fscottyzen%2FWooNuxt3&repository-name=WooNuxt&env=GQL_HOST,NUXT_IMAGE_DOMAINS)
 
+### Deployment on Coolify (self‑hosted)
+
+For fully static generation (SSG) with scheduled redeploys via GitHub Actions and a Coolify Deploy Hook, see:
+
+- docs/deployment-coolify.md
+
 ## How to customize & extend WooNuxt 🎨
 
 WooNuxt now uses the Nuxt layers feature to make it easy to customize any part of WooNuxt just like you would with a WordPress theme with its child theme.

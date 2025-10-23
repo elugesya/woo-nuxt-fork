@@ -1,3 +1,73 @@
+const GQL_HOST = process.env.GQL_HOST || 'http://localhost:4000/graphql';
+const APP_HOST = process.env.APP_HOST || 'http://localhost:3000';
+
+const PRODUCTS_Q = `
+  query AllProductSlugs($first: Int = 100, $after: String) {
+    products(first: $first, after: $after, where: { status: \"publish\", visibility: VISIBLE }) {
+      pageInfo { hasNextPage endCursor }
+      nodes { slug }
+    }
+  }
+`;
+const CATEGORIES_Q = `
+  query AllCategorySlugs($first: Int = 100, $after: String) {
+    productCategories(first: $first, after: $after, where: { hideEmpty: false }) {
+      pageInfo { hasNextPage endCursor }
+      nodes { slug }
+    }
+  }
+`;
+
+async function fetchAllProductSlugs() {
+  const slugs: string[] = [];
+  let after: string | null = null;
+  for (let i = 0; i < 50; i++) {
+    const res: any = await fetch(GQL_HOST, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Origin: APP_HOST },
+      body: JSON.stringify({ query: PRODUCTS_Q, variables: { first: 100, after } }),
+    }).then((r) => r.json()).catch(() => null);
+    if (!res || res.errors) break;
+    const root = res?.data?.products;
+    const nodes = root?.nodes || [];
+    slugs.push(...nodes.map((n: any) => n?.slug).filter(Boolean));
+    if (!root?.pageInfo?.hasNextPage || !root?.pageInfo?.endCursor) break;
+    after = root.pageInfo.endCursor;
+  }
+  return Array.from(new Set(slugs));
+}
+
+async function fetchAllCategorySlugs() {
+  const slugs: string[] = [];
+  let after: string | null = null;
+  for (let i = 0; i < 50; i++) {
+    const res: any = await fetch(GQL_HOST, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json', Origin: APP_HOST },
+      body: JSON.stringify({ query: CATEGORIES_Q, variables: { first: 100, after } }),
+    }).then((r) => r.json()).catch(() => null);
+    if (!res || res.errors) break;
+    const root = res?.data?.productCategories;
+    const nodes = root?.nodes || [];
+    slugs.push(...nodes.map((n: any) => n?.slug).filter(Boolean));
+    if (!root?.pageInfo?.hasNextPage || !root?.pageInfo?.endCursor) break;
+    after = root.pageInfo.endCursor;
+  }
+  return Array.from(new Set(slugs));
+}
+
+const productSlugs = await fetchAllProductSlugs().catch(() => [] as string[]);
+const categorySlugs = await fetchAllCategorySlugs().catch(() => [] as string[]);
+
+const dynamicRoutes = [
+  '/',
+  '/urunler',
+  ...productSlugs.map((s) => `/urun/${decodeURIComponent(s)}`),
+  ...categorySlugs.map((s) => `/urun-kategorisi/${decodeURIComponent(s)}`),
+  '/sitemap.xml',
+  '/robots.txt',
+];
+
 export default defineNuxtConfig({
 
   // Get all the pages, components, composables and plugins from the parent theme
@@ -19,6 +89,7 @@ export default defineNuxtConfig({
       '/robots.txt': { prerender: true },
     },
     prerender: {
+      routes: dynamicRoutes,
       concurrency: 10,
       interval: 1000,
       failOnError: false,
