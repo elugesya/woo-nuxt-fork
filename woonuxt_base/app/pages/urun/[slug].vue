@@ -136,9 +136,16 @@ const disabledAddToCart = computed(() => {
               :defaultAttributes="product.defaultAttributes"
               :variations="product.variations.nodes"
               @attrs-changed="updateSelectedVariations" />
+            
+            <!-- Desktop WhatsApp Order Button -->
+            <div v-if="isVariableProduct || isSimpleProduct" class="hidden md:block mb-4">
+              <WhatsAppOrderButton :product="product" />
+            </div>
+
+            <!-- Desktop Add to Cart -->
             <div
               v-if="isVariableProduct || isSimpleProduct"
-              class="fixed bottom-0 left-0 z-10 flex items-center w-full gap-4 p-4 mt-12 bg-white md:static md:bg-transparent bg-opacity-90 md:p-0">
+              class="hidden md:flex items-center w-full gap-4 mt-4">
               <input
                 v-model="quantity"
                 type="number"
@@ -146,6 +153,13 @@ const disabledAddToCart = computed(() => {
                 aria-label="Quantity"
                 class="bg-white border rounded-lg flex text-left p-2.5 w-20 gap-4 items-center justify-center focus:outline-none" />
               <AddToCartButton class="flex-1 w-full md:max-w-xs" :disabled="disabledAddToCart" :class="{ loading: isUpdatingCart }" />
+            </div>
+
+            <!-- Mobile Sticky WhatsApp Button -->
+            <div
+              v-if="isVariableProduct || isSimpleProduct"
+              class="fixed bottom-0 left-0 z-10 w-full p-4 bg-white md:hidden bg-opacity-90">
+              <WhatsAppOrderButton :product="product" class="w-full" />
             </div>
             <a
               v-if="isExternalProduct && product.externalUrl"
