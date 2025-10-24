@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const route = useRoute();
 const { storeSettings } = useAppConfig();
+const { FALLBACK_IMG } = useHelpers();
 const props = defineProps({
   node: { type: Object as PropType<Product>, required: true },
   index: { type: Number, default: 1 },
@@ -34,24 +35,36 @@ const imagetoDisplay = computed<string>(() => {
   }
   return mainImage.value;
 });
+const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
 </script>
 
 <template>
   <div class="relative group">
     <NuxtLink v-if="node.slug" :to="`/urun/${decodeURIComponent(node.slug)}`" :title="node.name">
       <SaleBadge :node class="absolute top-2 right-2" />
-      <NuxtImg
-        v-if="imagetoDisplay"
-        :width="imgWidth"
-        :height="imgHeight"
-        :src="imagetoDisplay"
-        :alt="node.image?.altText || node.name || 'Product image'"
-        :title="node.image?.title || node.name"
-        :loading="index <= 3 ? 'eager' : 'lazy'"
-        :sizes="`sm:${imgWidth / 2}px md:${imgWidth}px`"
-        class="rounded-lg object-top object-cover w-full aspect-9/8"
-        placeholder
-        placeholder-class="blur-xl" />
+      <template v-if="imagetoDisplay && !isFallback">
+        <NuxtImg
+          :width="imgWidth"
+          :height="imgHeight"
+          :src="imagetoDisplay"
+          :alt="node.image?.altText || node.name || 'Product image'"
+          :title="node.image?.title || node.name"
+          :loading="index <= 3 ? 'eager' : 'lazy'"
+          :sizes="`sm:${imgWidth / 2}px md:${imgWidth}px`"
+          class="rounded-lg object-top object-cover w-full aspect-9/8"
+          placeholder
+          placeholder-class="blur-xl" />
+      </template>
+      <template v-else>
+        <img
+          :width="imgWidth"
+          :height="imgHeight"
+          src="/images/placeholder.jpg"
+          :alt="node.name || 'Product image'"
+          :title="node.name"
+          :loading="index <= 3 ? 'eager' : 'lazy'"
+          class="rounded-lg object-top object-cover w-full aspect-9/8" />
+      </template>
     </NuxtLink>
     <div class="p-2">
       <StarRating v-if="storeSettings.showReviews" :rating="node.averageRating" :count="node.reviewCount" />

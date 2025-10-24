@@ -12,6 +12,12 @@ setProducts(allProducts);
 
 const hasProducts = computed<boolean>(() => Array.isArray(allProducts) && allProducts.length > 0);
 
+// SEO
+useSeoMeta({
+  title: 'Ürünler',
+  description: 'Tüm ürünlerimizi keşfedin. Dıştan takma motorlar, şişme botlar ve denizcilik ekipmanları.',
+})
+
 onMounted(() => {
   if (!isQueryEmpty.value) updateProductList();
   
@@ -46,8 +52,6 @@ const nextUrl = computed(() => {
 });
 
 useHead(() => ({
-  title: `Products`,
-  meta: [{ name: 'description', content: 'Discover our products' }],
   link: [
     prevUrl.value ? { rel: 'prev', href: prevUrl.value } : undefined,
     nextUrl.value ? { rel: 'next', href: nextUrl.value } : undefined,

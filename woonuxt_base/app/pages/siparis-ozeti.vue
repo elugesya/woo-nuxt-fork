@@ -145,14 +145,25 @@ useSeoMeta({
           <div class="grid gap-2">
             <div v-for="item in order.lineItems.nodes" :key="item.id" class="flex items-center justify-between gap-8">
               <NuxtLink v-if="item.product?.node" :to="`/urun/${item.product.node.slug}`">
-                <NuxtImg
-                  class="w-16 h-16 rounded-xl"
-                  :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl || '/images/placeholder.png'"
-                  :alt="item.variation?.node?.image?.altText || item.product.node?.image?.altText || 'Product image'"
-                  :title="item.variation?.node?.image?.title || item.product.node?.image?.title || 'Product image'"
-                  width="64"
-                  height="64"
-                  loading="lazy" />
+                <template v-if="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl">
+                  <NuxtImg
+                    class="w-16 h-16 rounded-xl"
+                    :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl"
+                    :alt="item.variation?.node?.image?.altText || item.product.node?.image?.altText || 'Product image'"
+                    :title="item.variation?.node?.image?.title || item.product.node?.image?.title || 'Product image'"
+                    width="64"
+                    height="64"
+                    loading="lazy" />
+                </template>
+                <template v-else>
+                  <img
+                    class="w-16 h-16 rounded-xl"
+                    src="/images/placeholder.jpg"
+                    alt="Product image"
+                    width="64"
+                    height="64"
+                    loading="lazy" />
+                </template>
               </NuxtLink>
               <div class="flex-1 leading-tight">
                 {{ item.variation ? item.variation?.node?.name : item.product?.node.name! }}

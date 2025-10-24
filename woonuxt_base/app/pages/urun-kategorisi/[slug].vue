@@ -38,6 +38,12 @@ const categoryName = computed(() => category.value?.name || 'Ürünler');
 const categoryDesc = computed(() => stripHtml(category.value?.description || ''));
 const canonical = computed(() => `${frontEndUrl}${route.path}`);
 
+// SEO
+useSeoMeta({
+  title: categoryName.value,
+  description: categoryDesc.value || `${categoryName.value} kategorisindeki ürünleri inceleyin.`,
+});
+
 // Pagination prev/next links (if route has pageNumber param)
 const currentPage = computed(() => {
   const pageNum = Number(route.params.pageNumber);
@@ -55,17 +61,7 @@ const nextUrl = computed(() => {
 });
 
 useHead(() => ({
-  title: `${categoryName.value}`,
-  meta: [
-    categoryDesc.value
-      ? { hid: 'description', name: 'description', content: categoryDesc.value }
-      : { hid: 'description', name: 'description', content: `${categoryName.value} kategorisindeki ürünler` },
-    { hid: 'og:title', property: 'og:title', content: categoryName.value },
-    categoryDesc.value ? { hid: 'og:description', property: 'og:description', content: categoryDesc.value } : undefined,
-    { hid: 'og:url', property: 'og:url', content: canonical.value },
-  ].filter(Boolean) as any,
   link: [
-    { rel: 'canonical', hid: 'canonical', href: canonical.value },
     prevUrl.value ? { rel: 'prev', href: prevUrl.value } : undefined,
     nextUrl.value ? { rel: 'next', href: nextUrl.value } : undefined,
   ].filter(Boolean) as any,

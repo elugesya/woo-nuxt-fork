@@ -1,17 +1,14 @@
 <template>
   <div class="relative mx-auto overflow-hidden">
-    <NuxtImg
+    <img
       width="1400"
       height="800"
       class="object-contain w-full h-auto max-h-[500px] lg:max-h-[600px] xl:max-h-[700px]"
       src="/images/hero-1.webp"
       alt="Hero image"
       loading="eager"
-      sizes="sm:100vw md:100vw lg:100vw"
       fetchpriority="high"
-      preload
-      placeholder
-      placeholder-class="blur-xl" />
+    />
     
     <!-- Gradient overlay for better text readability -->
     <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent"></div>

@@ -6,6 +6,12 @@ const { resolve } = createResolver(import.meta.url);
 // Environment variables with fallbacks
 const GQL_HOST = process.env.GQL_HOST || 'http://localhost:4000/graphql';
 const APP_HOST = process.env.APP_HOST || 'http://localhost:3000';
+// Derive GQL origin for resource hints
+let GQL_ORIGIN = '';
+try {
+  const u = new URL(GQL_HOST);
+  GQL_ORIGIN = `${u.protocol}//${u.host}`;
+} catch {}
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-08-10',
@@ -13,7 +19,12 @@ export default defineNuxtConfig({
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
-      link: [{ rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }],
+      link: [
+        { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' },
+        // Resource hints
+        ...(GQL_ORIGIN ? [{ rel: 'preconnect', href: GQL_ORIGIN }] : []),
+        ...(GQL_ORIGIN ? [{ rel: 'dns-prefetch', href: GQL_ORIGIN }] : []),
+      ],
       meta: [
         // Google Search Console Verification
         ...(process.env.GOOGLE_SITE_VERIFICATION
@@ -31,6 +42,20 @@ export default defineNuxtConfig({
   components: [{ path: resolve('./app/components'), pathPrefix: false }],
 
   modules: [resolve('./modules/woonuxt-bridge.ts'), 'nuxt-graphql-client', '@nuxtjs/tailwindcss', '@nuxt/icon', '@nuxt/image', '@nuxtjs/i18n', 'nuxt-gtag'],
+
+  image: {
+    quality: 80,
+    formats: ['webp', 'avif', 'jpg'],
+    screens: { xs: 320, sm: 640, md: 768, lg: 1024, xl: 1280, xxl: 1536 },
+    presets: {
+      product: { modifiers: { format: 'webp', quality: 80, width: 800, height: 800, fit: 'contain' } },
+      thumbnail: { modifiers: { format: 'webp', quality: 70, width: 300, height: 300, fit: 'cover' } },
+    },
+    // Ensure IPX resolves assets from this layer's public/ directory during prerender
+    ipx: {
+      dir: resolve('./public'),
+    },
+  },
 
   runtimeConfig: {
     public: {
@@ -86,7 +111,7 @@ export default defineNuxtConfig({
   },
 
   hooks: {
-    'pages:extend'(pages) {
+    'pages:extend'(pages: any[]) {
       const addPage = (name: string, path: string, file: string) => {
         pages.push({ name, path, file: resolve(`./app/pages/${file}`) });
       };

@@ -9,8 +9,10 @@ const siteName = process.env.SITE_TITLE ?? 'WooNuxt';
 
 const img = useImage();
 const imageURL = info.image?.sourceUrl ?? '/images/placeholder.jpg';
-const defaultImageSrc = img.getSizes(imageURL, { width: 1200, height: 630 }).src;
-const twitterImageSrc = img.getSizes(imageURL, { width: 1600, height: 900 }).src;
+const isLocalImage = imageURL.startsWith('/');
+// Avoid generating IPX URLs for local placeholder; use original path instead
+const defaultImageSrc = isLocalImage ? imageURL : img.getSizes(imageURL, { width: 1200, height: 630 }).src;
+const twitterImageSrc = isLocalImage ? imageURL : img.getSizes(imageURL, { width: 1600, height: 900 }).src;
 
 const getFullImageURL = (url?: string) => {
   if (!url) return '';

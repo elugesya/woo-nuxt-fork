@@ -15,6 +15,7 @@ const imgScr = computed(() => productType.value.image?.cartSourceUrl || productT
 const regularPrice = computed(() => parseFloat(productType.value.rawRegularPrice));
 const salePrice = computed(() => parseFloat(productType.value.rawSalePrice));
 const salePercentage = computed(() => Math.round(((regularPrice.value - salePrice.value) / regularPrice.value) * 100) + '%');
+const isFallback = computed(() => imgScr.value === FALLBACK_IMG);
 
 const removeItem = () => {
   updateItemQuantity(item.key, 0);
@@ -30,14 +31,26 @@ const moveToWishList = () => {
   <SwipeCard @remove="removeItem">
     <div v-if="productType" class="flex items-center gap-3 group">
       <NuxtLink :to="productSlug">
-        <NuxtImg
-          width="64"
-          height="64"
-          class="w-16 h-16 rounded-md skeleton"
-          :src="imgScr"
-          :alt="productType.image?.altText || productType.name"
-          :title="productType.image?.title || productType.name"
-          loading="lazy" />
+        <template v-if="isFallback">
+          <img
+            width="64"
+            height="64"
+            class="w-16 h-16 rounded-md skeleton"
+            src="/images/placeholder.jpg"
+            :alt="productType.name"
+            :title="productType.name"
+            loading="lazy" />
+        </template>
+        <template v-else>
+          <NuxtImg
+            width="64"
+            height="64"
+            class="w-16 h-16 rounded-md skeleton"
+            :src="imgScr"
+            :alt="productType.image?.altText || productType.name"
+            :title="productType.image?.title || productType.name"
+            loading="lazy" />
+        </template>
       </NuxtLink>
       <div class="flex-1">
         <div class="flex gap-x-2 gap-y-1 flex-wrap items-center">
