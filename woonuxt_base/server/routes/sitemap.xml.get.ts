@@ -73,8 +73,16 @@ async function getAllCategorySlugs(): Promise<Array<{ slug: string; modified?: s
 }
 
 export default defineEventHandler(async (event) => {
-  const isProd = process.env.NODE_ENV === 'production'
-  const SITE_URL = isProd ? 'https://ntmc.com.tr' : 'http://localhost:3000'
+  // Prefer configured public FRONT_END_URL for absolute links
+  const config = useRuntimeConfig()
+  let SITE_URL = (config.public as any).FRONT_END_URL as string | undefined
+  if (!SITE_URL) {
+    // Fallback to request host if available (useful in non-prerendered contexts)
+    const headers = event.node.req.headers as Record<string, string | string[] | undefined>
+    const proto = (headers['x-forwarded-proto'] as string) || 'http'
+    const host = (headers['x-forwarded-host'] as string) || (headers['host'] as string) || 'localhost:3000'
+    SITE_URL = `${proto}://${host}`
+  }
 
   // Build static routes
   const staticPaths = ['/', '/urunler', '/kategoriler', '/iletisim']
