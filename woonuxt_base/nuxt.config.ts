@@ -20,7 +20,8 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'en' },
       link: [
-        { rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' },
+        { rel: 'icon', href: '/images/favicon.ico', type: 'image/x-icon' },
+        { rel: 'icon', href: '/images/favicon-16x16.png', type: 'image/png', sizes: '16x16' },
         // Resource hints
         ...(GQL_ORIGIN ? [{ rel: 'preconnect', href: GQL_ORIGIN }] : []),
         ...(GQL_ORIGIN ? [{ rel: 'dns-prefetch', href: GQL_ORIGIN }] : []),
