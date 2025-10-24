@@ -1,0 +1,58 @@
+query getAllProductsForFeed($first: Int = 100, $after: String) {
+  products(first: $first, after: $after, where: { status: "publish" }) {
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+    nodes {
+      databaseId
+      name
+      slug
+      type
+      description
+      shortDescription
+      sku
+      image {
+        sourceUrl
+        altText
+      }
+      galleryImages {
+        nodes {
+          sourceUrl
+          altText
+        }
+      }
+      ... on SimpleProduct {
+        price
+        regularPrice
+        salePrice
+        stockStatus
+        stockQuantity
+      }
+      ... on VariableProduct {
+        price
+        regularPrice
+        salePrice
+        stockStatus
+      }
+      productCategories {
+        nodes {
+          name
+          slug
+          databaseId
+        }
+      }
+      productTags {
+        nodes {
+          name
+        }
+      }
+      ... on SimpleProduct {
+        weight
+        length
+        width
+        height
+      }
+    }
+  }
+}
