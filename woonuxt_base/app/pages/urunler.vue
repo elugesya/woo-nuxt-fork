@@ -30,7 +30,8 @@ onMounted(() => {
 watch(
   () => route.query,
   () => {
-    if (route.name !== 'products') return;
+    // Ensure we only react on the product list route
+    if (route.name !== 'urunler') return;
     updateProductList();
   },
 );

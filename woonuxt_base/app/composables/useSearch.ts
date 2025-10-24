@@ -7,10 +7,11 @@ export function useSearching() {
   const searchQuery = useState<string>('searchQuery', () => '');
   const isSearchActive = computed<boolean>(() => !!searchQuery.value);
 
-  searchQuery.value = route.query.search as string;
+  // Initialize from route but ensure string
+  searchQuery.value = (route.query.search as string) || '';
 
   function getSearchQuery(): string {
-    return route.query.search as string;
+    return (route.query.search as string) || '';
   }
 
   function setSearchQuery(search: string): void {
@@ -40,18 +41,18 @@ export function useSearching() {
   }
 
   function searchProducts(products: Product[]): Product[] {
-    const name = route.name ?? 'products';
     const search = getSearchQuery();
 
     /**
      * If we are on a category page, we need to add the category slug to the
      * route, otherwise every search will redirect to the products page.
      */
-    if (route.name === 'product-category-slug') {
+    if (route.name === 'product-category-page' || route.name === 'product-category-page-pager') {
       const categorySlug = route.params.categorySlug as string;
-      router.push({ name, params: { categorySlug }, query: { ...route.query, search } });
+      router.push({ name: route.name as string, params: { categorySlug }, query: { ...route.query, search } });
     } else {
-      router.push({ name: 'products', query: { ...route.query, search } });
+      // Use explicit path to avoid relying on route name mapping
+      router.push({ path: '/urunler', query: { ...route.query, search } });
     }
 
     return search ? products.filter((product: Product) => productMatchesSearch(product, search)) : products;
