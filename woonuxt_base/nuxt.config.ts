@@ -16,12 +16,6 @@ try {
 export default defineNuxtConfig({
   compatibilityDate: '2025-08-10',
 
-  router: {
-    options: {
-      trailingSlash: true
-    }
-  },
-
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
@@ -135,6 +129,10 @@ export default defineNuxtConfig({
   },
 
   nitro: {
+    prerender: {
+      crawlLinks: true,
+      failOnError: false,
+    },
     routeRules: {
       '/odeme/siparis-alindi/**': { prerender: false },
       '/siparis-ozeti/**': { prerender: false },
