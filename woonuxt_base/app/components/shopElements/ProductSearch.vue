@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 const { getSearchQuery, setSearchQuery, clearSearchQuery } = useSearching();
 const { trackSearch } = useGoogleAnalytics();
 const searchQuery = ref(getSearchQuery());
