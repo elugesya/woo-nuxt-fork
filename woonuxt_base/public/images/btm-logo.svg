@@ -1,0 +1,8 @@
+<svg width="140" height="60" viewBox="0 0 140 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hexagon icon -->
+  <path d="M30 15 L42 22 L42 38 L30 45 L18 38 L18 22 Z" fill="#2C3E50" stroke="#34495E" stroke-width="2"/>
+  <path d="M30 22 L36 26 L36 34 L30 38 L24 34 L24 26 Z" fill="#ECF0F1"/>
+  
+  <!-- Text -->
+  <text x="55" y="40" font-family="Arial, Helvetica, sans-serif" font-size="32" font-weight="700" fill="#2C3E50" letter-spacing="2">BTM</text>
+</svg>

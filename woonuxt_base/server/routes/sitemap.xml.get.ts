@@ -25,7 +25,7 @@ async function getAllProductSlugs(): Promise<Array<{ slug: string; modified?: st
     query getAllProducts($first: Int = 100, $after: String) {
       products(first: $first, after: $after, where: { status: "publish", visibility: VISIBLE }) {
         pageInfo { hasNextPage endCursor }
-        nodes { slug dateModifiedGmt }
+        nodes { slug modifiedGmt }
       }
     }
   `
@@ -33,13 +33,13 @@ async function getAllProductSlugs(): Promise<Array<{ slug: string; modified?: st
   let after: string | null = null
   let guard = 0
   while (guard++ < 20) {
-    const data: { products: { pageInfo: { hasNextPage: boolean; endCursor: string | null }; nodes: Array<{ slug: string; dateModifiedGmt?: string }> } } =
+    const data: { products: { pageInfo: { hasNextPage: boolean; endCursor: string | null }; nodes: Array<{ slug: string; modifiedGmt?: string }> } } =
       await fetchGraphQL(
         query,
         { after },
       )
     const nodes = data?.products?.nodes || []
-    for (const n of nodes) results.push({ slug: n.slug, modified: n.dateModifiedGmt || undefined })
+    for (const n of nodes) results.push({ slug: n.slug, modified: n.modifiedGmt || undefined })
     if (data?.products?.pageInfo?.hasNextPage) after = data.products.pageInfo.endCursor
     else break
   }

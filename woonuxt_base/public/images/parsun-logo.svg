@@ -1,0 +1,8 @@
+<svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sun icon -->
+  <circle cx="30" cy="30" r="12" fill="#FF6B00"/>
+  <path d="M30 10 L30 15 M30 45 L30 50 M50 30 L45 30 M15 30 L10 30 M43.5 16.5 L40.5 19.5 M19.5 40.5 L16.5 43.5 M43.5 43.5 L40.5 40.5 M19.5 19.5 L16.5 16.5" stroke="#FF6B00" stroke-width="2.5" stroke-linecap="round"/>
+  
+  <!-- Text -->
+  <text x="60" y="38" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#FF6B00">parsun</text>
+</svg>

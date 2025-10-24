@@ -1,0 +1,8 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Wave icon -->
+  <path d="M10 30C10 30 15 20 20 20C25 20 25 30 30 30C35 30 35 20 40 20C45 20 50 30 50 30" stroke="#0066CC" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <path d="M10 38C10 38 15 28 20 28C25 28 25 38 30 38C35 38 35 28 40 28C45 28 50 38 50 38" stroke="#0099FF" stroke-width="3" stroke-linecap="round" fill="none"/>
+  
+  <!-- Text -->
+  <text x="60" y="38" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#0066CC">netamarine</text>
+</svg>
