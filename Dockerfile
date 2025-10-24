@@ -67,8 +67,10 @@ RUN pnpm run generate
 
 FROM base
 
+ENV PORT=3000
+
 COPY --from=build /src/.output /src/.output
 # Optional, only needed if you rely on unbundled dependencies
 COPY --from=build /src/node_modules /src/node_modules
 
-CMD ["npx", "serve", ".output/public", "-l", "3000"]
+CMD npx serve .output/public -l $PORT
