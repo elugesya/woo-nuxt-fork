@@ -6,6 +6,7 @@ const { storeSettings, siteName } = useAppConfig();
 const { arraysEqual, formatArray, checkForVariationTypeOfAny, frontEndUrl } = useHelpers();
 const { addToCart, isUpdatingCart } = useCart();
 const { t } = useI18n();
+const { trackViewItem, trackAddToCart } = useGoogleAnalytics();
 const slug = route.params.slug as string;
 
 const { data } = await useAsyncGql('getProduct', { slug });
@@ -44,6 +45,9 @@ onMounted(async () => {
     const errorMessage = error?.gqlErrors?.[0].message;
     if (errorMessage) console.error(errorMessage);
   }
+
+  // Track product view
+  trackViewItem(product.value);
 });
 
 const updateSelectedVariations = (variations: VariationAttribute[]): void => {
@@ -168,7 +172,13 @@ useHead(() => ({
 
           <hr />
 
-          <form @submit.prevent="addToCart(selectProductInput)">
+          <form
+            @submit.prevent="
+              () => {
+                addToCart(selectProductInput);
+                trackAddToCart(type, quantity);
+              }
+            ">
             <AttributeSelections
               v-if="isVariableProduct && product.attributes && product.variations"
               class="mt-4 mb-8"

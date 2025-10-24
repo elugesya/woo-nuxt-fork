@@ -3,6 +3,7 @@ const { setProducts, updateProductList } = useProducts();
 const route = useRoute();
 const { storeSettings } = useAppConfig();
 const { isQueryEmpty, frontEndUrl } = useHelpers();
+const { trackViewItemList } = useGoogleAnalytics();
 
 const { data } = await useAsyncGql('getProducts');
 const allProducts = data.value?.products?.nodes as Product[];
@@ -13,6 +14,11 @@ const hasProducts = computed<boolean>(() => Array.isArray(allProducts) && allPro
 
 onMounted(() => {
   if (!isQueryEmpty.value) updateProductList();
+  
+  // Track product list view
+  if (allProducts && allProducts.length > 0) {
+    trackViewItemList(allProducts, 'All Products');
+  }
 });
 
 watch(

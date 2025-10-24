@@ -6,6 +6,7 @@ const { customer } = useAuth();
 const { formatDate, formatPrice } = useHelpers();
 const { t } = useI18n();
 const { cart, emptyCart, refreshCart } = useCart();
+const { trackPurchase } = useGoogleAnalytics();
 
 const order = ref<Order | null>(null);
 const fetchDelay = ref<boolean>(query.fetch_delay === 'true');
@@ -37,6 +38,11 @@ onMounted(async () => {
   if (order.value && isCheckoutPage.value && cart.value?.contents?.nodes?.length) {
     await emptyCart();
     await refreshCart();
+  }
+
+  // Track purchase event (only on order-received page, not on order-summary)
+  if (order.value && isCheckoutPage.value) {
+    trackPurchase(order.value);
   }
 
   /**

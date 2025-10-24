@@ -1,10 +1,18 @@
 <script setup>
 const { getSearchQuery, setSearchQuery, clearSearchQuery } = useSearching();
+const { trackSearch } = useGoogleAnalytics();
 const searchQuery = ref(getSearchQuery());
 
 const reset = () => {
   clearSearchQuery();
   searchQuery.value = '';
+};
+
+const handleSearch = (query: string) => {
+  setSearchQuery(query);
+  if (query) {
+    trackSearch(query);
+  }
 };
 
 watch(getSearchQuery, (value) => {
@@ -13,7 +21,7 @@ watch(getSearchQuery, (value) => {
 </script>
 
 <template>
-  <form class="relative items-center flex-1 -space-x-px rounded-md shadow-sm" @submit.prevent="setSearchQuery(searchQuery)">
+  <form class="relative items-center flex-1 -space-x-px rounded-md shadow-sm" @submit.prevent="handleSearch(searchQuery)">
     <Icon name="ion:search-outline" size="20" class="absolute z-10 opacity-50 pointer-events-none left-2" />
     <input
       id="product-search-input"

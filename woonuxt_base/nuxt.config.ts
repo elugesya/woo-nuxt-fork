@@ -14,6 +14,14 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'en' },
       link: [{ rel: 'icon', href: '/logo.svg', type: 'image/svg+xml' }],
+      meta: [
+        // Google Search Console Verification
+        ...(process.env.GOOGLE_SITE_VERIFICATION
+          ? [{ name: 'google-site-verification', content: process.env.GOOGLE_SITE_VERIFICATION }]
+          : []),
+        // Bing Webmaster Tools Verification
+        ...(process.env.BING_SITE_VERIFICATION ? [{ name: 'msvalidate.01', content: process.env.BING_SITE_VERIFICATION }] : []),
+      ],
     },
     pageTransition: { name: 'page', mode: 'default' },
   },
@@ -22,7 +30,7 @@ export default defineNuxtConfig({
 
   components: [{ path: resolve('./app/components'), pathPrefix: false }],
 
-  modules: [resolve('./modules/woonuxt-bridge.ts'), 'nuxt-graphql-client', '@nuxtjs/tailwindcss', '@nuxt/icon', '@nuxt/image', '@nuxtjs/i18n'],
+  modules: [resolve('./modules/woonuxt-bridge.ts'), 'nuxt-graphql-client', '@nuxtjs/tailwindcss', '@nuxt/icon', '@nuxt/image', '@nuxtjs/i18n', 'nuxt-gtag'],
 
   runtimeConfig: {
     public: {
@@ -50,7 +58,26 @@ export default defineNuxtConfig({
       ORGANIZATION_SOCIAL_TWITTER: process.env.NUXT_PUBLIC_ORGANIZATION_SOCIAL_TWITTER || '',
       ORGANIZATION_SOCIAL_INSTAGRAM: process.env.NUXT_PUBLIC_ORGANIZATION_SOCIAL_INSTAGRAM || '',
       GOOGLE_MAPS_EMBED: process.env.NUXT_PUBLIC_GOOGLE_MAPS_EMBED || '',
+      // Google Integration
+      GOOGLE_ANALYTICS_ID: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || '',
+      GTM_ID: process.env.NUXT_PUBLIC_GTM_ID || '',
+      GOOGLE_SITE_VERIFICATION: process.env.GOOGLE_SITE_VERIFICATION || '',
+      BING_SITE_VERIFICATION: process.env.BING_SITE_VERIFICATION || '',
+      GOOGLE_MERCHANT_SHOP_NAME: process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_SHOP_NAME || '',
+      GOOGLE_MERCHANT_BRAND: process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_BRAND || '',
+      ANALYTICS_DEBUG: process.env.NUXT_PUBLIC_ANALYTICS_DEBUG === 'true',
     },
+  },
+
+  // Google Analytics 4 & Tag Manager Configuration
+  gtag: {
+    id: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || '',
+    enabled: !!process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID,
+    config: {
+      send_page_view: true,
+      cookie_flags: 'SameSite=None;Secure',
+    },
+    tags: process.env.NUXT_PUBLIC_GTM_ID ? [process.env.NUXT_PUBLIC_GTM_ID] : [],
   },
 
   alias: {

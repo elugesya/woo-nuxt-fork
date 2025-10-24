@@ -2,6 +2,7 @@
 const { setProducts, updateProductList } = useProducts();
 const { isQueryEmpty, frontEndUrl, stripHtml } = useHelpers();
 const { storeSettings } = useAppConfig();
+const { trackViewItemList } = useGoogleAnalytics();
 const route = useRoute();
 
 const categorySlug = (route.params.categorySlug || route.params.slug) as string;
@@ -16,6 +17,12 @@ setProducts(productsInCategory);
 
 onMounted(() => {
   if (!isQueryEmpty.value) updateProductList();
+  
+  // Track category product list view
+  if (productsInCategory && productsInCategory.length > 0) {
+    const categoryName = catData.value?.productCategory?.name || 'Category';
+    trackViewItemList(productsInCategory, categoryName);
+  }
 });
 
 watch(

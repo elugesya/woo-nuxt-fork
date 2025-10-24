@@ -7,6 +7,7 @@ const { query } = useRoute();
 const { cart, isUpdatingCart, paymentGateways, emptyCart, refreshCart } = useCart();
 const { customer, viewer, navigateToLogin } = useAuth();
 const { orderInput, isProcessingOrder, processCheckout } = useCheckout();
+const { trackBeginCheckout, trackAddPaymentInfo } = useGoogleAnalytics();
 const runtimeConfig = useRuntimeConfig();
 const appConfig = useAppConfig();
 const stripeKey = runtimeConfig.public?.STRIPE_PUBLISHABLE_KEY || null;
@@ -70,6 +71,11 @@ onBeforeMount(async () => {
   // For guest users, automatically open shipping form if no address is provided
   if (!viewer.value && customer.value?.shipping && !hasAnyShippingInfo.value) {
     isEditingShipping.value = true;
+  }
+
+  // Track begin checkout
+  if (cart.value) {
+    trackBeginCheckout(cart.value);
   }
 });
 
@@ -261,8 +267,13 @@ watch(
     } else {
       stripeClientSecret.value = '';
     }
+
+    // Track payment info addition
+    if (paymentMethodId && cart.value) {
+      const paymentType = orderInput.value.paymentMethod?.title || paymentMethodId;
+      trackAddPaymentInfo(cart.value, paymentType);
+    }
   },
-  { immediate: true },
 );
 
 useSeoMeta({
