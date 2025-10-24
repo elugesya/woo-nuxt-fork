@@ -27,6 +27,9 @@ export default defineNuxtConfig({
         ...(GQL_ORIGIN ? [{ rel: 'dns-prefetch', href: GQL_ORIGIN }] : []),
       ],
       meta: [
+        // Build version for cache busting debugging
+        { name: 'build-version', content: process.env.BUILD_VERSION || Date.now().toString() },
+        { name: 'build-timestamp', content: new Date().toISOString() },
         // Google Search Console Verification
         ...(process.env.GOOGLE_SITE_VERIFICATION
           ? [{ name: 'google-site-verification', content: process.env.GOOGLE_SITE_VERIFICATION }]
@@ -129,6 +132,28 @@ export default defineNuxtConfig({
     routeRules: {
       '/odeme/siparis-alindi/**': { prerender: false },
       '/siparis-ozeti/**': { prerender: false },
+      // Cache control headers for different content types
+      '/**': { 
+        headers: { 
+          'Cache-Control': 'public, max-age=0, must-revalidate',
+          'X-Content-Type-Options': 'nosniff',
+        } 
+      },
+      '/_nuxt/**': { 
+        headers: { 
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        } 
+      },
+      '/images/**': { 
+        headers: { 
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        } 
+      },
+      '/icons/**': { 
+        headers: { 
+          'Cache-Control': 'public, max-age=31536000, immutable',
+        } 
+      },
     },
   },
 
