@@ -69,16 +69,23 @@ RUN pnpm install --frozen-lockfile
 RUN npm install --platform=linux --arch=x64 sharp
 RUN pnpm run generate
 
-FROM base
+FROM nginx:alpine
 
 ENV PORT=3000
-ENV NODE_ENV=production
 
-COPY --from=build /src/.output/public /src/.output/public
+# Copy the static files from build stage
+COPY --from=build /src/.output/public /usr/share/nginx/html
 
-# For SSG, we need a static file server with SPA fallback support
-RUN npm install -g serve
+# Copy nginx configuration
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Use serve with single-page mode (-s) for proper routing
-# Shell form to allow $PORT variable expansion
-CMD serve .output/public -s -l $PORT
+# Create a startup script to handle PORT environment variable
+RUN echo '#!/bin/sh' > /docker-entrypoint.sh && \
+    echo 'sed -i "s/listen 3000/listen $PORT/g" /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
+    echo 'sed -i "s/listen \[::\]:3000/listen [::]:$PORT/g" /etc/nginx/conf.d/default.conf' >> /docker-entrypoint.sh && \
+    echo 'exec nginx -g "daemon off;"' >> /docker-entrypoint.sh && \
+    chmod +x /docker-entrypoint.sh
+
+EXPOSE 3000
+
+CMD ["/docker-entrypoint.sh"]
