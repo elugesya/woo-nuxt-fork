@@ -74,7 +74,11 @@ FROM base
 ENV PORT=3000
 ENV NODE_ENV=production
 
-COPY --from=build /src/.output /src/.output
+COPY --from=build /src/.output/public /src/.output/public
 
-# Use Nuxt's built-in server for SSG
-CMD ["node", ".output/server/index.mjs"]
+# For SSG, we need a static file server with SPA fallback support
+RUN npm install -g serve
+
+# Use serve with single-page mode (-s) for proper routing
+# Shell form to allow $PORT variable expansion
+CMD serve .output/public -s -l $PORT
