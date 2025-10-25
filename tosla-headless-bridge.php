@@ -468,7 +468,15 @@ class Tosla_Headless_Bridge {
             $order->save();
             
             // Step 2: Call ProcessCardForm API
-            $process_url = $gateway->payment_url . '/ProcessCardForm';
+            // Check if payment_url already includes ProcessCardForm
+            $base_url = rtrim($gateway->payment_url, '/');
+            if (strpos($base_url, 'ProcessCardForm') !== false) {
+                // Already contains ProcessCardForm, use as-is
+                $process_url = $base_url;
+            } else {
+                // Append ProcessCardForm
+                $process_url = $base_url . '/ProcessCardForm';
+            }
             
             // Validate and sanitize card data
             if (!isset($card_data['CardHolderName']) || !isset($card_data['CardNo']) || 
@@ -486,17 +494,18 @@ class Tosla_Headless_Bridge {
             
             // IMPORTANT: Log card processing attempt (NOT card details)
             $order->add_order_note(sprintf(
-                'Tosla ProcessCardForm çağrısı yapıldı. Taksit: %d, Session ID: %s',
+                'Tosla ProcessCardForm çağrısı yapılıyor. URL: %s, Taksit: %d, Session ID: %s, Payload keys: %s',
+                $process_url,
                 $installment,
-                substr($session_id, 0, 20) . '...'
+                substr($session_id, 0, 20) . '...',
+                implode(',', array_keys($card_payload))
             ));
             
             // Make API call
             $response = wp_remote_post($process_url, [
-                'body' => json_encode($card_payload),
+                'body' => $card_payload,  // Send as form data, not JSON!
                 'headers' => [
-                    'Content-Type' => 'application/json',
-                    'Accept' => 'application/json'
+                    'Content-Type' => 'application/x-www-form-urlencoded'
                 ],
                 'timeout' => 30,
                 'sslverify' => true,
@@ -557,13 +566,34 @@ class Tosla_Headless_Bridge {
                 }
             }
             
-            // If we got here, something unexpected happened
-            $order->add_order_note('ProcessCardForm beklenmedik yanıt: ' . $response_code . ' Body: ' . substr((string)$response_body, 0, 300));
+            // If we got here, log detailed response for debugging
+            $order->add_order_note(sprintf(
+                'ProcessCardForm yanıt: HTTP %d, Content-Type: %s, Body başlangıcı: %s',
+                $response_code,
+                is_array($response_headers) ? ($response_headers['content-type'] ?? 'unknown') : 'unknown',
+                substr((string)$response_body, 0, 200)
+            ));
+            
+            // FALLBACK: If 200 but no form/redirect, still try to return the body
+            // Maybe Tosla returns different format than expected
+            if ($response_code === 200 && !empty($response_body)) {
+                // Log full body to order notes for debugging
+                $order->add_order_note('ProcessCardForm 200 yanıtı (beklenmedik format): ' . substr($response_body, 0, 500));
+                
+                // Try to return as HTML anyway - maybe it's a valid 3D page
+                return rest_ensure_response([
+                    'success' => true,
+                    'type' => 'html',
+                    'html' => $response_body,
+                    'sessionId' => $session_id,
+                    'debug' => 'Fallback: returned 200 body as HTML'
+                ]);
+            }
             
             return new WP_Error('unexpected_response', 'Ödeme işlemi başlatılamadı', [
                 'status' => 500,
                 'responseCode' => $response_code,
-                'body' => substr((string)$response_body, 0, 500), // Only first 500 chars for debugging
+                'body' => substr((string)$response_body, 0, 500),
                 'location' => isset($location) ? $location : '',
                 'headers' => is_array($response_headers) ? array_slice($response_headers, 0, 10, true) : $response_headers
             ]);
