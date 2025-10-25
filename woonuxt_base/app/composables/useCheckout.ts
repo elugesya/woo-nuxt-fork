@@ -150,27 +150,85 @@ export function useCheckout() {
       // Process the checkout
       const { checkout } = await GqlCheckout(checkoutPayload);
 
+      // Debug: Log checkout response to see what Tosla returns
+      console.log('🔍 Checkout Response:', {
+        orderId: checkout?.order?.databaseId,
+        orderKey: checkout?.order?.orderKey,
+        redirect: checkout?.redirect,
+        result: checkout?.result,
+        paymentMethod: checkoutPayload.paymentMethod,
+      });
+
       // Handle account creation if requested
       await handleAccountCreation();
 
       const orderId = checkout?.order?.databaseId;
       const orderKey = checkout?.order?.orderKey;
 
+      console.log('📦 Checkout response:', {
+        orderId,
+        orderKey,
+        paymentMethod: checkoutPayload.paymentMethod,
+        hasRedirect: !!checkout?.redirect,
+        redirectUrl: checkout?.redirect
+      });
+
       // Ensure we have required order details
       if (!orderId || !orderKey) {
         throw new Error('Order ID or order key is missing from checkout response');
       }
 
-      // Handle PayPal redirect if needed
-      if (checkout?.redirect && isPayPalPayment()) {
-        await handlePayPalRedirect(checkout, String(orderId), orderKey);
+      // If checkout includes a redirect URL
+      if (checkout?.redirect) {
+        if (isPayPalPayment()) {
+          // PayPal flow handled via popup window
+          await handlePayPalRedirect(checkout, String(orderId), orderKey);
+          // Finalize the checkout (this will also clear cart for PayPal)
+          await finalizeCheckout(checkout);
+        } else {
+          // For hosted/redirect gateways (e.g., Tosla/Sanal POS), navigate current window
+          // Backend snippet should rewrite return/cancel URLs to frontend routes
+          let redirectUrl = checkout.redirect;
+          
+          // If Tosla payment page, add cart total for installment calculation
+          if (redirectUrl.includes('/odeme/kart-bilgileri')) {
+            const { cart } = useCart();
+            // Use RAW total provided by GraphQL (already in major currency units, e.g., TL)
+            const raw = parseFloat((cart.value?.rawTotal as string) || '0');
+            const cartTotal = Number.isFinite(raw) ? raw : 0;
+            const url = new URL(redirectUrl);
+            url.searchParams.set('total', cartTotal.toFixed(2));
+            redirectUrl = url.toString();
+          }
+          
+          window.location.assign(redirectUrl);
+          return checkout; // stop further processing as we're leaving the page
+        }
+      } else if (checkoutPayload.paymentMethod === 'wc_alttantire') {
+        // FALLBACK: Tosla gateway doesn't provide redirect in GraphQL response
+        // Manually redirect to card details page
+    // Use RAW total to avoid locale formatting issues (e.g., 13.600,00)
+    const raw = parseFloat((cart.value?.rawTotal as string) || '0');
+    const cartTotal = Number.isFinite(raw) ? raw : 0;
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const redirectUrl = `${origin}/odeme/kart-bilgileri?order_id=${orderId}&key=${orderKey}&total=${cartTotal.toFixed(2)}`;
+        
+  console.log('🔄 Tosla fallback redirect triggered');
+  console.log('🔄 Redirecting to:', redirectUrl);
+        console.log('📝 Order details:', { orderId, orderKey, cartTotal });
+        
+        // Alert to pause and see the URL
+        alert(`Redirect URL: ${redirectUrl}\n\nTıklayınca yönlendirileceksiniz...`);
+        
+        // Use window.location for full page reload (ensures Nuxt properly loads the route)
+        window.location.href = redirectUrl;
+        return checkout;
       } else {
-        // Standard redirect to order received page
+        // No redirect provided: go directly to order received page (e.g., COD or already-paid flows)
         router.push(`/odeme/siparis-alindi/${orderId}/?key=${orderKey}`);
+        // Finalize the checkout (no popup/redirect needed)
+        await finalizeCheckout(checkout);
       }
-
-      // Finalize the checkout (this will also clear cart for PayPal)
-      await finalizeCheckout(checkout);
 
       return checkout;
     } catch (error: any) {

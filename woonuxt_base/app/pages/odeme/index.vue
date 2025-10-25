@@ -58,7 +58,11 @@ watch(shipToDifferentAddress, (newValue) => {
 });
 
 onBeforeMount(async () => {
-  if (query.cancel_order) window.close();
+  // If a cancel comes from a popup-based flow (e.g., PayPal), close the window.
+  // In single-window redirects (e.g., Tosla), we should NOT attempt to close the tab.
+  if (query.cancel_order && (query.from_paypal || (typeof window !== 'undefined' && window.opener))) {
+    window.close();
+  }
 
   // Initialize shipping address if it doesn't exist and we have shipping methods
   if (cart.value?.availableShippingMethods?.length && customer.value && !customer.value.shipping) {

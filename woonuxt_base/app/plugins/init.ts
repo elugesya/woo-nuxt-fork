@@ -56,8 +56,18 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     const isDev = process.env.NODE_ENV === 'development';
 
     // Check if the current route path is one of the pages that need immediate initialization
-    const pagesToInitializeRightAway = ['/odeme', '/hesabim', '/siparis-ozeti'];
-    const isPathThatRequiresInit = pagesToInitializeRightAway.some((page) => useRoute().path.includes(page));
+    // EXCLUDE /odeme/kart-bilgileri AND /odeme/siparis-alindi to prevent cart check issues after order creation
+    const pagesToInitializeRightAway = ['/hesabim', '/siparis-ozeti'];
+    const currentPath = useRoute().path;
+    
+    // Skip initialization for payment-related pages where cart state might be in transition
+    const skipInitPaths = ['/odeme/kart-bilgileri', '/odeme/siparis-alindi'];
+    const shouldSkipInit = skipInitPaths.some(path => currentPath.includes(path));
+    
+    const isPathThatRequiresInit = !shouldSkipInit && (
+      pagesToInitializeRightAway.some((page) => currentPath.includes(page)) || 
+      currentPath.includes('/odeme')
+    );
 
     const shouldInit = isDev || isPathThatRequiresInit || !storeSettings.initStoreOnUserActionToReduceServerLoad;
 

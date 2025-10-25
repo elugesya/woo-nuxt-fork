@@ -75,6 +75,7 @@ export default defineNuxtConfig({
           },
         },
       },
+      wpUrl: GQL_ORIGIN, // WordPress backend URL (for REST API calls)
       SITE_NAME: process.env.NUXT_PUBLIC_SITE_NAME || 'WooNuxt',
       SITE_DESCRIPTION: process.env.NUXT_PUBLIC_SITE_DESCRIPTION || 'Modern, fast, and SEO friendly ecommerce store',
       CURRENCY_CODE: process.env.NUXT_PUBLIC_CURRENCY_CODE || 'TRY',
@@ -128,6 +129,8 @@ export default defineNuxtConfig({
       addPage('product-category-page-pager', '/urun-kategorisi/:categorySlug/sayfa/:pageNumber', 'urun-kategorisi/[slug].vue');
       addPage('order-received', '/odeme/siparis-alindi/:orderId', 'siparis-ozeti.vue');
       addPage('order-summary', '/siparis-ozeti/:orderId', 'siparis-ozeti.vue');
+      // Ensure card details page is explicitly registered
+      addPage('card-details', '/odeme/kart-bilgileri', 'odeme/kart-bilgileri.vue');
     },
   },
 
