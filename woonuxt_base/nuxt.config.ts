@@ -94,6 +94,8 @@ export default defineNuxtConfig({
       BING_SITE_VERIFICATION: process.env.BING_SITE_VERIFICATION || '',
       GOOGLE_MERCHANT_SHOP_NAME: process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_SHOP_NAME || '',
       GOOGLE_MERCHANT_BRAND: process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_BRAND || '',
+      // Comma-separated list of taxonomy slugs to treat as brand (lowercase), e.g.: "product_brand,pa_brand,brand"
+      BRAND_TAXONOMIES: process.env.NUXT_PUBLIC_BRAND_TAXONOMIES || 'product_brand,pa_brand,brand',
       ANALYTICS_DEBUG: process.env.NUXT_PUBLIC_ANALYTICS_DEBUG === 'true',
     },
   },

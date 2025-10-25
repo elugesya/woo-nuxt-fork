@@ -50,6 +50,9 @@ export function useSearching() {
     if (route.name === 'product-category-page' || route.name === 'product-category-page-pager') {
       const categorySlug = route.params.categorySlug as string;
       router.push({ name: route.name as string, params: { categorySlug }, query: { ...route.query, search } });
+    } else if (route.name === 'shop-brand-slug') {
+      const slug = route.params.slug as string
+      router.push({ name: 'shop-brand-slug', params: { slug }, query: { ...route.query, search } })
     } else {
       // Use explicit path to avoid relying on route name mapping
       router.push({ path: '/urunler', query: { ...route.query, search } });
