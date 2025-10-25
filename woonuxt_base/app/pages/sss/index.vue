@@ -1,4 +1,8 @@
 <script lang="ts" setup>
+const runtimeConfig = useRuntimeConfig()
+// WhatsApp numarasını sadece ortam değişkenlerinden al; fallback kullanma
+const whatsappPhone = runtimeConfig.public.WHATSAPP_PHONE || ''
+
 useSeoMeta({
   title: 'Sıkça Sorulan Sorular (SSS)',
   description: 'Neta Marine hakkında sıkça sorulan sorular ve cevapları. Sipariş, kargo, iade ve ürünler hakkında bilgi edinin.',
@@ -89,7 +93,8 @@ const faqCategories = [
             İletişim Formu
           </NuxtLink>
           <a
-            href="https://wa.me/905551234567"
+            v-if="whatsappPhone"
+            :href="`https://wa.me/${whatsappPhone}`"
             target="_blank"
             class="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
             <Icon name="ion:logo-whatsapp" class="w-5 h-5 mr-2" />

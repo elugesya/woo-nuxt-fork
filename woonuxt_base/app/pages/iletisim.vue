@@ -21,6 +21,11 @@ const formStatus = ref<'idle' | 'sending' | 'success' | 'error'>('idle');
 const errorMessage = ref('');
 
 const handleSubmit = async () => {
+  if (!whatsappPhone) {
+    formStatus.value = 'error';
+    errorMessage.value = 'WhatsApp numarası yapılandırılmadı. Lütfen yönetici ile iletişime geçin.';
+    return;
+  }
   if (!formData.value.name || !formData.value.email || !formData.value.message) {
     errorMessage.value = 'Lütfen tüm zorunlu alanları doldurun.';
     formStatus.value = 'error';

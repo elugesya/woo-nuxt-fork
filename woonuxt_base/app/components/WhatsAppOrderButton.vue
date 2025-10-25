@@ -4,9 +4,14 @@ const props = defineProps<{
 }>();
 
 const runtimeConfig = useRuntimeConfig();
-const whatsappPhone = runtimeConfig.public.WHATSAPP_PHONE || '905551234567';
+// Ortam değişkenlerinden alın; hard-coded fallback kullanmayın
+const whatsappPhone = runtimeConfig.public.WHATSAPP_PHONE || '';
 
 const sendWhatsAppMessage = () => {
+  if (!whatsappPhone) {
+    console.warn('WhatsApp phone number is not configured (NUXT_PUBLIC_WHATSAPP_PHONE).');
+    return;
+  }
   const productName = props.product.name;
   const productUrl = window.location.href;
   const message = encodeURIComponent(`Merhaba, ${productName} ürünü hakkında bilgi almak istiyorum.\n\n${productUrl}`);
@@ -18,6 +23,7 @@ const sendWhatsAppMessage = () => {
 
 <template>
   <button
+    v-if="whatsappPhone"
     @click="sendWhatsAppMessage"
     type="button"
     class="whatsapp-button rounded-lg flex font-bold text-white text-center w-full p-3 gap-2 items-center justify-center focus:outline-none hover:opacity-90 transition-opacity">

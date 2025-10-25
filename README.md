@@ -94,6 +94,14 @@ And here is the live demo of the customized WooNuxt site: [My Shop](https://mysh
 
 `GQL_HOST` - The URL of your WordPress site. This is the only required environment variable. The WooNuxt Settings plugin will automatically populate the rest of the environment variables for you.
 
+#### WhatsApp Support Line
+
+Set the WhatsApp phone number via environment variables. This value is read at runtime (supports Coolify env and .env files):
+
+- NUXT_PUBLIC_WHATSAPP_PHONE: Phone with country code, without + or spaces. Example: `905551234567`.
+
+If not set, WhatsApp buttons/links will be hidden.
+
 &nbsp;
 
 #### Tested up to:
