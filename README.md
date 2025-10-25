@@ -136,3 +136,31 @@ I don't know where this project will go, but I'm excited to see what the future 
 ## 🤝 Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines on how to get started.
+
+
+## Brands integartion 
+to get brands from woo you have to add this code snippet through code snippet plugin : 
+
+```php
+add_action( 'graphql_register_types', function() {
+    register_graphql_connection([
+        'fromType' => 'Product',
+        'toType' => 'ProductBrand',
+        'fromFieldName' => 'brands',
+        'connectionTypeName' => 'ProductToBrandConnection',
+        'resolve' => function( $product, $args, $context, $info ) {
+            $resolver = new \WPGraphQL\Data\Connection\TermObjectConnectionResolver( $product, $args, $context, $info, 'product_brand' );
+            return $resolver->get_connection();
+        },
+    ]);
+});
+
+add_filter( 'register_taxonomy_args', function( $args, $taxonomy ) {
+    if ( 'product_brand' === $taxonomy ) {
+        $args['show_in_graphql'] = true;
+        $args['graphql_single_name'] = 'ProductBrand';
+        $args['graphql_plural_name'] = 'ProductBrands';
+    }
+    return $args;
+}, 10, 2 );
+```

@@ -24,11 +24,14 @@ useSeoMeta({
 
     <div class="container flex flex-wrap items-center justify-center my-16 text-center gap-x-8 gap-y-4 brand lg:justify-between">
       <img src="/images/netamarine-logo.svg" alt="Brand 1" width="200" height="60" />
-      <img src="/images/parsun-logo.svg" alt="Brand 2" width="180" height="60" />
+      <NuxtLink to="/shop/brand/parsun">
+        <img src="/images/parsun-logo.svg" alt="Parsun" width="180" height="60" />
+      </NuxtLink>
       <img src="/images/makoshark-logo.svg" alt="Brand 3" width="200" height="60" />
       <img src="/images/nxt-logo.svg" alt="Brand 4" width="130" height="60" />
-      <img src="/images/btm-logo.svg" alt="Brand 5" width="140" height="60" />
-      
+      <NuxtLink to="/shop/brand/btm">
+        <img src="/images/btm-logo.svg" alt="BTM" width="140" height="60" />
+      </NuxtLink>
     </div>
 
     <section class="container my-16">

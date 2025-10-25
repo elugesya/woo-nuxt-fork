@@ -1,0 +1,11 @@
+query getBrands($taxonomy: TaxonomyEnum!, $first: Int = 100) {
+  terms(where: { taxonomies: [$taxonomy], hideEmpty: true }, first: $first) {
+    nodes {
+      databaseId
+      name
+      slug
+      description
+      count
+    }
+  }
+}

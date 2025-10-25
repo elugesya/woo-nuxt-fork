@@ -4,28 +4,31 @@ const { setProducts, updateProductList } = useProducts()
 const { isQueryEmpty, frontEndUrl, stripHtml } = useHelpers()
 const { storeSettings } = useAppConfig()
 
-// Runtime-configured brand taxonomies (comma-separated, lowercase)
-const config = useRuntimeConfig()
-const brandTaxonomies = ((config.public as any).BRAND_TAXONOMIES as string || 'product_brand,pa_brand,brand')
-  .split(',')
-  .map((s) => s.trim().toLowerCase())
-  .filter(Boolean)
-
 const brandSlug = (route.params.slug as string) || ''
 
-// Fetch all products and filter by brand taxonomy terms
+// Fetch all products with brands
 const { data } = await useAsyncGql('getProducts')
 const allProducts = (data.value?.products?.nodes || []) as Product[]
 
+// Filter products by brand
 function productHasBrand(product: Product, slug: string): boolean {
-  const terms = (product as any)?.terms?.nodes || []
-  return terms.some((t: any) => brandTaxonomies.includes(String(t?.taxonomyName || '').toLowerCase()) && t?.slug === slug)
+  const brands = (product as any)?.brands?.nodes || []
+  return brands.some((brand: any) => brand?.slug === slug)
 }
 
 const productsInBrand = allProducts.filter((p: Product) => productHasBrand(p, brandSlug))
 setProducts(productsInBrand)
 
-const brandName = computed(() => brandSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase()))
+// Get brand name from first product or fallback to slug
+const brandName = computed(() => {
+  if (productsInBrand.length > 0) {
+    const brands = (productsInBrand[0] as any)?.brands?.nodes || []
+    const brand = brands.find((b: any) => b?.slug === brandSlug)
+    if (brand?.name) return brand.name
+  }
+  return brandSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase())
+})
+
 const canonical = computed(() => `${frontEndUrl}/shop/brand/${brandSlug}`)
 
 // SEO

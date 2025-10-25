@@ -1,8 +1,7 @@
-fragment Terms on Product {
-  terms(first: 100) {
+fragment ProductBrands on Product {
+  brands(first: 100) {
     nodes {
       databaseId
-      taxonomyName
       name
       slug
       description
