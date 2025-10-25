@@ -95,6 +95,7 @@ export default defineNuxtConfig({
       GOOGLE_MERCHANT_SHOP_NAME: process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_SHOP_NAME || '',
       GOOGLE_MERCHANT_BRAND: process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_BRAND || '',
       ANALYTICS_DEBUG: process.env.NUXT_PUBLIC_ANALYTICS_DEBUG === 'true',
+      WHATSAPP_PHONE: process.env.NUXT_PUBLIC_WHATSAPP_PHONE || '',
     },
   },
 
