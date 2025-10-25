@@ -25,7 +25,12 @@ const { wishlistLink } = useAuth();
               <a href="/iletisim" class="py-1.5 block">{{ $t('general.contact') }}</a>
             </template>
           </ClientOnly>
-          <a href="https://woonuxt.com/faq" class="py-1.5 block" rel="noreferrer" target="_blank">FAQ's</a>
+          <ClientOnly>
+            <NuxtLink to="/sss" class="py-1.5 block">SSS</NuxtLink>
+            <template #fallback>
+              <a href="/sss" class="py-1.5 block">SSS</a>
+            </template>
+          </ClientOnly>
         </div>
       </div>
       <div class="w-3/7 lg:w-auto">
