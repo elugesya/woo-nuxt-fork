@@ -97,6 +97,7 @@ export default defineNuxtConfig({
       // Comma-separated list of taxonomy slugs to treat as brand (lowercase), e.g.: "product_brand,pa_brand,brand"
       BRAND_TAXONOMIES: process.env.NUXT_PUBLIC_BRAND_TAXONOMIES || 'product_brand,pa_brand,brand',
       ANALYTICS_DEBUG: process.env.NUXT_PUBLIC_ANALYTICS_DEBUG === 'true',
+      WHATSAPP_PHONE: process.env.NUXT_PUBLIC_WHATSAPP_PHONE || '',
     },
   },
 
