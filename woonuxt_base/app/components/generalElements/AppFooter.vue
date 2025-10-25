@@ -13,11 +13,18 @@ const { wishlistLink } = useAuth();
       <div class="w-3/7 lg:w-auto">
         <div class="mb-1 font-semibold">{{ $t('general.information') }}</div>
         <div class="text-sm">
-          <a class="py-1.5 block" href="https://github.com/scottyzen/woonuxt?tab=readme-ov-file#next-generation-front-end-for-woocommerce" target="_blank">{{
-            $t('general.about')
-          }}</a>
-          <a href="/" class="py-1.5 block">{{ $t('general.careers') }}</a>
-          <a href="/" class="py-1.5 block">{{ $t('general.press') }}</a>
+          <ClientOnly>
+            <NuxtLink to="/hakkimizda" class="py-1.5 block">{{ $t('general.about') }}</NuxtLink>
+            <template #fallback>
+              <a href="/hakkimizda" class="py-1.5 block">{{ $t('general.about') }}</a>
+            </template>
+          </ClientOnly>
+          <ClientOnly>
+            <NuxtLink to="/iletisim" class="py-1.5 block">{{ $t('general.contact') }}</NuxtLink>
+            <template #fallback>
+              <a href="/iletisim" class="py-1.5 block">{{ $t('general.contact') }}</a>
+            </template>
+          </ClientOnly>
           <a href="https://woonuxt.com/faq" class="py-1.5 block" rel="noreferrer" target="_blank">FAQ's</a>
         </div>
       </div>
