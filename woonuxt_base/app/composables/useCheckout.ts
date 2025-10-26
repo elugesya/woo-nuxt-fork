@@ -92,8 +92,8 @@ export function useCheckout() {
     // For other payment methods, don't clear cart here to avoid flash
     // Cart will be cleared on the order-received page
     if (checkout?.result !== 'success' && !checkout?.order?.databaseId) {
-      alert('There was an error processing your order. Please try again.');
-      window.location.reload();
+      // Surface an error to the caller; UI should show a friendly message
+      throw new Error('There was an error processing your order. Please try again.');
     }
   };
 
@@ -116,7 +116,7 @@ export function useCheckout() {
 
       if (updateCustomer) await refreshCart();
     } catch (error) {
-      console.error('Error updating shipping location:', error);
+      // Swallow error to avoid noisy logs in production; optional: report to monitoring
     } finally {
       isUpdatingCart.value = false;
     }
@@ -150,14 +150,7 @@ export function useCheckout() {
       // Process the checkout
       const { checkout } = await GqlCheckout(checkoutPayload);
 
-      // Debug: Log checkout response to see what Tosla returns
-      console.log('🔍 Checkout Response:', {
-        orderId: checkout?.order?.databaseId,
-        orderKey: checkout?.order?.orderKey,
-        redirect: checkout?.redirect,
-        result: checkout?.result,
-        paymentMethod: checkoutPayload.paymentMethod,
-      });
+      //
 
       // Handle account creation if requested
       await handleAccountCreation();
@@ -165,13 +158,7 @@ export function useCheckout() {
       const orderId = checkout?.order?.databaseId;
       const orderKey = checkout?.order?.orderKey;
 
-      console.log('📦 Checkout response:', {
-        orderId,
-        orderKey,
-        paymentMethod: checkoutPayload.paymentMethod,
-        hasRedirect: !!checkout?.redirect,
-        redirectUrl: checkout?.redirect
-      });
+      //
 
       // Ensure we have required order details
       if (!orderId || !orderKey) {
@@ -213,12 +200,7 @@ export function useCheckout() {
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const redirectUrl = `${origin}/odeme/kart-bilgileri?order_id=${orderId}&key=${orderKey}&total=${cartTotal.toFixed(2)}`;
         
-  console.log('🔄 Tosla fallback redirect triggered');
-  console.log('🔄 Redirecting to:', redirectUrl);
-        console.log('📝 Order details:', { orderId, orderKey, cartTotal });
-        
-        // Alert to pause and see the URL
-        alert(`Redirect URL: ${redirectUrl}\n\nTıklayınca yönlendirileceksiniz...`);
+  //
         
         // Use window.location for full page reload (ensures Nuxt properly loads the route)
         window.location.href = redirectUrl;
@@ -232,8 +214,7 @@ export function useCheckout() {
 
       return checkout;
     } catch (error: any) {
-      console.error('Checkout error:', error);
-      if (error.message) alert(error.message);
+      // Do not show intrusive alerts or logs in production; return null so caller can handle UI state
       return null;
     } finally {
       isProcessingOrder.value = false;
