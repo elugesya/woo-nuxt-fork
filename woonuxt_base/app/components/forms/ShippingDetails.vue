@@ -46,13 +46,13 @@ const shipping = toRef(props, 'modelValue');
     </div>
 
     <div class="w-full">
-      <label for="zip">{{ $t('billing.zip') }}</label>
-      <input id="zip" v-model="shipping.postcode" placeholder="10001" autocomplete="postal-code" type="text" required />
+      <label for="zip">{{ $t('billing.zip') }} ({{ $t('general.optional') }})</label>
+      <input id="zip" v-model="shipping.postcode" placeholder="10001" autocomplete="postal-code" type="text" />
     </div>
 
     <div class="w-full col-span-full">
-      <label for="phone">{{ $t('billing.phone') }} ({{ $t('general.optional') }})</label>
-      <input id="phone" v-model="shipping.phone" placeholder="+9053212345678" autocomplete="tel" type="tel" />
+      <label for="phone">{{ $t('billing.phone') }}</label>
+      <input id="phone" v-model="shipping.phone" placeholder="+9053212345678" autocomplete="tel" type="tel" required />
     </div>
   </div>
 </template>

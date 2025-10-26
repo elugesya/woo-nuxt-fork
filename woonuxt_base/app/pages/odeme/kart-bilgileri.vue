@@ -305,7 +305,7 @@ const years = Array.from({ length: 10 }, (_, i) => {
     </div>
 
     <!-- Card form -->
-    <form @submit.prevent="submitPayment" class="space-y-6">
+    <form @submit.prevent="submitPayment" class="space-y-6 pb-32 md:pb-6">
       <!-- Card number -->
       <div>
         <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-2">
@@ -453,18 +453,18 @@ const years = Array.from({ length: 10 }, (_, i) => {
         </div>
       </div>
 
-      <!-- Submit button -->
+      <!-- Submit button - Desktop -->
       <button
         type="submit"
         :disabled="loading"
-        class="w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+        class="hidden md:flex w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed items-center justify-center gap-2"
       >
         <Icon v-if="loading" name="ion:reload-outline" class="animate-spin text-xl" />
         <span>{{ loading ? 'İşleniyor...' : 'Ödemeyi Tamamla' }}</span>
       </button>
 
-      <!-- Cancel link -->
-      <div class="text-center">
+      <!-- Cancel link - Desktop -->
+      <div class="hidden md:block text-center">
         <NuxtLink
           :to="`/odeme?cancel_order=true`"
           class="text-sm text-gray-600 hover:text-gray-900 underline"
@@ -473,6 +473,33 @@ const years = Array.from({ length: 10 }, (_, i) => {
         </NuxtLink>
       </div>
     </form>
+
+    <!-- Mobile Sticky Payment Button -->
+    <div class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t shadow-lg md:hidden">
+      <div class="container mx-auto max-w-2xl space-y-3">
+        <div v-if="orderTotal > 0" class="flex items-center justify-between">
+          <span class="text-sm text-gray-600">Toplam Ödeme</span>
+          <span class="text-lg font-bold text-gray-900">{{ formatCurrency(finalTotal) }}</span>
+        </div>
+        <button
+          type="submit"
+          :disabled="loading"
+          @click="submitPayment"
+          class="flex w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed items-center justify-center gap-2"
+        >
+          <Icon v-if="loading" name="ion:reload-outline" class="animate-spin text-xl" />
+          <span>{{ loading ? 'İşleniyor...' : 'Ödemeyi Tamamla' }}</span>
+        </button>
+        <div class="text-center">
+          <NuxtLink
+            :to="`/odeme?cancel_order=true`"
+            class="text-sm text-gray-600 hover:text-gray-900 underline"
+          >
+            İptal Et ve Sepete Dön
+          </NuxtLink>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 

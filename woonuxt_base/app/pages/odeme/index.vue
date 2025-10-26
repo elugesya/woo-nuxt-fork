@@ -299,7 +299,7 @@ useSeoMeta({
         </NuxtLink>
       </div>
 
-      <form v-else class="container flex flex-wrap items-start gap-8 my-16 justify-evenly lg:gap-20" @submit.prevent="payNow">
+      <form v-else class="container flex flex-wrap items-start gap-8 my-16 justify-evenly lg:gap-20 pb-32 md:pb-0" @submit.prevent="payNow">
         <div class="grid w-full max-w-2xl gap-8 checkout-form md:flex-1">
           <!-- Customer details -->
           <div v-if="!viewer && customer?.billing">
@@ -453,13 +453,36 @@ useSeoMeta({
           </div>
         </div>
 
-        <OrderSummary>
-          <button
-            class="flex items-center justify-center w-full gap-3 p-3 mt-4 font-semibold text-center text-white rounded-lg shadow-md bg-primary hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-gray-400"
-            :disabled="isCheckoutDisabled">
-            {{ buttonText }}<LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" />
-          </button>
-        </OrderSummary>
+        <!-- Desktop: OrderSummary with button inside -->
+        <div class="hidden md:block">
+          <OrderSummary>
+            <button
+              class="flex items-center justify-center w-full gap-3 p-3 mt-4 font-semibold text-center text-white rounded-lg shadow-md bg-primary hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-gray-400"
+              :disabled="isCheckoutDisabled">
+              {{ buttonText }}<LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" />
+            </button>
+          </OrderSummary>
+        </div>
+
+        <!-- Mobile: Show OrderSummary without button (button will be sticky at bottom) -->
+        <div class="block md:hidden">
+          <OrderSummary />
+        </div>
+
+        <!-- Mobile Sticky Payment Button -->
+        <div class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t shadow-lg md:hidden">
+          <div class="container mx-auto max-w-2xl">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-sm text-gray-600">{{ $t('shop.total') }}</span>
+              <span class="text-lg font-bold text-gray-900" v-html="cart.total" />
+            </div>
+            <button
+              class="flex items-center justify-center w-full gap-3 p-4 font-semibold text-center text-white rounded-lg shadow-md bg-primary hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-gray-400"
+              :disabled="isCheckoutDisabled">
+              {{ buttonText }}<LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" />
+            </button>
+          </div>
+        </div>
       </form>
     </template>
     <LoadingIcon v-else class="m-auto" />
