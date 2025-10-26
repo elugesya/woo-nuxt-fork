@@ -72,8 +72,8 @@ onBeforeMount(async () => {
     }
   }
 
-  // For guest users, automatically open shipping form if no address is provided
-  if (!viewer.value && customer.value?.shipping && !hasAnyShippingInfo.value) {
+  // For guest users, always open shipping form (they must fill address)
+  if (!viewer.value) {
     isEditingShipping.value = true;
   }
 
@@ -343,44 +343,67 @@ useSeoMeta({
           <div v-if="cart?.availableShippingMethods?.length">
             <h2 class="text-2xl font-semibold text-gray-900 mb-4 leading-none">{{ $t('checkout.billingAddress') }}</h2>
 
-            <!-- Shipping Address Summary or Form -->
-            <div v-if="!isEditingShipping" class="space-y-4">
-              <!-- Shipping Address Summary -->
-              <AddressSummary :address="customer?.shipping" :show-validation-warnings="!!viewer" @edit="editShippingAddress" />
+            <!-- For logged-in users: Show Summary or Form -->
+            <template v-if="viewer">
+              <!-- Shipping Address Summary or Form -->
+              <div v-if="!isEditingShipping" class="space-y-4">
+                <!-- Shipping Address Summary -->
+                <AddressSummary :address="customer?.shipping" :show-validation-warnings="!!viewer" @edit="editShippingAddress" />
 
-              <!-- Ship to Different Address Checkbox -->
-              <div class="flex items-center gap-3">
-                <input
-                  id="useSameAddress"
-                  v-model="shipToDifferentAddress"
-                  type="checkbox"
-                  name="useSameAddress"
-                  class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
-                <label for="useSameAddress" class="text-sm font-medium text-gray-700">
-                  {{ $t('billing.differentAddress') }}
-                </label>
+                <!-- Ship to Different Address Checkbox -->
+                <div class="flex items-center gap-3">
+                  <input
+                    id="useSameAddress"
+                    v-model="shipToDifferentAddress"
+                    type="checkbox"
+                    name="useSameAddress"
+                    class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
+                  <label for="useSameAddress" class="text-sm font-medium text-gray-700">
+                    {{ $t('billing.differentAddress') }}
+                  </label>
+                </div>
               </div>
-            </div>
 
-            <!-- Shipping Address Form (when editing - stays open once clicked) -->
-            <div v-else class="space-y-6">
-              <div>
+              <!-- Shipping Address Form (when editing - stays open once clicked) -->
+              <div v-else class="space-y-6">
+                <div>
+                  <ShippingDetails v-if="customer?.shipping" v-model="customer.shipping" />
+                </div>
+
+                <!-- Ship to Different Address Checkbox (also shown during editing) -->
+                <div class="flex items-center gap-3">
+                  <input
+                    id="useSameAddressEdit"
+                    v-model="shipToDifferentAddress"
+                    type="checkbox"
+                    name="useSameAddressEdit"
+                    class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
+                  <label for="useSameAddressEdit" class="text-sm font-medium text-gray-700">
+                    {{ $t('billing.differentAddress') }}
+                  </label>
+                </div>
+              </div>
+            </template>
+
+            <!-- For guest users: Always show form open -->
+            <template v-else>
+              <div class="space-y-6">
                 <ShippingDetails v-if="customer?.shipping" v-model="customer.shipping" />
-              </div>
 
-              <!-- Ship to Different Address Checkbox (also shown during editing) -->
-              <div class="flex items-center gap-3">
-                <input
-                  id="useSameAddressEdit"
-                  v-model="shipToDifferentAddress"
-                  type="checkbox"
-                  name="useSameAddressEdit"
-                  class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
-                <label for="useSameAddressEdit" class="text-sm font-medium text-gray-700">
-                  {{ $t('billing.differentAddress') }}
-                </label>
+                <!-- Ship to Different Address Checkbox -->
+                <div class="flex items-center gap-3">
+                  <input
+                    id="useSameAddressGuest"
+                    v-model="shipToDifferentAddress"
+                    type="checkbox"
+                    name="useSameAddressGuest"
+                    class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
+                  <label for="useSameAddressGuest" class="text-sm font-medium text-gray-700">
+                    {{ $t('billing.differentAddress') }}
+                  </label>
+                </div>
               </div>
-            </div>
+            </template>
           </div>
 
           <div v-if="shipToDifferentAddress">
