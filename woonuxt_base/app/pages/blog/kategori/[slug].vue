@@ -64,8 +64,8 @@ const itemListJsonLd = computed(() => {
 
 useHead(() => ({
   script: [
-    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
-    { type: 'application/ld+json', children: itemListJsonLd.value },
+    { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', innerHTML: blogPostListJsonLd.value },
   ],
 }));
 </script>

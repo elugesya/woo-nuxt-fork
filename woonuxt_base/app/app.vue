@@ -84,8 +84,8 @@ const websiteJsonLd = JSON.stringify(
 
 useHead({
   script: [
-    { type: 'application/ld+json', children: organizationJsonLd },
-    { type: 'application/ld+json', children: websiteJsonLd },
+    { type: 'application/ld+json', innerHTML: organizationJsonLd },
+    { type: 'application/ld+json', innerHTML: websiteJsonLd },
   ],
 });
 </script>

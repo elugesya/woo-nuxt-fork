@@ -196,10 +196,10 @@ const faqJsonLd = computed(() =>
 
 useHead(() => ({
   script: [
-    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
-    { type: 'application/ld+json', children: faqJsonLd.value },
+    { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', innerHTML: faqJsonLd.value },
   ],
-}))
+}));
   if (openQuestions.value.has(index)) {
     openQuestions.value.delete(index)
   } else {

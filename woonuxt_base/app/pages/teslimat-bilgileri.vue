@@ -40,8 +40,8 @@ const webPageJsonLd = computed(() =>
 
 useHead(() => ({
   script: [
-    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
-    { type: 'application/ld+json', children: webPageJsonLd.value },
+    { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', innerHTML: webPageJsonLd.value },
   ],
 }));
 </script>

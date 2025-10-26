@@ -126,13 +126,13 @@ const jsonLd = computed(() =>
   2,
 ));
 
-// Inject JSON-LD via head manager instead of using a <Script> component
+// Inject JSON-LD via head manager with innerHTML for proper rendering
 useHead(() => ({
   script: [
     {
       key: 'product-jsonld',
       type: 'application/ld+json',
-      children: jsonLd.value,
+      innerHTML: jsonLd.value,
     },
   ],
 }));

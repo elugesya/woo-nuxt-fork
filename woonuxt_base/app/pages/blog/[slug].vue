@@ -85,8 +85,8 @@ const articleJsonLd = computed(() =>
 
 useHead(() => ({
   script: [
-    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
-    { type: 'application/ld+json', children: articleJsonLd.value },
+    { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', innerHTML: articleJsonLd.value },
   ],
 }));
 </script>
