@@ -14,7 +14,7 @@ export default defineAppConfig({
   // - 'card': Traditional single card input field (legacy but still supported)
   // - 'payment': Modern Payment Element with tabs for multiple payment methods (recommended)
   storeSettings: {
-    autoOpenCart: false,
+    autoOpenCart: true,
     showReviews: true,
     showFilters: true,
     showOrderByDropdown: true,

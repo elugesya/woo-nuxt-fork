@@ -205,11 +205,14 @@ useHead(() => ({
               <AddToCartButton class="flex-1 w-full md:max-w-xs" :disabled="disabledAddToCart" :class="{ loading: isUpdatingCart }" />
             </div>
 
-            <!-- Mobile Sticky WhatsApp Button -->
+            <!-- Mobile Sticky Actions: WhatsApp + Add to Cart -->
             <div
               v-if="isVariableProduct || isSimpleProduct"
               class="fixed bottom-0 left-0 z-10 w-full p-4 bg-white md:hidden bg-opacity-90">
               <WhatsAppOrderButton :product="product" class="w-full" />
+              <div class="mt-3">
+                <AddToCartButton class="w-full" :disabled="disabledAddToCart" :class="{ loading: isUpdatingCart }" />
+              </div>
             </div>
             <a
               v-if="isExternalProduct && product.externalUrl"
