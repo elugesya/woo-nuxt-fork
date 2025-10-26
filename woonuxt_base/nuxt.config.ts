@@ -99,6 +99,9 @@ export default defineNuxtConfig({
       BRAND_TAXONOMIES: process.env.NUXT_PUBLIC_BRAND_TAXONOMIES || 'product_brand,pa_brand,brand',
       ANALYTICS_DEBUG: process.env.NUXT_PUBLIC_ANALYTICS_DEBUG === 'true',
       WHATSAPP_PHONE: process.env.NUXT_PUBLIC_WHATSAPP_PHONE || '',
+      // Shipping and Return Policy URLs for Product schema
+      SHIPPING_DETAILS_URL: process.env.NUXT_PUBLIC_SHIPPING_DETAILS_URL || '/kargo-ve-teslimat',
+      RETURN_POLICY_URL: process.env.NUXT_PUBLIC_RETURN_POLICY_URL || '/iade-ve-degisim',
     },
   },
 

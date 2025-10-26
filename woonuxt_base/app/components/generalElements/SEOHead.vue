@@ -87,6 +87,13 @@ const brandName = computed(() => {
   return brandFromBrands || '';
 });
 
+// Calculate price validity (48 hours from now)
+const priceValidUntil = computed(() => {
+  const date = new Date();
+  date.setHours(date.getHours() + 48);
+  return date.toISOString();
+});
+
 const jsonLd = computed(() =>
   JSON.stringify(
   {
@@ -118,7 +125,23 @@ const jsonLd = computed(() =>
             url: canonical,
             priceCurrency: currency.value,
             price: String(price.value),
+            priceValidUntil: priceValidUntil.value,
             availability: availabilityMap[(info as any)?.stockStatus || 'IN_STOCK'] || 'https://schema.org/InStock',
+            shippingDetails: {
+              '@type': 'OfferShippingDetails',
+              shippingDestination: {
+                '@type': 'DefinedRegion',
+                addressCountry: 'TR',
+              },
+            },
+            hasMerchantReturnPolicy: {
+              '@type': 'MerchantReturnPolicy',
+              applicableCountry: 'TR',
+              returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+              merchantReturnDays: 14,
+              returnMethod: 'https://schema.org/ReturnByMail',
+              returnFees: 'https://schema.org/FreeReturn',
+            },
           }
         : undefined,
   },
