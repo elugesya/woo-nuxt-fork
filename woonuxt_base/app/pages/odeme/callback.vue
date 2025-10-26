@@ -18,10 +18,9 @@ const orderKey = computed(() => route.query.key as string);
 const checking = ref(true);
 const errorMessage = ref('');
 const statusMessage = ref('Ödeme durumunuz kontrol ediliyor...');
-const retries = ref(0);
 const maxRetries = 5;
 
-onMounted(async () => {
+async function pollOrderStatus() {
   // Verify required params
   if (!orderId.value || !orderKey.value) {
     errorMessage.value = 'Geçersiz ödeme linki';
@@ -32,66 +31,48 @@ onMounted(async () => {
   // Give Tosla/WordPress a moment to process the callback
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  try {
-      // Prefer WP REST bridge endpoint to avoid GraphQL auth limitations on orders
-      const wpUrl = runtimeConfig.public.wpUrl?.replace(/\/$/, '') || '';
-      const statusEndpoint = `${wpUrl}/wp-json/tosla/v1/order-status?orderId=${encodeURIComponent(orderId.value)}&orderKey=${encodeURIComponent(orderKey.value)}`;
-      const result = await $fetch(statusEndpoint, { method: 'GET', mode: 'cors' as any });
+  const wpUrl = runtimeConfig.public.wpUrl?.replace(/\/$/, '') || '';
+  const statusEndpoint = `${wpUrl}/wp-json/tosla/v1/order-status?orderId=${encodeURIComponent(orderId.value)}&orderKey=${encodeURIComponent(orderKey.value)}`;
 
-      if (!result?.success) {
-        throw new Error('Sipariş bulunamadı');
-      }
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result: any = await $fetch(statusEndpoint, { method: 'GET', mode: 'cors' as any });
+      if (!result?.success) throw new Error('Sipariş bulunamadı');
 
       const orderStatus = String(result.status || '').toLowerCase();
 
-    if (orderStatus === 'processing' || orderStatus === 'completed') {
-      // Payment successful!
-      statusMessage.value = 'Ödemeniz başarıyla tamamlandı! Yönlendiriliyorsunuz...';
-      
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Redirect to order confirmation page
-      router.push(`/siparis-ozeti/${orderId.value}?key=${orderKey.value}`);
-    } else if (orderStatus === 'pending') {
-      // Still pending - might be processing
-      statusMessage.value = 'Ödemeniz işleniyor, lütfen bekleyin...';
-      
-      // Retry a few times, then stop to avoid infinite loop
-      if (retries.value < maxRetries) {
-        retries.value++;
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        // Re-run the mounted logic by reloading the route (without full page reload)
-        router.replace({ path: route.path, query: route.query });
-      } else {
-        checking.value = false;
-        errorMessage.value = 'Ödeme henüz onaylanmadı. Lütfen biraz sonra tekrar deneyin veya siparişlerim sayfasından kontrol edin.';
+      if (orderStatus === 'processing' || orderStatus === 'completed') {
+        statusMessage.value = 'Ödemeniz başarıyla tamamlandı! Yönlendiriliyorsunuz...';
+        await new Promise(r => setTimeout(r, 1200));
+        router.push(`/siparis-ozeti/${orderId.value}?key=${orderKey.value}`);
+        return;
       }
-  } else if (orderStatus === 'failed' || orderStatus === 'cancelled') {
-      // Payment failed
-      errorMessage.value = 'Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.';
+
+      if (orderStatus === 'failed' || orderStatus === 'cancelled' || orderStatus === 'refunded' || orderStatus === 'trash') {
+        errorMessage.value = 'Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.';
+        checking.value = false;
+        setTimeout(() => router.push('/odeme'), 3000);
+        return;
+      }
+
+      // pending | on-hold -> keep polling a few times
+      statusMessage.value = 'Ödemeniz işleniyor, lütfen bekleyin...';
+      await new Promise(r => setTimeout(r, 3000));
+    } catch (err) {
+      console.error('Ödeme durumu kontrol hatası:', err);
+      errorMessage.value = 'Ödeme durumu kontrol edilemedi. Lütfen siparişlerim sayfasından kontrol edin.';
       checking.value = false;
-      
-      // Redirect to checkout after showing error
-      setTimeout(() => {
-        router.push('/odeme');
-      }, 3000);
-    } else {
-      // Unknown status
-      errorMessage.value = `Ödeme durumu belirsiz: ${orderStatus}`;
-      checking.value = false;
+      setTimeout(() => router.push('/hesabim?tab=orders'), 4000);
+      return;
     }
-    
-  } catch (error: any) {
-    console.error('Ödeme durumu kontrol hatası:', error);
-    errorMessage.value = 'Ödeme durumu kontrol edilemedi. Lütfen siparişlerim sayfasından kontrol edin.';
-    checking.value = false;
-    
-    // Redirect to account orders tab (correct URL)
-    setTimeout(() => {
-      router.push('/hesabim?tab=orders');
-    }, 4000);
   }
-});
+
+  // Max attempts reached
+  errorMessage.value = 'Ödeme henüz onaylanmadı. Lütfen biraz sonra tekrar deneyin veya siparişlerim sayfasından kontrol edin.';
+  checking.value = false;
+}
+
+onMounted(pollOrderStatus);
 
 // Prevent user from going back during check
 useHead({
