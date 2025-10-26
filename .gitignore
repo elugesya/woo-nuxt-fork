@@ -29,3 +29,14 @@ logs
 *.pem
 
 woonuxt-settings
+AKOde-sdk-postman_collection.json
+woonuxt_base/server/middleware/debug-card-page.ts
+wc-alttantire-gateway/languages/wc_alttantire.pot
+wc-alttantire-gateway/includes/class/Gateway.php
+wc-alttantire-gateway/includes/wc-alttantire-gateway.php
+wc-alttantire-gateway/includes/alttantire-common.php
+wc-alttantire-gateway/assets/js/jquery.payment.min.js
+wc-alttantire-gateway/assets/js/jquery.ajax.js
+wc-alttantire-gateway/assets/js/credit-card-form.min.js
+wc-alttantire-gateway/assets/css/alttantire.css
+wc-alttantire-gateway/wc-alttantire.php

@@ -3,17 +3,8 @@ const route = useRoute();
 const { storeSettings } = useAppConfig();
 const runtimeConfig = useRuntimeConfig();
 
-// Server-side render debug
-if (process.server) {
-  // eslint-disable-next-line no-console
-  console.log('[SSR] /odeme/kart-bilgileri render', route.query);
-}
-
-// CRITICAL DEBUG: Alert on component mount
-onMounted(() => {
-  alert('KART-BILGILERI.VUE COMPONENT MOUNTED!\nURL: ' + window.location.href);
-  console.log('***** KART-BILGILERI COMPONENT MOUNTED *****', route.query);
-});
+// ...existing code...
+// ...existing code...
 
 // Order verification
 const orderId = computed(() => route.query.order_id as string);
@@ -35,29 +26,18 @@ const loading = ref(false);
 const loadingInstallments = ref(false);
 const errorMessage = ref('');
 const orderTotal = ref(0);
-// TEMP DEBUG
-const debugInfo = ref({ orderId: '', orderKey: '', total: 0 });
-const debugMsg = ref('');
+// ...existing code...
 
 // Get order total from URL or fetch from GraphQL
 onMounted(async () => {
   // Verify required query parameters
   if (!orderId.value || !orderKey.value) {
-    console.error('Missing order_id or key in URL');
-    debugMsg.value = 'Missing order_id or key in URL. (TEMP: redirect disabled for debug)';
+    errorMessage.value = 'Eksik sipariş bilgisi.';
     return;
   }
-  
   if (route.query.total) {
     orderTotal.value = parseFloat(route.query.total as string);
   }
-  
-  debugInfo.value = {
-    orderId: String(orderId.value || ''),
-    orderKey: String(orderKey.value || ''),
-    total: orderTotal.value || 0
-  };
-  console.log('✅ Card details page loaded', debugInfo.value);
 });
 
 // BIN detection (first 6 digits)
@@ -120,7 +100,7 @@ const fetchInstallments = async (bin: string) => {
       installmentOptions.value = [];
     }
   } catch (error: any) {
-    console.error('Taksit bilgisi alınamadı:', error);
+  // ...existing code...
     // Fallback: even if taksit API fails (e.g., 404 route not found), allow Tek Çekim
     installmentOptions.value = [{
       count: 1,
@@ -239,27 +219,7 @@ const submitPayment = async () => {
     }
     
   } catch (error: any) {
-    console.error('Ödeme hatası:', error);
-    // WordPress REST errors are shaped as { code, message, data: { status, ...custom } }
-    const wpPayload = error?.data || {};
-    const wpData = wpPayload?.data || {};
-
-    // Surface more server details in console for debugging
-    if (error && typeof error === 'object') {
-      // eslint-disable-next-line no-console
-      console.error('Ödeme hatası detay:', {
-        status: wpData?.status ?? error?.status,
-        code: wpPayload?.code,
-        message: wpPayload?.message || error?.message,
-        responseCode: wpData?.responseCode,
-        location: wpData?.location,
-        body: typeof wpData?.body === 'string' ? wpData.body.slice(0, 300) : wpData?.body,
-        triedUrls: wpData?.triedUrls,
-        lastError: wpData?.lastError,
-        baseUrl: wpData?.baseUrl,
-        headers: wpData?.headers
-      });
-    }
+    // ...existing code...
 
     // If backend returned a redirect Location in error payload, follow it (edge case)
     if (wpData?.location) {
@@ -318,21 +278,8 @@ const years = Array.from({ length: 10 }, (_, i) => {
 
 <template>
   <div class="container mx-auto px-4 py-8 max-w-2xl">
-    <!-- CRITICAL DEBUG: This should ONLY show if kart-bilgileri.vue is rendering -->
-    <div class="mb-4 p-6 bg-red-100 border-4 border-red-500 text-center">
-      <h2 class="text-2xl font-bold text-red-900">🔴 KART-BILGILERI.VUE RENDERING 🔴</h2>
-      <p class="text-sm mt-2 font-mono">{{ route.fullPath }}</p>
-    </div>
-    
-    <!-- TEMP DEBUG BANNER -->
-    <div class="mb-4 p-3 rounded border" :class="debugMsg ? 'bg-yellow-50 border-yellow-200 text-yellow-900' : 'bg-gray-50 border-gray-200 text-gray-700'">
-      <div class="text-xs font-mono break-all">
-        <div><strong>order_id</strong>: {{ debugInfo.orderId }}</div>
-        <div><strong>key</strong>: {{ debugInfo.orderKey }}</div>
-        <div><strong>total</strong>: {{ debugInfo.total }}</div>
-        <div v-if="debugMsg" class="mt-1">{{ debugMsg }}</div>
-      </div>
-    </div>
+  <!-- ...existing code... -->
+    <!-- ...existing code... -->
 
     <h1 class="text-2xl font-bold mb-6">Kart Bilgileri</h1>
     

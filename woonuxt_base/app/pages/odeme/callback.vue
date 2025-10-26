@@ -21,14 +21,12 @@ const statusMessage = ref('Ödeme durumunuz kontrol ediliyor...');
 const maxRetries = 5;
 
 async function pollOrderStatus() {
-  // Verify required params
   if (!orderId.value || !orderKey.value) {
     errorMessage.value = 'Geçersiz ödeme linki';
     checking.value = false;
     return;
   }
 
-  // Give Tosla/WordPress a moment to process the callback
   await new Promise(resolve => setTimeout(resolve, 2000));
 
   const wpUrl = runtimeConfig.public.wpUrl?.replace(/\/$/, '') || '';
@@ -59,7 +57,6 @@ async function pollOrderStatus() {
       statusMessage.value = 'Ödemeniz işleniyor, lütfen bekleyin...';
       await new Promise(r => setTimeout(r, 3000));
     } catch (err) {
-      console.error('Ödeme durumu kontrol hatası:', err);
       errorMessage.value = 'Ödeme durumu kontrol edilemedi. Lütfen siparişlerim sayfasından kontrol edin.';
       checking.value = false;
       setTimeout(() => router.push('/hesabim?tab=orders'), 4000);
@@ -67,7 +64,6 @@ async function pollOrderStatus() {
     }
   }
 
-  // Max attempts reached
   errorMessage.value = 'Ödeme henüz onaylanmadı. Lütfen biraz sonra tekrar deneyin veya siparişlerim sayfasından kontrol edin.';
   checking.value = false;
 }
@@ -131,14 +127,7 @@ useHead({
         </button>
       </div>
 
-      <!-- Debug info (only in dev) -->
-      <div v-if="false" class="mt-8 p-4 bg-gray-100 rounded text-left text-xs">
-        <strong>Debug:</strong><br>
-        Order ID: {{ orderId }}<br>
-        Order Key: {{ orderKey }}<br>
-        Checking: {{ checking }}<br>
-        Error: {{ errorMessage }}
-      </div>
+      <!-- ...existing code... -->
     </div>
   </div>
 </template>
