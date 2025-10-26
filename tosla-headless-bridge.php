@@ -20,6 +20,8 @@ class Tosla_Headless_Bridge {
         add_action('rest_api_init', [$this, 'register_routes']);
         // Allow CORS for frontend (needed for headless usage)
         add_action('rest_api_init', [$this, 'enable_cors_headers']);
+        // Allow CORS for WPGraphQL endpoint (/graphql)
+        add_action('init', [$this, 'enable_graphql_cors'], 0);
         
         // Inject dummy card data BEFORE any validation
         add_filter('woocommerce_checkout_posted_data', [$this, 'inject_dummy_card_data_for_tosla'], 5);
@@ -29,6 +31,44 @@ class Tosla_Headless_Bridge {
         
         // Security: Disable error logging for card data
         add_filter('woocommerce_logger_log_message', [$this, 'sanitize_log_messages'], 10, 2);
+    }
+
+    /**
+     * Enable CORS for WPGraphQL endpoint (/graphql), including preflight handling
+     */
+    public function enable_graphql_cors() {
+        // Only act on /graphql requests
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? wp_unslash($_SERVER['REQUEST_URI']) : '';
+        $path = parse_url($request_uri, PHP_URL_PATH);
+        if (!$path || !preg_match('#/graphql/?$#', $path)) {
+            return;
+        }
+
+        // Determine allowed origin (frontend)
+        $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
+        $allowed_origins = [
+            'http://localhost:3000',
+            'https://localhost:3000',
+        ];
+        // Also allow configured frontend URL if defined
+        if (defined('NUXT_FRONTEND_URL')) {
+            $allowed_origins[] = rtrim(NUXT_FRONTEND_URL, '/');
+        }
+
+        if ($origin && in_array($origin, $allowed_origins, true)) {
+            header('Access-Control-Allow-Origin: ' . $origin);
+            header('Vary: Origin');
+            header('Access-Control-Allow-Credentials: true');
+            header('Access-Control-Allow-Methods: POST, OPTIONS');
+            // Allow WooCommerce session header and common headers used by fetch/GraphQL
+            header('Access-Control-Allow-Headers: Authorization, Content-Type, X-WP-Nonce, woocommerce-session, X-Requested-With, Accept, Origin');
+        }
+
+        // Handle preflight
+        if (isset($_SERVER['REQUEST_METHOD']) && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS') {
+            status_header(200);
+            exit;
+        }
     }
 
     /**
