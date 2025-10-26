@@ -1,0 +1,54 @@
+query getPost($slug: ID!) {
+  post(id: $slug, idType: SLUG) {
+    id
+    databaseId
+    title
+    slug
+    content
+    excerpt
+    date
+    modified
+    featuredImage {
+      node {
+        sourceUrl(size: LARGE)
+        altText
+        title
+        mediaDetails {
+          width
+          height
+        }
+      }
+    }
+    author {
+      node {
+        name
+        description
+        avatar {
+          url
+        }
+      }
+    }
+    categories {
+      nodes {
+        id
+        databaseId
+        name
+        slug
+      }
+    }
+    tags {
+      nodes {
+        id
+        name
+        slug
+      }
+    }
+    seo {
+      title
+      metaDesc
+      opengraphImage {
+        sourceUrl
+      }
+    }
+  }
+}

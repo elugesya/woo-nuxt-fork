@@ -8,6 +8,7 @@ const route = useRoute();
     <NuxtLink to="/">{{ $t('general.home') }}</NuxtLink>
     <NuxtLink to="/urunler">{{ $t('general.products') }}</NuxtLink>
     <NuxtLink to="/kategoriler">{{ $t('shop.category', 2) }}</NuxtLink>
+    <NuxtLink to="/blog">{{ $t('blog.title') }}</NuxtLink>
     <NuxtLink to="/iletisim">{{ $t('general.contact') }}</NuxtLink>
     <NuxtLink class="lg:hidden" :to="wishlistLink" :prefetch="false">Wishlist</NuxtLink>
     <NuxtLink class="lg:hidden" to="/hesabim" @click="navigateToLogin(route.fullPath)" :prefetch="false">My Account</NuxtLink>

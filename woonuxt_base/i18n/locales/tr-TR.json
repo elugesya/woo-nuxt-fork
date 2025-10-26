@@ -194,5 +194,23 @@
     "save": "Kaydet",
     "continue": "Devam Et",
     "confirm": "Onayla"
+  },
+  "blog": {
+    "title": "Blog",
+    "readMore": "Devamını Oku",
+    "relatedPosts": "İlgili Yazılar",
+    "category": "Kategori",
+    "categories": "Kategoriler",
+    "tags": "Etiketler",
+    "author": "Yazar",
+    "publishedOn": "Yayınlanma Tarihi",
+    "updatedOn": "Güncelleme Tarihi",
+    "noPosts": "Henüz blog yazısı bulunmuyor",
+    "noPostsInCategory": "Bu kategoride henüz blog yazısı bulunmuyor",
+    "allCategories": "Tüm Kategoriler",
+    "latestPosts": "Son Yazılar",
+    "popularPosts": "Popüler Yazılar",
+    "searchPlaceholder": "Blog yazılarında ara...",
+    "postsCount": "{count} yazı"
   }
 }
