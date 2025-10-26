@@ -393,8 +393,10 @@ class Tosla_Headless_Bridge {
             $order_total = $order->get_total();
             $amount_in_kurus = round($order_total * 100); // Convert to kuruş
             
-            // Build callback URL
-            $callback_url = add_query_arg('wc-api', 'wc_alttantire', home_url('/'));
+                // Build callback URL - redirect to frontend instead of WordPress
+                // Frontend will handle the callback and query WordPress for payment status
+                $frontend_url = defined('NUXT_FRONTEND_URL') ? NUXT_FRONTEND_URL : 'https://ntmc.com.tr';
+                $callback_url = $frontend_url . '/odeme/callback?order_id=' . $order_id . '&key=' . $order->get_order_key();
             
             // Get currency code (949 = TRY)
             $currency = get_woocommerce_currency();
