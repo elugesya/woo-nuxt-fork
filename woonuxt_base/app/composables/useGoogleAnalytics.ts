@@ -52,12 +52,25 @@ export const useGoogleAnalytics = () => {
     const price = parseFloat(String(product.salePrice || product.price || product.regularPrice || 0))
     const categories = product.productCategories?.nodes || product.terms?.nodes?.filter((t) => t.taxonomyName === 'PRODUCTCATEGORY') || []
 
+    // Derive brand from product-specific data, fallback to configured merchant brand
+    const brandTaxonomies = String(config.public.BRAND_TAXONOMIES || '')
+      .split(',')
+      .map((s) => s.trim().toLowerCase())
+      .filter(Boolean)
+
+    // @ts-ignore - tolerate unknown brands shape if present on product
+    const brandsNodes: Array<{ name?: string }> = (product as any)?.brands?.nodes || []
+    const brandFromBrands = brandsNodes?.[0]?.name || ''
+    const termsNodes: Array<{ name?: string; taxonomyName?: string }> = product.terms?.nodes || []
+    const brandFromTerms = (termsNodes.find((t) => brandTaxonomies.includes(String(t?.taxonomyName || '').toLowerCase())) || {})?.name || ''
+    const derivedBrand = brandFromTerms || brandFromBrands || config.public.GOOGLE_MERCHANT_BRAND || undefined
+
     return {
       item_id: product.sku || String(product.databaseId),
       item_name: product.name || 'Unknown Product',
       price,
       quantity,
-      item_brand: config.public.GOOGLE_MERCHANT_BRAND || 'Neta Marine',
+      item_brand: derivedBrand,
       item_category: categories[0]?.name || 'Uncategorized',
       item_category2: categories[1]?.name,
       item_category3: categories[2]?.name,

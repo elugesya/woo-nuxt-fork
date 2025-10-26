@@ -9,11 +9,11 @@ const runtimeConfig = useRuntimeConfig();
 const siteName = runtimeConfig.public?.SITE_NAME || 'WooNuxt';
 
 const img = useImage();
-const imageURL = info.image?.sourceUrl ?? '/images/placeholder.jpg';
-const isLocalImage = imageURL.startsWith('/');
+const imageURL = computed(() => info.image?.sourceUrl ?? '/images/placeholder.jpg');
+const isLocalImage = computed(() => imageURL.value.startsWith('/'));
 // Avoid generating IPX URLs for local placeholder; use original path instead
-const defaultImageSrc = isLocalImage ? imageURL : img.getSizes(imageURL, { width: 1200, height: 630 }).src;
-const twitterImageSrc = isLocalImage ? imageURL : img.getSizes(imageURL, { width: 1600, height: 900 }).src;
+const defaultImageSrc = computed(() => (isLocalImage.value ? imageURL.value : img.getSizes(imageURL.value, { width: 1200, height: 630 }).src));
+const twitterImageSrc = computed(() => (isLocalImage.value ? imageURL.value : img.getSizes(imageURL.value, { width: 1600, height: 900 }).src));
 
 const getFullImageURL = (url?: string) => {
   if (!url) return '';
@@ -21,32 +21,37 @@ const getFullImageURL = (url?: string) => {
   return `${frontEndUrl}${url}`;
 };
 
-const defaultImage = getFullImageURL(defaultImageSrc);
-const twitterImage = getFullImageURL(twitterImageSrc);
-const description = info.shortDescription || info.description ? stripHtml(info.shortDescription || '') : stripHtml(info.description || '');
+const defaultImage = computed(() => getFullImageURL(defaultImageSrc.value));
+const twitterImage = computed(() => getFullImageURL(twitterImageSrc.value));
+const description = computed(() => (info.shortDescription || info.description ? stripHtml(info.shortDescription || '') : stripHtml(info.description || '')));
 
 const facebook = wooNuxtSEO?.find((item) => item?.provider === 'facebook') ?? null;
 const twitter = wooNuxtSEO?.find((item) => item?.provider === 'twitter') ?? null;
 
 // JSON-LD Product structured data
-const currency = runtimeConfig.public?.CURRENCY_CODE || 'TRY';
+const currency = computed(() => runtimeConfig.public?.CURRENCY_CODE || 'TRY');
 const availabilityMap: Record<string, string> = {
   IN_STOCK: 'https://schema.org/InStock',
   OUT_OF_STOCK: 'https://schema.org/OutOfStock',
   ON_BACKORDER: 'https://schema.org/PreOrder',
 };
-const price = (info as any)?.rawSalePrice || (info as any)?.rawPrice || (info as any)?.rawRegularPrice || null;
-const images: string[] = [];
-if (info?.image?.sourceUrl) images.push(getFullImageURL(info.image.sourceUrl));
-if (Array.isArray((info as any)?.galleryImages?.nodes)) {
-  for (const g of (info as any).galleryImages.nodes) {
-    if (g?.sourceUrl) images.push(getFullImageURL(g.sourceUrl));
+const price = computed(() => (info as any)?.rawSalePrice || (info as any)?.rawPrice || (info as any)?.rawRegularPrice || null);
+// Build unique image list (main + gallery) with absolute URLs
+const images = computed(() => {
+  const set = new Set<string>();
+  if (info?.image?.sourceUrl) set.add(getFullImageURL(info.image.sourceUrl));
+  if (Array.isArray((info as any)?.galleryImages?.nodes)) {
+    for (const g of (info as any).galleryImages.nodes) {
+      if (g?.sourceUrl) set.add(getFullImageURL(g.sourceUrl));
+    }
   }
-}
+  return Array.from(set);
+});
 
 // Individual Review schema if reviews exist
-const reviews = (info as any)?.reviews?.edges || [];
-const reviewSchemas = reviews
+const reviews = computed(() => (info as any)?.reviews?.edges || []);
+const reviewSchemas = computed(() =>
+  reviews.value
   .filter((edge: any) => edge.node?.content && edge.node?.author?.node?.name)
   .map((edge: any) => ({
     '@type': 'Review',
@@ -63,20 +68,40 @@ const reviewSchemas = reviews
           bestRating: 5,
         }
       : undefined,
-  }));
+  }))
+);
 
-const jsonLd = JSON.stringify(
+// Resolve brand from product-specific data (brands taxonomy or global attribute terms)
+const brandTaxonomies = computed(() =>
+  String(runtimeConfig.public?.BRAND_TAXONOMIES || '')
+    .split(',')
+    .map((s: string) => s.trim().toLowerCase())
+    .filter(Boolean),
+);
+const brandName = computed(() => {
+  const termsNodes = (info as any)?.terms?.nodes || [];
+  const brandFromTerms = (termsNodes.find((t: any) => brandTaxonomies.value.includes(String(t?.taxonomyName || '').toLowerCase())) || {})?.name || '';
+  if (brandFromTerms) return brandFromTerms;
+  const brandsNodes = (info as any)?.brands?.nodes || [];
+  const brandFromBrands = brandsNodes?.[0]?.name || '';
+  return brandFromBrands || '';
+});
+
+const jsonLd = computed(() =>
+  JSON.stringify(
   {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: info?.name,
-    image: images.length ? images : [defaultImage],
-    description,
+    image: images.value.length ? images.value : [defaultImage.value],
+    description: description.value,
     sku: (info as any)?.sku || undefined,
-    brand: {
-      '@type': 'Brand',
-      name: siteName,
-    },
+    brand: brandName.value
+      ? {
+          '@type': 'Brand',
+          name: brandName.value,
+        }
+      : undefined,
     aggregateRating:
       info?.averageRating && info?.reviewCount
         ? {
@@ -85,31 +110,32 @@ const jsonLd = JSON.stringify(
             reviewCount: Number(info.reviewCount),
           }
         : undefined,
-    review: reviewSchemas.length ? reviewSchemas : undefined,
+    review: reviewSchemas.value.length ? reviewSchemas.value : undefined,
     offers:
-      price
+      price.value
         ? {
             '@type': 'Offer',
             url: canonical,
-            priceCurrency: currency,
-            price: String(price),
+            priceCurrency: currency.value,
+            price: String(price.value),
             availability: availabilityMap[(info as any)?.stockStatus || 'IN_STOCK'] || 'https://schema.org/InStock',
           }
         : undefined,
   },
   null,
   2,
-);
+));
 
 // Inject JSON-LD via head manager instead of using a <Script> component
-useHead({
+useHead(() => ({
   script: [
     {
+      key: 'product-jsonld',
       type: 'application/ld+json',
-      children: jsonLd,
+      children: jsonLd.value,
     },
   ],
-});
+}));
 </script>
 
 <template>

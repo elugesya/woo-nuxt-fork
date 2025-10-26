@@ -17,6 +17,7 @@ query getProduct($slug: ID!) {
     ...ProductWithAttributes
     ...ProductCategories
     ...Terms
+  ...ProductBrands
     ...SimpleProduct
     ...VariableProduct
     ...ExternalProduct
