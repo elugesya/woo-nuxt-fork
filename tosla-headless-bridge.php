@@ -174,6 +174,23 @@ class Tosla_Headless_Bridge {
             ]
         ]);
         
+        // 1.5. Public order status check by id+key (for headless callback page)
+        register_rest_route('tosla/v1', '/order-status', [
+            'methods' => ['GET'],
+            'callback' => [$this, 'get_order_status'],
+            'permission_callback' => '__return_true',
+            'args' => [
+                'orderId' => [
+                    'required' => true,
+                    'type' => 'integer'
+                ],
+                'orderKey' => [
+                    'required' => true,
+                    'type' => 'string'
+                ]
+            ]
+        ]);
+
         // 2. Process payment endpoint (requires order ownership verification)
         register_rest_route('tosla/v1', '/process-payment', [
             'methods' => 'POST',
@@ -204,6 +221,42 @@ class Tosla_Headless_Bridge {
                     'default' => 0
                 ]
             ]
+        ]);
+    }
+
+    /**
+     * Public order status lookup by (orderId, orderKey)
+     * Returns minimal status needed by the frontend callback page without authentication
+     */
+    public function get_order_status($request) {
+        $order_id = intval($request->get_param('orderId'));
+        $order_key = sanitize_text_field($request->get_param('orderKey'));
+
+        if (!$order_id || !$order_key) {
+            return new WP_Error('bad_request', 'Eksik parametre', ['status' => 400]);
+        }
+
+        $order = wc_get_order($order_id);
+        if (!$order) {
+            return new WP_Error('not_found', 'Sipariş bulunamadı', ['status' => 404]);
+        }
+
+        if ($order->get_order_key() !== $order_key) {
+            return new WP_Error('forbidden', 'Geçersiz sipariş anahtarı', ['status' => 403]);
+        }
+
+        $status = $order->get_status();
+        $needs_payment = $order->needs_payment();
+        $is_paid = in_array($status, ['processing', 'completed'], true);
+
+        return rest_ensure_response([
+            'success' => true,
+            'orderId' => $order_id,
+            'orderKey' => $order_key,
+            'status' => $status,
+            'needsPayment' => $needs_payment,
+            'isPaid' => $is_paid,
+            'total' => (float) $order->get_total(),
         ]);
     }
     

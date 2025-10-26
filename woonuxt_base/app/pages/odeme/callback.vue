@@ -31,19 +31,16 @@ onMounted(async () => {
   await new Promise(resolve => setTimeout(resolve, 2000));
 
   try {
-      // Query WordPress for order status via existing GraphQL query
-      const { data } = await GqlGetOrder({ id: parseInt(orderId.value) });
-    
-      if (!data?.order) {
+      // Prefer WP REST bridge endpoint to avoid GraphQL auth limitations on orders
+      const wpUrl = runtimeConfig.public.wpUrl?.replace(/\/$/, '') || '';
+      const statusEndpoint = `${wpUrl}/wp-json/tosla/v1/order-status?orderId=${encodeURIComponent(orderId.value)}&orderKey=${encodeURIComponent(orderKey.value)}`;
+      const result = await $fetch(statusEndpoint, { method: 'GET', mode: 'cors' as any });
+
+      if (!result?.success) {
         throw new Error('Sipariş bulunamadı');
       }
-    
-      // Verify order key matches for security
-      if (data.order.orderKey !== orderKey.value) {
-        throw new Error('Geçersiz sipariş anahtarı');
-      }
 
-      const orderStatus = data.order.status?.toLowerCase();
+      const orderStatus = String(result.status || '').toLowerCase();
 
     if (orderStatus === 'processing' || orderStatus === 'completed') {
       // Payment successful!
@@ -62,7 +59,7 @@ onMounted(async () => {
       
       // Refresh page to check again
       window.location.reload();
-    } else if (orderStatus === 'failed' || orderStatus === 'cancelled') {
+  } else if (orderStatus === 'failed' || orderStatus === 'cancelled') {
       // Payment failed
       errorMessage.value = 'Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.';
       checking.value = false;
@@ -82,9 +79,9 @@ onMounted(async () => {
     errorMessage.value = 'Ödeme durumu kontrol edilemedi. Lütfen siparişlerim sayfasından kontrol edin.';
     checking.value = false;
     
-    // Redirect to account orders page
+    // Redirect to account orders tab (correct URL)
     setTimeout(() => {
-      router.push('/hesabim/siparisler');
+      router.push('/hesabim?tab=orders');
     }, 4000);
   }
 });
