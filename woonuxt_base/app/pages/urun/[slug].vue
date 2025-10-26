@@ -192,8 +192,8 @@ const breadcrumbJsonLd = computed(() =>
 );
 useHead(() => ({
   script: [
+    // Breadcrumbs for the product page (Product JSON-LD is injected by SEOHead to avoid duplicates)
     { type: 'application/ld+json', children: breadcrumbJsonLd.value },
-    { type: 'application/ld+json', children: productJsonLd.value },
   ],
 }));
 </script>

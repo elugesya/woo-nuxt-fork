@@ -28,8 +28,16 @@ useHead({
 });
 
 // Organization + WebSite JSON-LD site-wide (dynamic from env)
-const logoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
-const logoUrl = logoPath.startsWith('http') ? logoPath : `${frontEndUrl}${logoPath}`;
+// Sanitize potential misconfigured env values (quotes, inline comments)
+const rawLogoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
+const cleanedLogoPath = String(rawLogoPath)
+  .replace(/^['"]|['"]$/g, '')
+  .split('#')[0]
+  .trim();
+const logoPath = cleanedLogoPath || '/logo.svg';
+const logoUrl = logoPath.startsWith('http')
+  ? logoPath
+  : `${frontEndUrl}${logoPath.startsWith('/') ? '' : '/'}${logoPath}`;
 const contactEmail = runtimeConfig.public.ORGANIZATION_CONTACT_EMAIL;
 const contactPhone = runtimeConfig.public.ORGANIZATION_PHONE;
 const socialFacebook = runtimeConfig.public.ORGANIZATION_SOCIAL_FACEBOOK;

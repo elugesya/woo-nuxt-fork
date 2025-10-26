@@ -32,8 +32,11 @@ useSeoMeta({
 const { frontEndUrl, stripHtml } = useHelpers();
 const runtimeConfig = useRuntimeConfig();
 const siteName = runtimeConfig.public.SITE_NAME || 'Site';
-const logoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
-const logoUrl = logoPath.startsWith('http') ? logoPath : `${frontEndUrl}${logoPath}`;
+// Sanitize potential misconfigured env values (quotes, inline comments) for logo
+const rawLogoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
+const cleanedLogoPath = String(rawLogoPath).replace(/^['"]|['"]$/g, '').split('#')[0].trim();
+const logoPath = cleanedLogoPath || '/logo.svg';
+const logoUrl = logoPath.startsWith('http') ? logoPath : `${frontEndUrl}${logoPath.startsWith('/') ? '' : '/'}${logoPath}`;
 const canonical = computed(() => `${frontEndUrl}${route.path}`);
 
 const breadcrumbJsonLd = computed(() =>

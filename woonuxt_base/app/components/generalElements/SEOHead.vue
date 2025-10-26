@@ -5,7 +5,8 @@ const { info } = defineProps({ info: { type: Object as PropType<Product>, requir
 
 const title = info.name;
 const canonical = `${frontEndUrl}${path}`;
-const siteName = process.env.SITE_TITLE ?? 'WooNuxt';
+const runtimeConfig = useRuntimeConfig();
+const siteName = runtimeConfig.public?.SITE_NAME || 'WooNuxt';
 
 const img = useImage();
 const imageURL = info.image?.sourceUrl ?? '/images/placeholder.jpg';
@@ -28,7 +29,6 @@ const facebook = wooNuxtSEO?.find((item) => item?.provider === 'facebook') ?? nu
 const twitter = wooNuxtSEO?.find((item) => item?.provider === 'twitter') ?? null;
 
 // JSON-LD Product structured data
-const runtimeConfig = useRuntimeConfig();
 const currency = runtimeConfig.public?.CURRENCY_CODE || 'TRY';
 const availabilityMap: Record<string, string> = {
   IN_STOCK: 'https://schema.org/InStock',
