@@ -11,6 +11,60 @@ useSeoMeta({
   ogTitle: 'Blog',
   ogDescription: 'En son haberler, ipuçları ve rehberler',
 });
+
+// Structured Data: BreadcrumbList + Blog + ItemList of posts
+const { frontEndUrl } = useHelpers();
+const breadcrumbJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${frontEndUrl}/blog` },
+      ],
+    },
+    null,
+    2,
+  ),
+);
+
+const blogJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Blog',
+      name: 'Blog',
+      url: `${frontEndUrl}/blog`,
+    },
+    null,
+    2,
+  ),
+);
+
+const itemListJsonLd = computed(() => {
+  const items = (posts.value || []).slice(0, 10).map((p: any, idx: number) => ({
+    '@type': 'ListItem', position: idx + 1, url: `${frontEndUrl}/blog/${p.slug}`, name: p.title,
+  }));
+  return JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Blog Yazıları',
+      itemListElement: items,
+    },
+    null,
+    2,
+  );
+});
+
+useHead(() => ({
+  script: [
+    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', children: blogJsonLd.value },
+    { type: 'application/ld+json', children: itemListJsonLd.value },
+  ],
+}));
 </script>
 
 <template>

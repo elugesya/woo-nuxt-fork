@@ -27,6 +27,65 @@ useSeoMeta({
   articleModifiedTime: post.value?.modified,
   articleAuthor: post.value?.author?.node?.name,
 });
+
+// Structured Data: Article + BreadcrumbList
+const { frontEndUrl, stripHtml } = useHelpers();
+const runtimeConfig = useRuntimeConfig();
+const siteName = runtimeConfig.public.SITE_NAME || 'Site';
+const logoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
+const logoUrl = logoPath.startsWith('http') ? logoPath : `${frontEndUrl}${logoPath}`;
+const canonical = computed(() => `${frontEndUrl}${route.path}`);
+
+const breadcrumbJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
+        { '@type': 'ListItem', position: 2, name: 'Blog', item: `${frontEndUrl}/blog` },
+        post.value?.categories?.nodes?.[0]
+          ? { '@type': 'ListItem', position: 3, name: post.value.categories.nodes[0].name, item: `${frontEndUrl}/blog/kategori/${post.value.categories.nodes[0].slug}` }
+          : undefined,
+        { '@type': 'ListItem', position: post.value?.categories?.nodes?.[0] ? 4 : 3, name: stripHtml(post.value?.title || ''), item: canonical.value },
+      ].filter(Boolean),
+    },
+    null,
+    2,
+  ),
+);
+
+const articleJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      mainEntityOfPage: canonical.value,
+      headline: stripHtml(post.value?.title || ''),
+      description: stripHtml(post.value?.seo?.metaDesc || post.value?.excerpt || ''),
+      image: seoImage ? [seoImage] : undefined,
+      datePublished: post.value?.date,
+      dateModified: post.value?.modified || post.value?.date,
+      author: post.value?.author?.node
+        ? { '@type': 'Person', name: post.value.author.node.name }
+        : undefined,
+      publisher: {
+        '@type': 'Organization',
+        name: siteName,
+        logo: { '@type': 'ImageObject', url: logoUrl },
+      },
+    },
+    null,
+    2,
+  ),
+);
+
+useHead(() => ({
+  script: [
+    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', children: articleJsonLd.value },
+  ],
+}));
 </script>
 
 <template>

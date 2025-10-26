@@ -66,9 +66,30 @@ const { wishlistLink } = useAuth();
               <a href="/iletisim" class="py-1.5 block">{{ $t('general.contactUs') }}</a>
             </template>
           </ClientOnly>
-          <a href="/" class="py-1.5 block">{{ $t('general.shippingReturns') }}</a>
-          <a href="/" class="py-1.5 block">{{ $t('general.privacyPolicy') }}</a>
-          <a href="/" class="py-1.5 block">{{ $t('general.termsConditions') }}</a>
+          <ClientOnly>
+            <NuxtLink to="/kargo-ve-teslimat" class="py-1.5 block">Kargo ve Teslimat</NuxtLink>
+            <template #fallback>
+              <a href="/kargo-ve-teslimat" class="py-1.5 block">Kargo ve Teslimat</a>
+            </template>
+          </ClientOnly>
+          <ClientOnly>
+            <NuxtLink to="/iade-ve-degisim" class="py-1.5 block">İade ve Değişim</NuxtLink>
+            <template #fallback>
+              <a href="/iade-ve-degisim" class="py-1.5 block">İade ve Değişim</a>
+            </template>
+          </ClientOnly>
+          <ClientOnly>
+            <NuxtLink to="/teslimat-bilgileri" class="py-1.5 block">Teslimat Bilgileri</NuxtLink>
+            <template #fallback>
+              <a href="/teslimat-bilgileri" class="py-1.5 block">Teslimat Bilgileri</a>
+            </template>
+          </ClientOnly>
+          <ClientOnly>
+            <NuxtLink to="/gizlilik-politikasi" class="py-1.5 block">{{ $t('general.privacyPolicy') }}</NuxtLink>
+            <template #fallback>
+              <a href="/gizlilik-politikasi" class="py-1.5 block">{{ $t('general.privacyPolicy') }}</a>
+            </template>
+          </ClientOnly>
         </div>
       </div>
       <div class="w-3/7 lg:w-auto">

@@ -88,6 +88,74 @@ const disabledAddToCart = computed(() => {
   return isInvalidType || isOutOfStock || isCartUpdating || !isValidActiveVariation;
 });
 
+// Product JSON-LD
+const mapAvailability = (status?: StockStatusEnum | string) => {
+  switch (status) {
+    case StockStatusEnum.IN_STOCK:
+      return 'https://schema.org/InStock';
+    case StockStatusEnum.ON_BACKORDER:
+      return 'https://schema.org/PreOrder';
+    case StockStatusEnum.OUT_OF_STOCK:
+    default:
+      return 'https://schema.org/OutOfStock';
+  }
+};
+
+const currencyCode = useRuntimeConfig().public?.CURRENCY_CODE || 'TRY';
+const productImages = computed<string[]>(() => {
+  const images: string[] = [];
+  const main = (product.value as any)?.image?.sourceUrl || (product.value as any)?.image?.mediaItemUrl;
+  if (main) images.push(main);
+  const gallery = (product.value as any)?.galleryImages?.nodes || [];
+  for (const g of gallery) {
+    const url = g?.sourceUrl || g?.mediaItemUrl;
+    if (url) images.push(url);
+  }
+  return Array.from(new Set(images));
+});
+
+const { stripHtml } = useHelpers();
+
+const offers = computed(() => ({
+  '@type': 'Offer',
+  url: `${frontEndUrl}/urun/${product.value?.slug}`,
+  priceCurrency: currencyCode,
+  price: (type.value?.salePrice || type.value?.regularPrice || '0').toString().replace(/[^0-9.]/g, ''),
+  availability: mapAvailability(stockStatus.value as any),
+}));
+
+const aggregateRating = computed(() => {
+  const rating = parseFloat((product.value?.averageRating as any) || '0');
+  const count = Number(product.value?.reviewCount || 0);
+  if (!rating || !count) return undefined;
+  return {
+    '@type': 'AggregateRating',
+    ratingValue: rating,
+    reviewCount: count,
+    bestRating: 5,
+    worstRating: 1,
+  } as Record<string, any>;
+});
+
+const productJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.value?.name,
+      description: stripHtml(product.value?.shortDescription || product.value?.description || ''),
+      image: productImages.value,
+      sku: product.value?.sku || undefined,
+      category: primaryCategory.value?.name || undefined,
+      brand: siteName || undefined,
+      offers: offers.value,
+      aggregateRating: aggregateRating.value,
+    },
+    null,
+    2,
+  ),
+);
+
 // BreadcrumbList JSON-LD for product page
 const primaryCategory = computed(() => product.value?.productCategories?.nodes?.[0] || null);
 const productUrl = computed(() => `${frontEndUrl}/urun/${product.value?.slug}`);
@@ -125,6 +193,7 @@ const breadcrumbJsonLd = computed(() =>
 useHead(() => ({
   script: [
     { type: 'application/ld+json', children: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', children: productJsonLd.value },
   ],
 }));
 </script>

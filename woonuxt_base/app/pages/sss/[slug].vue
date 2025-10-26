@@ -157,6 +157,49 @@ useSeoMeta({
 const openQuestions = ref<Set<number>>(new Set())
 
 const toggleQuestion = (index: number) => {
+// Structured Data: FAQPage + BreadcrumbList
+const { frontEndUrl } = useHelpers()
+const breadcrumbJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
+        { '@type': 'ListItem', position: 2, name: 'SSS', item: `${frontEndUrl}/sss` },
+        { '@type': 'ListItem', position: 3, name: currentFaq.value.title, item: `${frontEndUrl}${route.path}` },
+      ],
+    },
+    null,
+    2,
+  ),
+)
+
+const faqJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: currentFaq.value.questions.map((q: { question: string; answer: string }) => ({
+        '@type': 'Question',
+        name: q.question,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: q.answer,
+        },
+      })),
+    },
+    null,
+    2,
+  ),
+)
+
+useHead(() => ({
+  script: [
+    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', children: faqJsonLd.value },
+  ],
+}))
   if (openQuestions.value.has(index)) {
     openQuestions.value.delete(index)
   } else {

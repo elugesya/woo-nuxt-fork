@@ -58,6 +58,49 @@ useHead(() => ({
     nextUrl.value ? { rel: 'next', href: nextUrl.value } : undefined,
   ].filter(Boolean) as any,
 }));
+
+// Structured Data: BreadcrumbList + ItemList for all products page
+const breadcrumbJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
+        { '@type': 'ListItem', position: 2, name: 'Ürünler', item: `${frontEndUrl}/urunler` },
+      ],
+    },
+    null,
+    2,
+  ),
+);
+
+const itemListJsonLd = computed(() => {
+  const items = (allProducts || []).slice(0, 10).map((p: any, idx: number) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    url: `${frontEndUrl}/urun/${p.slug}`,
+    name: p.name,
+  }));
+  return JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'ItemList',
+      name: 'Tüm Ürünler',
+      itemListOrder: 'http://schema.org/ItemListOrderDescending',
+      itemListElement: items,
+    },
+    null,
+    2,
+  );
+});
+
+useHead(() => ({
+  script: [
+    { type: 'application/ld+json', children: breadcrumbJsonLd.value },
+    { type: 'application/ld+json', children: itemListJsonLd.value },
+  ],
+}));
 </script>
 
 <template>
