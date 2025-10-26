@@ -154,7 +154,7 @@
     "lastName": "Soyad",
     "address1": "Adres 1",
     "address2": "Adres 2",
-    "city": "Şehir",
+    "city": "İlçe-Semt",
     "state": "İl",
     "zip": "Posta Kodu",
     "country": "Ülke",
@@ -175,5 +175,24 @@
     "invalidPasswordResetLink": "Şifre sıfırlama bağlantısı geçersiz.",
     "general": "Bir şeyler yanlış gitti",
     "noOrder": "Siparişinizi bulamadık. Lütfen daha sonra tekrar deneyin."
+  },
+  "checkout": {
+    "contactInformation": "İletişim Bilgileri",
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "logIn": "Giriş yapın",
+    "invalidEmailAddress": "Geçersiz e-posta adresi",
+    "createAccount": "Hesap oluşturmak ister misiniz?",
+    "billingAddress": "Fatura Adresi",
+    "shippingAddressTitle": "Teslimat Adresi",
+    "unexpectedError": "Ödeme sırasında beklenmeyen bir hata oluştu",
+    "paymentFailed": "Ödeme başarısız",
+    "paymentFailedMessage": "Ödeme başarısız: {message}. Lütfen tekrar deneyin veya destek ile iletişime geçin.",
+    "paymentIntentNotAvailable": "Ödeme niyet bilgisi mevcut değil. Lütfen sayfayı yenileyin ve tekrar deneyin.",
+    "formValidationFailed": "Form doğrulaması başarısız oldu",
+    "processingPayment": "Ödeme işleniyor...",
+    "edit": "Düzenle",
+    "save": "Kaydet",
+    "continue": "Devam Et",
+    "confirm": "Onayla"
   }
 }

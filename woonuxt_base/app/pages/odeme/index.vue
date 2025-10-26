@@ -101,7 +101,7 @@ const payNow = async () => {
       if (paymentMethodType === 'payment') {
         // Modern Payment Element - use confirmPayment
         if (!stripeClientSecret.value) {
-          throw new Error('Payment intent not available. Please refresh and try again.');
+          throw new Error(t('checkout.paymentIntentNotAvailable'));
         }
 
         // First, submit the elements to validate the form
@@ -197,10 +197,10 @@ const payNow = async () => {
     console.error('Checkout error:', error);
 
     // Provide user-friendly error message
-    const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred during checkout';
+    const errorMessage = error instanceof Error ? error.message : t('checkout.unexpectedError');
 
     // You could show a toast notification here instead
-    alert(`Payment failed: ${errorMessage}. Please try again or contact support.`);
+    alert(t('checkout.paymentFailedMessage', { message: errorMessage }));
 
     buttonText.value = t('shop.placeOrder');
     return; // Don't process checkout if payment failed
@@ -303,9 +303,9 @@ useSeoMeta({
         <div class="grid w-full max-w-2xl gap-8 checkout-form md:flex-1">
           <!-- Customer details -->
           <div v-if="!viewer && customer?.billing">
-            <h2 class="w-full mb-2 text-2xl font-semibold leading-none">Contact Information</h2>
+            <h2 class="w-full mb-2 text-2xl font-semibold leading-none">{{ $t('checkout.contactInformation') }}</h2>
             <p class="mt-1 text-sm text-gray-500">
-              Already have an account? <NuxtLink to="/hesabim" @click="navigateToLogin('/odeme')" class="text-primary text-semibold">Log in</NuxtLink>.
+              {{ $t('checkout.alreadyHaveAccount') }} <NuxtLink to="/hesabim" @click="navigateToLogin('/odeme')" class="text-primary text-semibold">{{ $t('checkout.logIn') }}</NuxtLink>.
             </p>
             <div class="w-full mt-4">
               <label for="email">{{ $t('billing.email') }}</label>
@@ -320,7 +320,7 @@ useSeoMeta({
                 @input="checkEmailOnInput(customer.billing.email)"
                 required />
               <Transition name="scale-y" mode="out-in">
-                <div v-if="isInvalidEmail" class="mt-1 text-sm text-red-500">Invalid email address</div>
+                <div v-if="isInvalidEmail" class="mt-1 text-sm text-red-500">{{ $t('checkout.invalidEmailAddress') }}</div>
               </Transition>
             </div>
             <template v-if="orderInput.createAccount">
@@ -334,14 +334,14 @@ useSeoMeta({
               </div>
             </template>
             <div v-if="!viewer" class="flex items-center gap-2 my-2">
-              <label for="creat-account">Create an account?</label>
+              <label for="creat-account">{{ $t('checkout.createAccount') }}</label>
               <input id="creat-account" v-model="orderInput.createAccount" type="checkbox" name="creat-account" />
             </div>
           </div>
 
           <!-- Shipping Address Section -->
           <div v-if="cart?.availableShippingMethods?.length">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-4 leading-none">Billing</h2>
+            <h2 class="text-2xl font-semibold text-gray-900 mb-4 leading-none">{{ $t('checkout.billingAddress') }}</h2>
 
             <!-- Shipping Address Summary or Form -->
             <div v-if="!isEditingShipping" class="space-y-4">
@@ -385,7 +385,7 @@ useSeoMeta({
 
           <div v-if="shipToDifferentAddress">
             <div class="mb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 mb-2 leading-none">Shipping Address</h2>
+              <h2 class="text-2xl font-semibold text-gray-900 mb-2 leading-none">{{ $t('checkout.shippingAddressTitle') }}</h2>
             </div>
             <BillingDetails v-if="customer?.billing" v-model="customer.billing" />
           </div>
