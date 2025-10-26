@@ -18,6 +18,8 @@ const orderKey = computed(() => route.query.key as string);
 const checking = ref(true);
 const errorMessage = ref('');
 const statusMessage = ref('Ödeme durumunuz kontrol ediliyor...');
+const retries = ref(0);
+const maxRetries = 5;
 
 onMounted(async () => {
   // Verify required params
@@ -54,11 +56,16 @@ onMounted(async () => {
       // Still pending - might be processing
       statusMessage.value = 'Ödemeniz işleniyor, lütfen bekleyin...';
       
-      // Retry after 3 seconds
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      
-      // Refresh page to check again
-      window.location.reload();
+      // Retry a few times, then stop to avoid infinite loop
+      if (retries.value < maxRetries) {
+        retries.value++;
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        // Re-run the mounted logic by reloading the route (without full page reload)
+        router.replace({ path: route.path, query: route.query });
+      } else {
+        checking.value = false;
+        errorMessage.value = 'Ödeme henüz onaylanmadı. Lütfen biraz sonra tekrar deneyin veya siparişlerim sayfasından kontrol edin.';
+      }
   } else if (orderStatus === 'failed' || orderStatus === 'cancelled') {
       // Payment failed
       errorMessage.value = 'Ödeme işlemi başarısız oldu. Lütfen tekrar deneyin.';
@@ -133,6 +140,15 @@ useHead({
       <p v-if="!checking && errorMessage" class="text-gray-600 mt-4 text-sm">
         Sipariş No: {{ orderId }}
       </p>
+
+      <div v-if="!checking && errorMessage" class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+        <NuxtLink to="/hesabim?tab=orders" class="px-5 py-3 bg-gray-800 text-white rounded hover:bg-gray-700 text-sm">
+          Siparişlerimi Görüntüle
+        </NuxtLink>
+        <button @click="() => window.location.reload()" class="px-5 py-3 bg-primary text-white rounded hover:opacity-90 text-sm">
+          Tekrar Kontrol Et
+        </button>
+      </div>
 
       <!-- Debug info (only in dev) -->
       <div v-if="false" class="mt-8 p-4 bg-gray-100 rounded text-left text-xs">
