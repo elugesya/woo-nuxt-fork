@@ -67,7 +67,8 @@ RUN rm -rf node_modules
 
 RUN pnpm install --frozen-lockfile
 RUN npm install --platform=linux --arch=x64 sharp
-RUN pnpm run generate
+# Ensure production mode during static generation so robots.txt and sitemap use prod rules
+RUN NODE_ENV=production pnpm run generate
 
 FROM nginx:alpine
 

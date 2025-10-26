@@ -56,6 +56,15 @@ async function fetchAllCategorySlugs() {
   return Array.from(new Set(slugs));
 }
 
+// Build-time guard: warn if FRONT_END_URL is not properly set in production
+if (process.env.NODE_ENV === 'production') {
+  const FE = process.env.NUXT_PUBLIC_FRONT_END_URL || '';
+  if (!FE || /localhost|127\.0\.0\.1/i.test(FE)) {
+    // eslint-disable-next-line no-console
+    console.warn('[WARN] NUXT_PUBLIC_FRONT_END_URL is not set to a public domain in production. Current:', FE);
+  }
+}
+
 const productSlugs = await fetchAllProductSlugs().catch(() => [] as string[]);
 const categorySlugs = await fetchAllCategorySlugs().catch(() => [] as string[]);
 
