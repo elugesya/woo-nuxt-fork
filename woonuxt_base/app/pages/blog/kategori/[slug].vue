@@ -3,21 +3,28 @@ const route = useRoute();
 const slug = route.params.slug as string;
 
 const { data } = await useAsyncGql('getPostsByCategory', { slug, first: 12 });
-const category = computed(() => data.value?.category);
 const posts = computed(() => data.value?.posts?.nodes || []);
 const pageInfo = computed(() => data.value?.posts?.pageInfo);
 
-if (!category.value) {
-  throw createError({ statusCode: 404, statusMessage: 'Kategori bulunamadı' });
+// Get category from first post
+const category = computed(() => {
+  if (posts.value.length > 0) {
+    return posts.value[0].categories?.nodes?.find((cat: any) => cat.slug === slug);
+  }
+  return null;
+});
+
+if (!posts.value.length) {
+  throw createError({ statusCode: 404, statusMessage: 'Kategori bulunamadı veya bu kategoride yazı bulunmuyor' });
 }
 
 const { formatDate } = useHelpers();
 
 useSeoMeta({
-  title: `${category.value.name} - Blog Kategorisi`,
-  description: category.value.description || `${category.value.name} kategorisindeki blog yazıları`,
-  ogTitle: `${category.value.name} - Blog Kategorisi`,
-  ogDescription: category.value.description || `${category.value.name} kategorisindeki blog yazıları`,
+  title: `${category.value?.name || slug} - Blog Kategorisi`,
+  description: category.value?.description || `${category.value?.name || slug} kategorisindeki blog yazıları`,
+  ogTitle: `${category.value?.name || slug} - Blog Kategorisi`,
+  ogDescription: category.value?.description || `${category.value?.name || slug} kategorisindeki blog yazıları`,
 });
 </script>
 
