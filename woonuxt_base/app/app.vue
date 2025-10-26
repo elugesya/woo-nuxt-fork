@@ -7,14 +7,7 @@ const runtimeConfig = useRuntimeConfig();
 const siteName = runtimeConfig.public.SITE_NAME || 'WooNuxt';
 const frontEndUrl = runtimeConfig.public.FRONT_END_URL || 'http://localhost:3000';
 
-// CRITICAL DEBUG: Watch all route changes
-watch(
-  () => route.fullPath,
-  (newPath, oldPath) => {
-    console.log('🔵 ROUTE CHANGE:', { from: oldPath, to: newPath, name: route.name });
-  },
-  { immediate: true }
-);
+//
 
 const closeCartAndMenu = () => {
   toggleCart(false);
