@@ -99,13 +99,8 @@ const disabledAddToCart = computed(() => {
 
 // Form submit handler
 const handleAddToCart = async () => {
-  console.log('Form submitted');
-  console.log('selectProductInput:', selectProductInput.value);
-  console.log('type:', type.value);
-  console.log('quantity:', quantity.value);
   try {
     await addToCart(selectProductInput.value);
-    console.log('Added to cart successfully');
     trackAddToCart(type.value, quantity.value);
   } catch (error) {
     console.error('Error adding to cart:', error);
