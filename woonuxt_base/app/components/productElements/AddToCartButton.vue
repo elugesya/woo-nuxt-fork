@@ -1,32 +1,29 @@
 <script setup>
-const { cart } = useCart();
+import { Button } from '@/components/ui/button'
+import { Spinner } from '@/components/ui/spinner'
+
+const { cart } = useCart()
 const props = defineProps({
   disabled: { type: Boolean, default: false },
-});
-const isLoading = ref(false);
-const { t } = useI18n();
-const addToCartButtonText = computed(() => (isLoading.value ? t('shop.adding') : t('shop.addToCart')));
+})
+const isLoading = ref(false)
+const { t } = useI18n()
+const addToCartButtonText = computed(() => (isLoading.value ? t('shop.adding') : t('shop.addToCart')))
 
 // stop loading when cart is updated
 watch(cart, (val) => {
-  isLoading.value = false;
-});
+  isLoading.value = false
+})
 </script>
 
 <template>
-  <button
+  <Button
     type="submit"
-    class="rounded-lg flex font-bold bg-gray-800 text-white text-center min-w-[150px] p-2.5 gap-4 items-center justify-center focus:outline-none disabled:cursor-not-allowed disabled:bg-gray-400"
-    :disabled="props.disabled"
-    @click="isLoading = true">
+    :disabled="props.disabled || isLoading"
+    @click="isLoading = true"
+    class="min-w-[150px]"
+  >
+    <Spinner v-if="isLoading" size="sm" class="mr-2" />
     <span>{{ addToCartButtonText }}</span>
-    <LoadingIcon v-if="isLoading" stroke="4" size="12" color="#fff" />
-  </button>
+  </Button>
 </template>
-
-<style lang="postcss" scoped>
-button {
-  outline: none !important;
-  transition: all 150ms ease-in;
-}
-</style>
