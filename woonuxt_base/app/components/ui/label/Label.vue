@@ -1,0 +1,23 @@
+<script setup lang="ts">
+import { Label as LabelPrimitive } from 'radix-vue'
+import type { LabelProps } from 'radix-vue'
+import { cn } from '@/lib/utils'
+
+interface Props extends LabelProps {
+  class?: string
+}
+
+const props = defineProps<Props>()
+</script>
+
+<template>
+  <LabelPrimitive
+    v-bind="props"
+    :class="cn(
+      'text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70',
+      props.class
+    )"
+  >
+    <slot />
+  </LabelPrimitive>
+</template>

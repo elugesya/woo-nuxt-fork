@@ -1,8 +1,21 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { Button } from '~/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '~/components/ui/card'
 import { Badge } from '~/components/ui/badge'
 import { Input } from '~/components/ui/input'
+import { Label } from '~/components/ui/label'
+import { Textarea } from '~/components/ui/textarea'
+import { Checkbox } from '~/components/ui/checkbox'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '~/components/ui/dialog'
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '~/components/ui/sheet'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '~/components/ui/tabs'
+import { RadioGroup, RadioGroupItem } from '~/components/ui/radio-group'
+
+const checked = ref(false)
+const selectValue = ref('')
+const radioValue = ref('option1')
 
 useSeoMeta({
   title: 'ShadCN Test Sayfası',
@@ -125,8 +138,183 @@ useSeoMeta({
           <li>Badge component - 4 variant</li>
           <li>Card component - Header, Title, Description, Content, Footer</li>
           <li>Input component - Responsive ve accessible</li>
+          <li>Label, Textarea, Checkbox - Form elementleri</li>
+          <li>Select component - Dropdown menü</li>
+          <li>Dialog & Sheet - Modal ve drawer</li>
+          <li>Tabs - Tab navigasyonu</li>
+          <li>RadioGroup - Radio button group</li>
         </ul>
       </CardContent>
     </Card>
+
+    <!-- Label & Textarea -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Label & Textarea</h2>
+      <div class="max-w-md space-y-4">
+        <div class="space-y-2">
+          <Label for="username">Username</Label>
+          <Input id="username" placeholder="johndoe" />
+        </div>
+        <div class="space-y-2">
+          <Label for="message">Message</Label>
+          <Textarea id="message" placeholder="Type your message here..." />
+        </div>
+      </div>
+    </section>
+
+    <!-- Checkbox -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Checkbox</h2>
+      <div class="flex items-center space-x-2">
+        <Checkbox id="terms" v-model:checked="checked" />
+        <Label for="terms" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+          Accept terms and conditions
+        </Label>
+      </div>
+      <p class="text-sm text-muted-foreground mt-2">Checked: {{ checked }}</p>
+    </section>
+
+    <!-- Select -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Select</h2>
+      <div class="max-w-xs space-y-2">
+        <Label>Select a fruit</Label>
+        <Select v-model="selectValue">
+          <SelectTrigger>
+            <SelectValue placeholder="Select a fruit" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="apple">Apple</SelectItem>
+            <SelectItem value="banana">Banana</SelectItem>
+            <SelectItem value="orange">Orange</SelectItem>
+            <SelectItem value="grape">Grape</SelectItem>
+          </SelectContent>
+        </Select>
+        <p class="text-sm text-muted-foreground">Selected: {{ selectValue }}</p>
+      </div>
+    </section>
+
+    <!-- RadioGroup -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Radio Group</h2>
+      <RadioGroup v-model="radioValue">
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="option1" id="option1" />
+          <Label for="option1">Option 1</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="option2" id="option2" />
+          <Label for="option2">Option 2</Label>
+        </div>
+        <div class="flex items-center space-x-2">
+          <RadioGroupItem value="option3" id="option3" />
+          <Label for="option3">Option 3</Label>
+        </div>
+      </RadioGroup>
+      <p class="text-sm text-muted-foreground mt-2">Selected: {{ radioValue }}</p>
+    </section>
+
+    <!-- Tabs -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Tabs</h2>
+      <Tabs default-value="account" class="w-full max-w-md">
+        <TabsList class="grid w-full grid-cols-2">
+          <TabsTrigger value="account">Account</TabsTrigger>
+          <TabsTrigger value="password">Password</TabsTrigger>
+        </TabsList>
+        <TabsContent value="account" class="space-y-4">
+          <div class="space-y-2">
+            <Label for="name">Name</Label>
+            <Input id="name" placeholder="John Doe" />
+          </div>
+          <div class="space-y-2">
+            <Label for="email">Email</Label>
+            <Input id="email" type="email" placeholder="john@example.com" />
+          </div>
+        </TabsContent>
+        <TabsContent value="password" class="space-y-4">
+          <div class="space-y-2">
+            <Label for="current">Current Password</Label>
+            <Input id="current" type="password" />
+          </div>
+          <div class="space-y-2">
+            <Label for="new">New Password</Label>
+            <Input id="new" type="password" />
+          </div>
+        </TabsContent>
+      </Tabs>
+    </section>
+
+    <!-- Dialog -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Dialog (Modal)</h2>
+      <Dialog>
+        <DialogTrigger as-child>
+          <Button>Open Dialog</Button>
+        </DialogTrigger>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Are you absolutely sure?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
+            </DialogDescription>
+          </DialogHeader>
+          <div class="flex justify-end gap-2">
+            <Button variant="outline">Cancel</Button>
+            <Button variant="destructive">Delete Account</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </section>
+
+    <!-- Sheet -->
+    <section class="mb-10">
+      <h2 class="text-2xl font-semibold mb-4">Sheet (Drawer)</h2>
+      <div class="flex gap-4">
+        <Sheet>
+          <SheetTrigger as-child>
+            <Button variant="outline">Open Sheet (Right)</Button>
+          </SheetTrigger>
+          <SheetContent side="right">
+            <SheetHeader>
+              <SheetTitle>Edit Profile</SheetTitle>
+              <SheetDescription>
+                Make changes to your profile here. Click save when you're done.
+              </SheetDescription>
+            </SheetHeader>
+            <div class="grid gap-4 py-4">
+              <div class="grid gap-2">
+                <Label for="name-sheet">Name</Label>
+                <Input id="name-sheet" placeholder="John Doe" />
+              </div>
+              <div class="grid gap-2">
+                <Label for="email-sheet">Email</Label>
+                <Input id="email-sheet" type="email" placeholder="john@example.com" />
+              </div>
+            </div>
+            <Button class="w-full">Save Changes</Button>
+          </SheetContent>
+        </Sheet>
+
+        <Sheet>
+          <SheetTrigger as-child>
+            <Button variant="outline">Open Sheet (Left)</Button>
+          </SheetTrigger>
+          <SheetContent side="left">
+            <SheetHeader>
+              <SheetTitle>Navigation Menu</SheetTitle>
+              <SheetDescription>Browse through menu items</SheetDescription>
+            </SheetHeader>
+            <div class="grid gap-2 py-4">
+              <Button variant="ghost" class="justify-start">Home</Button>
+              <Button variant="ghost" class="justify-start">Products</Button>
+              <Button variant="ghost" class="justify-start">About</Button>
+              <Button variant="ghost" class="justify-start">Contact</Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+    </section>
   </main>
 </template>
