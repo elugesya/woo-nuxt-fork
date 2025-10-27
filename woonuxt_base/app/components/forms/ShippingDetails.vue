@@ -1,58 +1,61 @@
 <script lang="ts" setup>
-const { updateShippingLocation } = useCheckout();
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
+const { updateShippingLocation } = useCheckout()
 
 const props = defineProps({
   modelValue: { type: Object, required: true },
-});
+})
 
-const shipping = toRef(props, 'modelValue');
+const shipping = toRef(props, 'modelValue')
 </script>
 
 <template>
   <div class="grid w-full gap-4 lg:grid-cols-2">
-    <div class="w-full">
-      <label for="first-name">{{ $t('billing.firstName') }}</label>
-      <input id="first-name" v-model="shipping.firstName" placeholder="Ahmet" autocomplete="given-name" type="text" required />
+    <div class="w-full space-y-2">
+      <Label for="first-name">{{ $t('billing.firstName') }}</Label>
+      <Input id="first-name" v-model="shipping.firstName" placeholder="Ahmet" autocomplete="given-name" type="text" required />
     </div>
 
-    <div class="w-full">
-      <label for="last-name">{{ $t('billing.lastName') }}</label>
-      <input id="last-name" v-model="shipping.lastName" placeholder="Yılmaz" autocomplete="family-name" type="text" required />
+    <div class="w-full space-y-2">
+      <Label for="last-name">{{ $t('billing.lastName') }}</Label>
+      <Input id="last-name" v-model="shipping.lastName" placeholder="Yılmaz" autocomplete="family-name" type="text" required />
     </div>
 
-    <div class="w-full col-span-full">
-      <label for="address1">{{ $t('billing.address1') }}</label>
-      <input id="address1" v-model="shipping.address1" placeholder="Kıbrıs şehitleri caddesi" autocomplete="street-address" type="text" required />
+    <div class="w-full col-span-full space-y-2">
+      <Label for="address1">{{ $t('billing.address1') }}</Label>
+      <Input id="address1" v-model="shipping.address1" placeholder="Kıbrıs şehitleri caddesi" autocomplete="street-address" type="text" required />
     </div>
 
-    <div class="w-full col-span-full">
-      <label for="address2">{{ $t('billing.address2') }} ({{ $t('general.optional') }})</label>
-      <input id="address2" v-model="shipping.address2" placeholder="Çameli Apartmanı" autocomplete="address-line2" type="text" />
+    <div class="w-full col-span-full space-y-2">
+      <Label for="address2">{{ $t('billing.address2') }} ({{ $t('general.optional') }})</Label>
+      <Input id="address2" v-model="shipping.address2" placeholder="Çameli Apartmanı" autocomplete="address-line2" type="text" />
     </div>
 
-    <div class="w-full">
-      <label for="city">{{ $t('billing.city') }}</label>
-      <input id="city" v-model="shipping.city" placeholder="Karşıyaka" autocomplete="locality" type="text" required />
+    <div class="w-full space-y-2">
+      <Label for="city">{{ $t('billing.city') }}</Label>
+      <Input id="city" v-model="shipping.city" placeholder="Karşıyaka" autocomplete="locality" type="text" required />
     </div>
 
-    <div class="w-full">
-      <label for="state">{{ $t('billing.state') }} ({{ $t('general.optional') }})</label>
+    <div class="w-full space-y-2">
+      <Label for="state">{{ $t('billing.state') }} ({{ $t('general.optional') }})</Label>
       <StateSelect id="state" v-model="shipping.state" :default-value="shipping.state" :country-code="shipping.country" @change="updateShippingLocation" />
     </div>
 
-    <div class="w-full">
-      <label for="country">{{ $t('billing.country') }}</label>
+    <div class="w-full space-y-2">
+      <Label for="country">{{ $t('billing.country') }}</Label>
       <CountrySelect id="country" v-model="shipping.country" :default-value="shipping.country" @change="updateShippingLocation" />
     </div>
 
-    <div class="w-full">
-      <label for="zip">{{ $t('billing.zip') }} ({{ $t('general.optional') }})</label>
-      <input id="zip" v-model="shipping.postcode" placeholder="10001" autocomplete="postal-code" type="text" />
+    <div class="w-full space-y-2">
+      <Label for="zip">{{ $t('billing.zip') }} ({{ $t('general.optional') }})</Label>
+      <Input id="zip" v-model="shipping.postcode" placeholder="10001" autocomplete="postal-code" type="text" />
     </div>
 
-    <div class="w-full col-span-full">
-      <label for="phone">{{ $t('billing.phone') }}</label>
-      <input id="phone" v-model="shipping.phone" placeholder="+9053212345678" autocomplete="tel" type="tel" required />
+    <div class="w-full col-span-full space-y-2">
+      <Label for="phone">{{ $t('billing.phone') }}</Label>
+      <Input id="phone" v-model="shipping.phone" placeholder="+9053212345678" autocomplete="tel" type="tel" required />
     </div>
   </div>
 </template>
