@@ -45,7 +45,26 @@ export default defineNuxtConfig({
 
   components: [{ path: resolve('./app/components'), pathPrefix: false }],
 
-  modules: [resolve('./modules/woonuxt-bridge.ts'), 'nuxt-graphql-client', '@nuxtjs/tailwindcss', '@nuxt/icon', '@nuxt/image', '@nuxtjs/i18n', 'nuxt-gtag'],
+  modules: [
+    resolve('./modules/woonuxt-bridge.ts'), 
+    'nuxt-graphql-client', 
+    '@nuxtjs/tailwindcss', 
+    '@nuxt/icon', 
+    '@nuxt/image', 
+    '@nuxtjs/i18n', 
+    'nuxt-gtag',
+    'shadcn-nuxt',
+    '@nuxtjs/color-mode'
+  ],
+
+  shadcn: {
+    prefix: '',
+    componentDir: resolve('./app/components/ui')
+  },
+
+  colorMode: {
+    classSuffix: ''
+  },
 
   image: {
     quality: 80,
