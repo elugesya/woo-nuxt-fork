@@ -93,11 +93,10 @@ useHead({
         </div>
       </Transition>
 
-      <button class="flex items-center justify-center gap-4 mt-4 text-lg">
-        <ShadcnButton type="submit" class="w-full flex items-center justify-center gap-4 mt-4 text-lg">
-          <LoadingIcon v-if="isPending" stroke="4" size="16" color="currentColor" />
-          <span>{{ $t('account.resetPassword') }}</span>
-        </ShadcnButton>
+      <ShadcnButton type="submit" class="w-full flex items-center justify-center gap-4 mt-4 text-lg">
+        <LoadingIcon v-if="isPending" stroke="4" size="16" color="currentColor" />
+        <span>{{ $t('account.resetPassword') }}</span>
+      </ShadcnButton>
     </form>
 
     <div class="my-8 text-center cursor-pointer">

@@ -62,7 +62,7 @@ useHead(() => ({
   script: [
     { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
     { type: 'application/ld+json', innerHTML: blogJsonLd.value },
-    { type: 'application/ld+json', innerHTML: blogPostListJsonLd.value },
+  { type: 'application/ld+json', innerHTML: itemListJsonLd.value },
   ],
 }));
 </script>

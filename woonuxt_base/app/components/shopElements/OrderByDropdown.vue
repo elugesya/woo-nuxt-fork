@@ -1,6 +1,7 @@
 <script setup>
 import { Button } from '@/components/ui/button'
-import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from '@/components/ui/select'
+import { Select, SelectTrigger, SelectItem, SelectValue } from '@/components/ui/select'
+import SelectContent from '@/components/ui/select/SelectContent.vue'
 const { getOrderQuery, setOrderQuery } = await useSorting();
 const { storeSettings } = useAppConfig();
 const selectedOrder = ref(getOrderQuery());

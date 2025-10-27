@@ -364,7 +364,7 @@ const lastUpdated = 'Ekim 2025';
         <section class="mb-12">
           <div class="flex items-start gap-4 mb-6">
             <div class="flex-shrink-0 w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-              <Icon name="ion:filing-outline" class="w-6 h-6 text-primary" />
+              <Icon name="ion:document-text-outline" class="w-6 h-6 text-primary" />
             </div>
             <div class="flex-1">
               <h2 class="text-2xl font-bold text-gray-900 mb-3 mt-0">6. Çerez (Cookie) Politikası</h2>

@@ -26,6 +26,7 @@ watch(
     closeMobileMenu();
   },
 );
+import MobileMenu from "./components/generalElements/MobileMenu.vue";
 
 useHead({
   titleTemplate: `%s - ${siteName}`,
@@ -128,7 +129,6 @@ useHead({
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;

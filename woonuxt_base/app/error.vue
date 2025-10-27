@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import MobileMenu from "./components/generalElements/MobileMenu.vue";
 const route = useRoute();
 const { error } = defineProps<{ error: any }>();
 const { isShowingCart, toggleCart } = useCart();
@@ -33,7 +34,7 @@ useSeoMeta({
     </Transition>
 
     <Transition name="slide-from-left">
-      <LazyMobileMenu v-if="isShowingMobileMenu" />
+      <MobileMenu v-if="isShowingMobileMenu" />
     </Transition>
 
     <div class="flex flex-col items-center justify-center flex-1 gap-4 min-h-[500px]">
