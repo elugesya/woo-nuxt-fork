@@ -22,6 +22,70 @@ const galleryImages = computed(() => {
   return [primaryImage.value, ...props.gallery.nodes].filter((img, index, self) => index === self.findIndex((t) => t?.databaseId === img?.databaseId));
 });
 
+// Progressive loading: Initially show only first 4 thumbnails, load more on scroll
+const INITIAL_VISIBLE_COUNT = 4;
+const visibleThumbnailCount = ref(INITIAL_VISIBLE_COUNT);
+const galleryContainer = ref<HTMLElement | null>(null);
+
+const visibleGalleryImages = computed(() => {
+  return galleryImages.value.slice(0, visibleThumbnailCount.value);
+});
+
+const hasMoreImages = computed(() => {
+  return visibleThumbnailCount.value < galleryImages.value.length;
+});
+
+const loadMoreImages = () => {
+  if (hasMoreImages.value) {
+    // Load 4 more images at a time
+    visibleThumbnailCount.value = Math.min(
+      visibleThumbnailCount.value + 4,
+      galleryImages.value.length
+    );
+  }
+};
+
+// Watch for scroll events to load more images
+onMounted(() => {
+  if (galleryContainer.value) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && hasMoreImages.value) {
+            loadMoreImages();
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    // Observe the last thumbnail to trigger loading
+    const observeLastThumbnail = () => {
+      const thumbnails = galleryContainer.value?.querySelectorAll('img');
+      if (thumbnails && thumbnails.length > 0) {
+        const lastThumbnail = thumbnails[thumbnails.length - 1];
+        observer.observe(lastThumbnail);
+      }
+    };
+
+    // Initial observation
+    nextTick(() => {
+      observeLastThumbnail();
+    });
+
+    // Re-observe when more images are loaded
+    watch(visibleThumbnailCount, () => {
+      nextTick(() => {
+        observeLastThumbnail();
+      });
+    });
+
+    onUnmounted(() => {
+      observer.disconnect();
+    });
+  }
+});
+
 const changeImage = (image: any) => {
   if (image) imageToShow.value = image;
 };
@@ -52,9 +116,9 @@ const imgWidth = 640;
       fetchpriority="high"
       placeholder
       placeholder-class="blur-xl" />
-    <div v-if="gallery.nodes.length" class="my-4 gallery-images">
+    <div v-if="gallery.nodes.length" ref="galleryContainer" class="my-4 gallery-images">
       <NuxtImg
-        v-for="galleryImg in galleryImages"
+        v-for="(galleryImg, index) in visibleGalleryImages"
         :key="galleryImg.databaseId"
         class="cursor-pointer rounded-xl"
         :width="imgWidth"
@@ -64,8 +128,15 @@ const imgWidth = 640;
         :title="galleryImg.title || node.name"
         placeholder
         placeholder-class="blur-xl"
-        loading="lazy"
+        :loading="index < 3 ? 'eager' : 'lazy'"
         @click.native="changeImage(galleryImg)" />
+      <!-- Loading indicator for remaining images -->
+      <div 
+        v-if="hasMoreImages" 
+        class="flex items-center justify-center rounded-xl bg-gray-100 text-gray-400 text-xs"
+        style="width: 72px; aspect-ratio: 5/6;">
+        +{{ galleryImages.length - visibleThumbnailCount }}
+      </div>
     </div>
   </div>
 </template>
