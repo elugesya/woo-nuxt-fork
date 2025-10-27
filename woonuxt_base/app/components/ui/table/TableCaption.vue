@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { type HTMLAttributes } from 'vue'
 import { cn } from '@/lib/utils'
 
-interface TableCaptionProps extends HTMLAttributes {
+interface TableCaptionProps {
   class?: string
 }
 

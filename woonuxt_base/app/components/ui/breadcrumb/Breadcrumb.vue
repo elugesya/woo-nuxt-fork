@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { type HTMLAttributes } from 'vue'
 import { Icon } from '@iconify/vue'
 import { cn } from '@/lib/utils'
 
-interface BreadcrumbProps extends HTMLAttributes {
+interface BreadcrumbProps {
   class?: string
 }
 

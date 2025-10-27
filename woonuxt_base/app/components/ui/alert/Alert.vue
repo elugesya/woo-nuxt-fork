@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { type HTMLAttributes, computed } from 'vue'
+import { computed } from 'vue'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
@@ -20,8 +20,9 @@ const alertVariants = cva(
 
 type AlertVariants = VariantProps<typeof alertVariants>
 
-interface AlertProps extends HTMLAttributes {
+interface AlertProps {
   variant?: AlertVariants['variant']
+  class?: string
 }
 
 const props = withDefaults(defineProps<AlertProps>(), {

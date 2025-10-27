@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue'
 import { type Component } from 'vue'
-import { type ButtonProps, Button } from '@/components/ui/button'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-interface PaginationNextProps extends ButtonProps {
+interface PaginationNextProps {
   component?: string | Component
+  variant?: 'default' | 'destructive' | 'outline' | 'secondary' | 'ghost' | 'link'
+  size?: 'default' | 'sm' | 'lg' | 'icon'
+  class?: string
 }
 
 const props = withDefaults(defineProps<PaginationNextProps>(), {
