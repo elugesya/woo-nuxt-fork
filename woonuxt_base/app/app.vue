@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const route = useRoute();
-const { isShowingCart, toggleCart } = useCart();
+const { isShowingCart } = useCart();
 const { isShowingMobileMenu, toggleMobileMenu, addBodyClass, removeBodyClass } = useHelpers();
 const runtimeConfig = useRuntimeConfig();
 
@@ -9,18 +9,22 @@ const frontEndUrl = runtimeConfig.public.FRONT_END_URL || 'http://localhost:3000
 
 //
 
-const closeCartAndMenu = () => {
-  toggleCart(false);
+const closeMobileMenu = () => {
   toggleMobileMenu(false);
 };
 
-watch([isShowingCart, isShowingMobileMenu], () => {
-  isShowingCart.value || isShowingMobileMenu.value ? addBodyClass('overflow-hidden') : removeBodyClass('overflow-hidden');
+// Sheet handles its own body scroll lock for cart
+// Only manage mobile menu scroll lock
+watch(isShowingMobileMenu, () => {
+  isShowingMobileMenu.value ? addBodyClass('overflow-hidden') : removeBodyClass('overflow-hidden');
 });
 
 watch(
   () => route.path,
-  () => closeCartAndMenu(),
+  () => {
+    isShowingCart.value = false;
+    closeMobileMenu();
+  },
 );
 
 useHead({
@@ -95,9 +99,7 @@ useHead({
   <div class="flex flex-col min-h-screen">
     <AppHeader />
 
-    <Transition name="slide-from-right">
-      <LazyCart v-if="isShowingCart" />
-    </Transition>
+    <LazyCart />
 
     <Transition name="slide-from-left">
       <MobileMenu v-if="isShowingMobileMenu" />
@@ -106,7 +108,7 @@ useHead({
     <NuxtPage />
 
     <Transition name="fade">
-      <div v-if="isShowingCart || isShowingMobileMenu" class="bg-black opacity-25 inset-0 z-40 fixed" @click="closeCartAndMenu" />
+      <div v-if="isShowingMobileMenu" class="bg-black opacity-25 inset-0 z-40 fixed" @click="closeMobileMenu" />
     </Transition>
 
     <LazyAppFooter hydrate-on-visible />

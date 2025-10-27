@@ -1,4 +1,14 @@
 <script setup lang="ts">
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Spinner } from '@/components/ui/spinner'
+import { ShieldCheck, AlertCircle } from 'lucide-vue-next'
+
 const route = useRoute();
 const { storeSettings } = useAppConfig();
 const runtimeConfig = useRuntimeConfig();
@@ -19,7 +29,7 @@ const cardData = ref({
   cvv: '',
 });
 
-const selectedInstallment = ref(1);
+const selectedInstallment = ref('1');
 const selectedCommission = ref(0);
 const installmentOptions = ref<any[]>([]);
 const loading = ref(false);
@@ -94,13 +104,12 @@ const fetchInstallments = async (bin: string) => {
       installmentOptions.value = opts;
 
       // Auto-select Tek Çekim by default
-      selectedInstallment.value = 1;
+      selectedInstallment.value = '1';
       selectedCommission.value = 0;
     } else {
       installmentOptions.value = [];
     }
   } catch (error: any) {
-  // ...existing code...
     // Fallback: even if taksit API fails (e.g., 404 route not found), allow Tek Çekim
     installmentOptions.value = [{
       count: 1,
@@ -111,7 +120,7 @@ const fetchInstallments = async (bin: string) => {
       monthlyPayment: Number(orderTotal.value),
       label: 'Tek Çekim'
     }];
-    selectedInstallment.value = 1;
+    selectedInstallment.value = '1';
     selectedCommission.value = 0;
     errorMessage.value = 'Taksit bilgileri alınamadı, Tek Çekim ile devam edebilirsiniz.';
   } finally {
@@ -121,7 +130,7 @@ const fetchInstallments = async (bin: string) => {
 
 // Handle installment selection
 const selectInstallment = (option: any) => {
-  selectedInstallment.value = option.count;
+  selectedInstallment.value = String(option.count);
   selectedCommission.value = option.commissionFee;
 };
 
@@ -193,7 +202,7 @@ const submitPayment = async () => {
           ExpireDate: expireDate,
           Cvv: cardData.value.cvv
         },
-        installment: selectedInstallment.value,
+        installment: parseInt(selectedInstallment.value),
         commission: selectedCommission.value
       }
     });
@@ -278,40 +287,40 @@ const years = Array.from({ length: 10 }, (_, i) => {
 
 <template>
   <div class="container mx-auto px-4 py-8 max-w-2xl">
-  <!-- ...existing code... -->
-    <!-- ...existing code... -->
-
     <h1 class="text-2xl font-bold mb-6">Kart Bilgileri</h1>
     
     <!-- Order info -->
-    <div v-if="orderTotal > 0" class="mb-6 p-4 bg-gray-50 rounded-lg">
-      <div class="flex justify-between items-center">
-        <span class="text-gray-600">Sipariş Tutarı:</span>
-        <span class="font-semibold">{{ formatCurrency(orderTotal) }}</span>
-      </div>
-      <div v-if="selectedCommission > 0" class="flex justify-between items-center mt-2 text-sm">
-        <span class="text-gray-600">Taksit Komisyonu:</span>
-        <span class="text-orange-600">+ {{ formatCurrency(selectedCommission) }}</span>
-      </div>
-      <div v-if="selectedCommission > 0" class="flex justify-between items-center mt-2 pt-2 border-t">
-        <span class="font-semibold">Toplam Ödeme:</span>
-        <span class="font-bold text-lg">{{ formatCurrency(finalTotal) }}</span>
-      </div>
-    </div>
+    <Card v-if="orderTotal > 0" class="mb-6">
+      <CardContent class="pt-6">
+        <div class="flex justify-between items-center">
+          <span class="text-muted-foreground">Sipariş Tutarı:</span>
+          <span class="font-semibold">{{ formatCurrency(orderTotal) }}</span>
+        </div>
+        <div v-if="selectedCommission > 0" class="flex justify-between items-center mt-2 text-sm">
+          <span class="text-muted-foreground">Taksit Komisyonu:</span>
+          <span class="text-orange-600">+ {{ formatCurrency(selectedCommission) }}</span>
+        </div>
+        <div v-if="selectedCommission > 0" class="flex justify-between items-center mt-2 pt-2 border-t">
+          <span class="font-semibold">Toplam Ödeme:</span>
+          <span class="font-bold text-lg">{{ formatCurrency(finalTotal) }}</span>
+        </div>
+      </CardContent>
+    </Card>
 
     <!-- Error message -->
-    <div v-if="errorMessage" class="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700">
-      {{ errorMessage }}
-    </div>
+    <Alert v-if="errorMessage" variant="destructive" class="mb-6">
+      <AlertCircle class="h-4 w-4" />
+      <AlertDescription>{{ errorMessage }}</AlertDescription>
+    </Alert>
 
     <!-- Card form -->
     <form @submit.prevent="submitPayment" class="space-y-6 pb-32 md:pb-6">
       <!-- Card number -->
-      <div>
-        <label for="cardNumber" class="block text-sm font-medium text-gray-700 mb-2">
-          Kart Numarası <span class="text-red-500">*</span>
-        </label>
-        <input
+      <div class="space-y-2">
+        <Label for="cardNumber">
+          Kart Numarası <span class="text-destructive">*</span>
+        </Label>
+        <Input
           id="cardNumber"
           v-model="cardData.cardNumber"
           type="text"
@@ -320,65 +329,64 @@ const years = Array.from({ length: 10 }, (_, i) => {
           placeholder="•••• •••• •••• ••••"
           maxlength="19"
           required
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           @input="cardData.cardNumber = formatCardNumber($event.target.value)"
         />
-        <p v-if="loadingInstallments" class="mt-2 text-sm text-gray-500">
+        <p v-if="loadingInstallments" class="text-sm text-muted-foreground">
           Taksit seçenekleri yükleniyor...
         </p>
       </div>
 
       <!-- Cardholder name -->
-      <div>
-        <label for="cardName" class="block text-sm font-medium text-gray-700 mb-2">
-          Kart Üzerindeki İsim <span class="text-red-500">*</span>
-        </label>
-        <input
+      <div class="space-y-2">
+        <Label for="cardName">
+          Kart Üzerindeki İsim <span class="text-destructive">*</span>
+        </Label>
+        <Input
           id="cardName"
           v-model="cardData.cardName"
           type="text"
           autocomplete="cc-name"
           placeholder="AD SOYAD"
           required
-          class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent uppercase"
+          class="uppercase"
         />
       </div>
 
       <!-- Expiry date and CVV -->
       <div class="grid grid-cols-2 gap-4">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Son Kullanma Tarihi <span class="text-red-500">*</span>
-          </label>
+        <div class="space-y-2">
+          <Label>
+            Son Kullanma Tarihi <span class="text-destructive">*</span>
+          </Label>
           <div class="flex gap-2">
-            <select
-              v-model="cardData.expiryMonth"
-              required
-              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="">Ay</option>
-              <option v-for="month in months" :key="month.value" :value="month.value">
-                {{ month.label }}
-              </option>
-            </select>
-            <select
-              v-model="cardData.expiryYear"
-              required
-              class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
-            >
-              <option value="">Yıl</option>
-              <option v-for="year in years" :key="year.value" :value="year.value">
-                {{ year.label }}
-              </option>
-            </select>
+            <Select v-model="cardData.expiryMonth" required>
+              <SelectTrigger class="flex-1">
+                <SelectValue placeholder="Ay" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="month in months" :key="month.value" :value="month.value">
+                  {{ month.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <Select v-model="cardData.expiryYear" required>
+              <SelectTrigger class="flex-1">
+                <SelectValue placeholder="Yıl" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem v-for="year in years" :key="year.value" :value="year.value">
+                  {{ year.label }}
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
-        <div>
-          <label for="cvv" class="block text-sm font-medium text-gray-700 mb-2">
-            CVV <span class="text-red-500">*</span>
-          </label>
-          <input
+        <div class="space-y-2">
+          <Label for="cvv">
+            CVV <span class="text-destructive">*</span>
+          </Label>
+          <Input
             id="cvv"
             v-model="cardData.cvv"
             type="password"
@@ -387,87 +395,89 @@ const years = Array.from({ length: 10 }, (_, i) => {
             placeholder="•••"
             maxlength="4"
             required
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
           />
         </div>
       </div>
 
       <!-- Installment options -->
-      <div v-if="installmentOptions.length > 0" class="border rounded-lg overflow-hidden">
-        <div class="bg-gray-50 px-4 py-3 border-b">
-          <h3 class="font-semibold">Taksit Seçenekleri</h3>
-        </div>
-        <table class="w-full">
-          <thead class="bg-gray-50 border-b">
-            <tr>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Seçim</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Taksit</th>
-              <th class="px-4 py-2 text-right text-sm font-medium text-gray-700">Aylık</th>
-              <th class="px-4 py-2 text-right text-sm font-medium text-gray-700">Toplam</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="option in installmentOptions"
-              :key="option.count"
-              class="border-b hover:bg-gray-50 cursor-pointer"
-              :class="{ 'bg-primary/10': selectedInstallment === option.count }"
-              @click="selectInstallment(option)"
-            >
-              <td class="px-4 py-3">
-                <input
-                  type="radio"
-                  :id="`installment-${option.count}`"
-                  :value="option.count"
-                  v-model="selectedInstallment"
-                  @change="selectInstallment(option)"
-                  class="w-4 h-4"
-                />
-              </td>
-              <td class="px-4 py-3">
-                <label :for="`installment-${option.count}`" class="cursor-pointer">
-                  {{ option.label }}
-                </label>
-              </td>
-              <td class="px-4 py-3 text-right">
-                <label :for="`installment-${option.count}`" class="cursor-pointer">
-                  {{ option.count > 1 ? formatCurrency(option.monthlyPayment) : '-' }}
-                </label>
-              </td>
-              <td class="px-4 py-3 text-right font-semibold">
-                <label :for="`installment-${option.count}`" class="cursor-pointer">
-                  {{ formatCurrency(option.totalAmount) }}
-                </label>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <Card v-if="installmentOptions.length > 0">
+        <CardHeader>
+          <CardTitle class="text-base">Taksit Seçenekleri</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <RadioGroup v-model="selectedInstallment" class="space-y-0">
+            <div class="overflow-x-auto">
+              <table class="w-full">
+                <thead class="border-b">
+                  <tr>
+                    <th class="px-2 py-2 text-left text-sm font-medium text-muted-foreground">Seçim</th>
+                    <th class="px-2 py-2 text-left text-sm font-medium text-muted-foreground">Taksit</th>
+                    <th class="px-2 py-2 text-right text-sm font-medium text-muted-foreground">Aylık</th>
+                    <th class="px-2 py-2 text-right text-sm font-medium text-muted-foreground">Toplam</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    v-for="option in installmentOptions"
+                    :key="option.count"
+                    class="border-b hover:bg-muted cursor-pointer transition-colors"
+                    :class="{ 'bg-accent': selectedInstallment === String(option.count) }"
+                    @click="selectInstallment(option)"
+                  >
+                    <td class="px-2 py-3">
+                      <RadioGroupItem
+                        :id="`installment-${option.count}`"
+                        :value="String(option.count)"
+                      />
+                    </td>
+                    <td class="px-2 py-3">
+                      <Label :for="`installment-${option.count}`" class="cursor-pointer">
+                        {{ option.label }}
+                      </Label>
+                    </td>
+                    <td class="px-2 py-3 text-right">
+                      <Label :for="`installment-${option.count}`" class="cursor-pointer">
+                        {{ option.count > 1 ? formatCurrency(option.monthlyPayment) : '-' }}
+                      </Label>
+                    </td>
+                    <td class="px-2 py-3 text-right font-semibold">
+                      <Label :for="`installment-${option.count}`" class="cursor-pointer">
+                        {{ formatCurrency(option.totalAmount) }}
+                      </Label>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </RadioGroup>
+        </CardContent>
+      </Card>
 
       <!-- Security notice -->
-      <div class="flex items-start gap-3 p-4 bg-blue-50 rounded-lg">
-        <Icon name="ion:shield-checkmark" class="text-blue-600 text-xl flex-shrink-0 mt-0.5" />
-        <div class="text-sm text-blue-900">
+      <Alert class="bg-blue-50 border-blue-200">
+        <ShieldCheck class="h-4 w-4 text-blue-600" />
+        <AlertDescription class="text-blue-900">
           <p class="font-semibold mb-1">Güvenli Ödeme</p>
-          <p>Kart bilgileriniz SSL sertifikası ile şifrelenerek güvenli bir şekilde işlenir.</p>
-        </div>
-      </div>
+          <p class="text-sm">Kart bilgileriniz SSL sertifikası ile şifrelenerek güvenli bir şekilde işlenir.</p>
+        </AlertDescription>
+      </Alert>
 
       <!-- Submit button - Desktop -->
-      <button
+      <Button
         type="submit"
         :disabled="loading"
-        class="hidden md:flex w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed items-center justify-center gap-2"
+        class="hidden md:flex w-full"
+        size="lg"
       >
-        <Icon v-if="loading" name="ion:reload-outline" class="animate-spin text-xl" />
+        <Spinner v-if="loading" size="sm" class="mr-2" />
         <span>{{ loading ? 'İşleniyor...' : 'Ödemeyi Tamamla' }}</span>
-      </button>
+      </Button>
 
       <!-- Cancel link - Desktop -->
       <div class="hidden md:block text-center">
         <NuxtLink
           :to="`/odeme?cancel_order=true`"
-          class="text-sm text-gray-600 hover:text-gray-900 underline"
+          class="text-sm text-muted-foreground hover:text-foreground underline"
         >
           İptal Et ve Sepete Dön
         </NuxtLink>
@@ -475,25 +485,26 @@ const years = Array.from({ length: 10 }, (_, i) => {
     </form>
 
     <!-- Mobile Sticky Payment Button -->
-    <div class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t shadow-lg md:hidden">
+    <div class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background border-t shadow-lg md:hidden">
       <div class="container mx-auto max-w-2xl space-y-3">
         <div v-if="orderTotal > 0" class="flex items-center justify-between">
-          <span class="text-sm text-gray-600">Toplam Ödeme</span>
-          <span class="text-lg font-bold text-gray-900">{{ formatCurrency(finalTotal) }}</span>
+          <span class="text-sm text-muted-foreground">Toplam Ödeme</span>
+          <span class="text-lg font-bold">{{ formatCurrency(finalTotal) }}</span>
         </div>
-        <button
+        <Button
           type="submit"
           :disabled="loading"
           @click="submitPayment"
-          class="flex w-full bg-primary hover:bg-primary-dark text-white font-semibold py-4 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed items-center justify-center gap-2"
+          class="w-full"
+          size="lg"
         >
-          <Icon v-if="loading" name="ion:reload-outline" class="animate-spin text-xl" />
+          <Spinner v-if="loading" size="sm" class="mr-2" />
           <span>{{ loading ? 'İşleniyor...' : 'Ödemeyi Tamamla' }}</span>
-        </button>
+        </Button>
         <div class="text-center">
           <NuxtLink
             :to="`/odeme?cancel_order=true`"
-            class="text-sm text-gray-600 hover:text-gray-900 underline"
+            class="text-sm text-muted-foreground hover:text-foreground underline"
           >
             İptal Et ve Sepete Dön
           </NuxtLink>

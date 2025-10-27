@@ -133,7 +133,7 @@ const imgWidth = 640;
       <!-- Loading indicator for remaining images -->
       <div 
         v-if="hasMoreImages" 
-        class="flex items-center justify-center rounded-xl bg-gray-100 text-gray-400 text-xs"
+        class="flex items-center justify-center rounded-xl bg-muted text-muted-foreground text-xs"
         style="width: 72px; aspect-ratio: 5/6;">
         +{{ galleryImages.length - visibleThumbnailCount }}
       </div>

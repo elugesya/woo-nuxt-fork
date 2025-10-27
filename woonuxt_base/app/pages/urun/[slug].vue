@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#woo';
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 const route = useRoute();
 const { storeSettings, siteName } = useAppConfig();
@@ -18,6 +20,8 @@ const product = ref<Product>(data?.value?.product);
 const quantity = ref<number>(1);
 const activeVariation = ref<Variation | null>(null);
 const variation = ref<VariationAttribute[]>([]);
+const variationId = ref<number | null>(null);
+const variationAttributes = ref<any[] | null>(null);
 const indexOfTypeAny = computed<number[]>(() => checkForVariationTypeOfAny(product.value));
 const attrValues = ref();
 const isSimpleProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.SIMPLE);
@@ -25,7 +29,12 @@ const isVariableProduct = computed<boolean>(() => product.value?.type === Produc
 const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
 
 const type = computed(() => activeVariation.value || product.value);
-const selectProductInput = computed<any>(() => ({ productId: type.value?.databaseId, quantity: quantity.value })) as ComputedRef<AddToCartInput>;
+const selectProductInput = computed<AddToCartInput>(() => ({ 
+  productId: type.value?.databaseId ?? 0, 
+  quantity: quantity.value,
+  variationId: variationId.value,
+  variation: variationAttributes.value
+}));
 
 const mergeLiveStockStatus = (payload: Product): void => {
   product.value.stockStatus = payload.stockStatus ?? product.value?.stockStatus;
@@ -68,8 +77,8 @@ const updateSelectedVariations = (variations: VariationAttribute[]): void => {
   // Set variation to the selected variation if it exists
   activeVariation.value = getActiveVariation?.[0] || null;
 
-  selectProductInput.value.variationId = activeVariation.value?.databaseId ?? null;
-  selectProductInput.value.variation = activeVariation.value ? attrValues.value : null;
+  variationId.value = activeVariation.value?.databaseId ?? null;
+  variationAttributes.value = activeVariation.value ? attrValues.value : null;
   variation.value = variations;
 };
 
@@ -87,6 +96,21 @@ const disabledAddToCart = computed(() => {
   const isValidActiveVariation = isVariableProduct.value ? !!activeVariation.value : true;
   return isInvalidType || isOutOfStock || isCartUpdating || !isValidActiveVariation;
 });
+
+// Form submit handler
+const handleAddToCart = async () => {
+  console.log('Form submitted');
+  console.log('selectProductInput:', selectProductInput.value);
+  console.log('type:', type.value);
+  console.log('quantity:', quantity.value);
+  try {
+    await addToCart(selectProductInput.value);
+    console.log('Added to cart successfully');
+    trackAddToCart(type.value, quantity.value);
+  } catch (error) {
+    console.error('Error adding to cart:', error);
+  }
+};
 
 // Product JSON-LD
 const mapAvailability = (status?: StockStatusEnum | string) => {
@@ -228,11 +252,11 @@ useHead(() => ({
 
           <div class="grid gap-2 my-8 text-sm empty:hidden">
             <div v-if="!isExternalProduct" class="flex items-center gap-2">
-              <span class="text-gray-400">{{ $t('shop.availability') }}: </span>
+              <span class="text-muted-foreground">{{ $t('shop.availability') }}: </span>
               <StockStatus :stockStatus @updated="mergeLiveStockStatus" />
             </div>
             <div class="flex items-center gap-2" v-if="storeSettings.showSKU && product.sku">
-              <span class="text-gray-400">{{ $t('shop.sku') }}: </span>
+              <span class="text-muted-foreground">{{ $t('shop.sku') }}: </span>
               <span>{{ product.sku || 'N/A' }}</span>
             </div>
           </div>
@@ -241,13 +265,7 @@ useHead(() => ({
 
           <hr />
 
-          <form
-            @submit.prevent="
-              () => {
-                addToCart(selectProductInput);
-                trackAddToCart(type, quantity);
-              }
-            ">
+          <form @submit.prevent="handleAddToCart">
             <AttributeSelections
               v-if="isVariableProduct && product.attributes && product.variations"
               class="mt-4 mb-8"
@@ -265,19 +283,19 @@ useHead(() => ({
             <div
               v-if="isVariableProduct || isSimpleProduct"
               class="hidden md:flex items-center w-full gap-4 mt-4">
-              <input
+              <Input
                 v-model="quantity"
                 type="number"
                 min="1"
                 aria-label="Quantity"
-                class="bg-white border rounded-lg flex text-left p-2.5 w-20 gap-4 items-center justify-center focus:outline-none" />
+                class="w-20" />
               <AddToCartButton class="flex-1 w-full md:max-w-xs" :disabled="disabledAddToCart" :class="{ loading: isUpdatingCart }" />
             </div>
 
             <!-- Mobile Sticky Actions: WhatsApp + Add to Cart -->
             <div
               v-if="isVariableProduct || isSimpleProduct"
-              class="fixed bottom-0 left-0 z-10 w-full p-4 bg-white md:hidden bg-opacity-90">
+              class="fixed bottom-0 left-0 z-10 w-full p-4 bg-background/95 backdrop-blur-sm md:hidden border-t">
               <WhatsAppOrderButton :product="product" class="w-full" />
               <div class="mt-3">
                 <AddToCartButton class="w-full" :disabled="disabledAddToCart" :class="{ loading: isUpdatingCart }" />
@@ -286,16 +304,17 @@ useHead(() => ({
             <a
               v-if="isExternalProduct && product.externalUrl"
               :href="product.externalUrl"
-              target="_blank"
-              class="rounded-lg flex font-bold bg-gray-800 text-white text-center min-w-[150px] p-2.5 gap-4 items-center justify-center focus:outline-none">
-              {{ product?.buttonText || 'View product' }}
+              target="_blank">
+              <Button class="w-full md:w-auto">
+                {{ product?.buttonText || 'View product' }}
+              </Button>
             </a>
           </form>
 
           <div v-if="storeSettings.showProductCategoriesOnSingleProduct && product.productCategories">
             <div class="grid gap-2 my-8 text-sm">
               <div class="flex items-center gap-2">
-                <span class="text-gray-400">{{ $t('shop.category', 2) }}:</span>
+                <span class="text-muted-foreground">{{ $t('shop.category', 2) }}:</span>
                 <div class="product-categories">
                   <NuxtLink
                     v-for="category in product.productCategories.nodes"
