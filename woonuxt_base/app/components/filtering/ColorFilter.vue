@@ -44,10 +44,12 @@ const checkboxChanged = () => {
             @change="checkboxChanged" />
           <label 
             :for="color.slug" 
-            class="flex aspect-square cursor-pointer items-center justify-center rounded-md border-2 border-border transition-all hover:scale-110 hover:border-primary peer-checked:ring-2 peer-checked:ring-primary peer-checked:ring-offset-2"
-            :class="`bg-${color.slug}-500`"
-            :style="{ backgroundColor: color.slug }">
-            <span v-if="selectedTerms.includes(color.slug)" class="text-white text-xl">✓</span>
+            class="flex aspect-square cursor-pointer items-center justify-center rounded-md border-2 transition-all hover:scale-110 peer-checked:ring-2 peer-checked:ring-primary peer-checked:ring-offset-2"
+            :style="{
+              backgroundColor: color.slug,
+              borderColor: selectedTerms.includes(color.slug) ? '#6366f1' : '#e5e7eb',
+            }">
+            <span v-if="selectedTerms.includes(color.slug)" :class="color.slug === 'white' ? 'text-foreground text-xl' : 'text-white text-xl'">✓</span>
           </label>
         </div>
       </div>
@@ -56,16 +58,5 @@ const checkboxChanged = () => {
 </template>
 
 <style scoped>
-/* Specific color classes for common colors */
-.bg-white { background-color: #ffffff; border-color: #e5e7eb; }
-.bg-black { background-color: #000000; }
-.bg-red { background-color: #ef4444; }
-.bg-blue { background-color: #3b82f6; }
-.bg-green { background-color: #22c55e; }
-.bg-yellow { background-color: #eab308; }
-.bg-orange { background-color: #f97316; }
-.bg-purple { background-color: #a855f7; }
-.bg-pink { background-color: #ec4899; }
-.bg-gray, .bg-grey { background-color: #6b7280; }
-.bg-brown { background-color: #92400e; }
+/* Renk swatchları için özel stil yok, hepsi inline style ile ayarlanıyor. */
 </style>

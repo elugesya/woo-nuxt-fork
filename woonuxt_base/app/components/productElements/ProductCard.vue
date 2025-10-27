@@ -41,7 +41,7 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
 </script>
 
 <template>
-  <Card class="group overflow-hidden transition-all duration-300 hover:shadow-lg">
+  <Card class="group bg-white border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg">
     <NuxtLink v-if="node.slug" :to="`/urun/${decodeURIComponent(node.slug)}`" :title="node.name" class="block">
       <div class="relative overflow-hidden">
         <SaleBadge :node class="absolute top-2 right-2 z-10" />
@@ -54,7 +54,7 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             :title="node.image?.title || node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
             :sizes="`sm:${imgWidth / 2}px md:${imgWidth}px`"
-            class="rounded-t-lg object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105"
+            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-white" 
             placeholder
             placeholder-class="blur-xl" />
         </template>
@@ -66,13 +66,13 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             :alt="node.name || 'Product image'"
             :title="node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
-            class="rounded-t-lg object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105" />
+            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-white" />
         </template>
       </div>
       <CardContent class="p-4">
         <StarRating v-if="storeSettings.showReviews" :rating="node.averageRating" :count="node.reviewCount" class="mb-2" />
-        <h2 class="mb-2 font-light leading-tight transition-colors group-hover:text-primary line-clamp-2">{{ node.name }}</h2>
-        <ProductPrice class="text-sm font-medium" :sale-price="node.salePrice" :regular-price="node.regularPrice" />
+  <h2 class="mb-2 font-light leading-tight transition-colors group-hover:text-primary line-clamp-2 text-foreground">{{ node.name }}</h2>
+  <ProductPrice class="text-sm font-medium text-foreground" :sale-price="node.salePrice" :regular-price="node.regularPrice" />
       </CardContent>
     </NuxtLink>
   </Card>

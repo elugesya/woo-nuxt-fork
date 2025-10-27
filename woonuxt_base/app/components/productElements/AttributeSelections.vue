@@ -193,7 +193,7 @@ onMounted(() => {
 }
 
 .color-black {
-  @apply bg-black;
+  @apply bg-background;
 }
 
 .color-white {

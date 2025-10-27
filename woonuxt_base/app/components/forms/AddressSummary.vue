@@ -4,7 +4,7 @@
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
         <div>
-          <h3 v-if="address?.firstName || address?.lastName" class="text-lg font-semibold text-gray-900">
+          <h3 v-if="address?.firstName || address?.lastName" class="text-lg font-semibold text-foreground">
             {{ [address.firstName, address.lastName].filter(Boolean).join(' ') }}
           </h3>
           <h3 v-else class="text-lg font-medium text-gray-500">No address provided</h3>

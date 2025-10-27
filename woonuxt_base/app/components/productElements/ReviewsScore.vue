@@ -65,8 +65,8 @@ async function addComment() {
 
 <template>
   <div>
-    <h4 v-if="reviews.edges.length" class="font-semibold text-2xl text-gray-900">{{ $t('shop.customerReviews') }}</h4>
-    <h4 v-else class="font-semibold text-2xl text-gray-900">{{ $t('shop.noReviews') }}</h4>
+  <h4 v-if="reviews.edges.length" class="font-semibold text-2xl text-foreground">{{ $t('shop.customerReviews') }}</h4>
+  <h4 v-else class="font-semibold text-2xl text-foreground">{{ $t('shop.noReviews') }}</h4>
     <div v-if="reviews.edges.length" class="my-2">
       <StarRating :rating="reviews.averageRating" :hide-count="true" class="text-sm mr-2" />
       <span class="text-sm"> {{ $t('general.basedOn') }} {{ reviews.edges.length }} {{ $t('shop.reviews') }}</span>
@@ -83,7 +83,7 @@ async function addComment() {
         </div>
       </div>
     </div>
-    <div class="mt-10 text-xl mb-2 text-gray-900">Share your thoughts</div>
+  <div class="mt-10 text-xl mb-2 text-foreground">Share your thoughts</div>
     <div class="text-sm mb-4">If you have used this product, we would love to hear about your experience.</div>
     <button @click="show = !show" class="border rounded-lg text-center w-full p-2">
       {{ show ? $t('shop.close') : $t('shop.writeReview') }}

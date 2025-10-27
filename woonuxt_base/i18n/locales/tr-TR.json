@@ -81,7 +81,9 @@
     "failed": "Güncelleme başarısız"
   },
   "shop": {
-    "shopByCategory": "Kategoriye Göre Alışveriş",
+  "shopByCategory": "Kategoriye Göre Alışveriş",
+  "from": "Başlangıç",
+  "to": "Bitiş",
     "popularProducts": "Popüler Ürünler",
     "availability": "Stok Durumu",
     "inStock": "Stokta",

@@ -50,17 +50,17 @@ useSeoMeta({
           <section class="my-8 flex gap-4 items-start justify-center w-full">
             <img v-if="avatar" :src="avatar" class="rounded-full aspect-square border border-white" alt="user-image" width="48" height="48" />
             <div class="flex-1 text-balance leading-tight w-full text-ellipsis overflow-hidden">
-              <div class="text-lg font-semibold">Welcome, {{ viewer?.firstName }}</div>
-              <span v-if="viewer?.email" class="text-gray-400 font-light" :title="viewer?.email">{{ viewer?.email }}</span>
+              <div class="text-lg font-semibold text-foreground">Welcome, {{ viewer?.firstName }}</div>
+              <span v-if="viewer?.email" class="text-muted-foreground font-light" :title="viewer?.email">{{ viewer?.email }}</span>
             </div>
-            <button class="flex text-gray-700 items-center flex-col p-2 px-4 rounded-lg hover:bg-white hover:text-red-700 lg:hidden" @click="logoutUser">
+            <button class="flex text-foreground items-center flex-col p-2 px-4 rounded-lg hover:bg-muted hover:text-destructive lg:hidden" @click="logoutUser">
               <LoadingIcon v-if="isPending" size="22" color="#B91C1B" />
               <Icon v-else name="ion:log-out-outline" size="22" />
               <small>{{ $t('account.logout') }}</small>
             </button>
           </section>
           <hr class="my-8" />
-          <nav class="flex text-gray-700 lg:grid flex-wrap w-full gap-1.5 my-8 min-w-[240px] lg:w-auto items-start">
+          <nav class="flex text-foreground lg:grid flex-wrap w-full gap-1.5 my-8 min-w-[240px] lg:w-auto items-start">
             <NuxtLink to="/hesabim?tab=my-details" class="flex items-center gap-4 p-2 px-4" :class="{ active: activeTab == 'my-details' }">
               <Icon name="ion:information-circle-outline" size="22" />
               {{ $t('general.myDetails') }}
@@ -80,7 +80,7 @@ useSeoMeta({
           </nav>
           <template class="hidden lg:block">
             <hr class="my-8" />
-            <button class="flex text-gray-700 items-center gap-4 p-2 px-4 w-full rounded-lg hover:bg-white hover:text-red-700" @click="logoutUser">
+            <button class="flex text-foreground items-center gap-4 p-2 px-4 w-full rounded-lg hover:bg-muted hover:text-destructive" @click="logoutUser">
               <LoadingIcon v-if="isPending" size="22" />
               <Icon v-else name="ion:log-out-outline" size="22" />
               {{ $t('account.logout') }}
@@ -101,12 +101,12 @@ useSeoMeta({
 
 <style lang="postcss" scoped>
 nav a {
-  @apply rounded-md;
+  @apply rounded-md transition-colors;
 
   &.active,
   &:focus,
   &:hover {
-    @apply bg-white shadow;
+    @apply bg-muted shadow text-primary;
   }
 
   & svg {

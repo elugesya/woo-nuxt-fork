@@ -37,7 +37,7 @@ const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, te
       <LazyResetFiltersButton v-if="isFiltersActive" />
     </div>
   </aside>
-  <div class="fixed inset-0 z-50 hidden bg-black opacity-25 filter-overlay" @click="removeBodyClass('show-filters')"></div>
+  <div class="fixed inset-0 z-50 hidden bg-muted/80 filter-overlay" @click="removeBodyClass('show-filters')"></div>
 </template>
 
 <style lang="postcss">

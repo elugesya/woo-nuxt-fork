@@ -12,38 +12,38 @@ export default <Partial<Config>>{
     extend: {
       colors: {
         primary: {
-          light: '#AE7DDD',
+          light: '#B7A6E7',
           DEFAULT: process.env.PRIMARY_COLOR || '#7F54B2',
-          dark: '#754fa3',
+          dark: '#6C479C',
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
+        background: '#F8F9FB',
+        foreground: '#23272F',
+        border: '#E5E7EB',
+        input: '#F3F4F6',
+        ring: '#B7A6E7',
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: '#F3F4F6',
+          foreground: '#23272F',
         },
         destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
+          DEFAULT: '#EF4444',
+          foreground: '#fff',
         },
         muted: {
-          DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          DEFAULT: '#F3F4F6',
+          foreground: '#6B7280',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: '#E0E7FF',
+          foreground: '#23272F',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: '#fff',
+          foreground: '#23272F',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: '#fff',
+          foreground: '#23272F',
         },
       },
       borderRadius: {
