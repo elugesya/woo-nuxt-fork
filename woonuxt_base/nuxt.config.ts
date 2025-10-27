@@ -43,7 +43,7 @@ export default defineNuxtConfig({
 
   plugins: [resolve('./app/plugins/init.ts')],
 
-  components: [{ path: resolve('./app/components'), pathPrefix: false }],
+  components: [{ path: resolve('./app/components'), pathPrefix: false, extensions: ['.vue'] }],
 
   modules: [
     resolve('./modules/woonuxt-bridge.ts'), 
@@ -52,19 +52,12 @@ export default defineNuxtConfig({
     '@nuxt/icon', 
     '@nuxt/image', 
     '@nuxtjs/i18n', 
-    'nuxt-gtag',
-    'shadcn-nuxt',
-    '@nuxtjs/color-mode'
+  'nuxt-gtag',
+  'shadcn-nuxt',
+  '@nuxtjs/color-mode',
   ],
 
-  shadcn: {
-    prefix: '',
-    componentDir: resolve('./app/components/ui')
-  },
 
-  colorMode: {
-    classSuffix: ''
-  },
 
   image: {
     quality: 80,
@@ -125,15 +118,6 @@ export default defineNuxtConfig({
   },
 
   // Google Analytics 4 & Tag Manager Configuration
-  gtag: {
-    id: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || '',
-    enabled: !!process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID,
-    config: {
-      send_page_view: true,
-      cookie_flags: 'SameSite=None;Secure',
-    },
-    tags: process.env.NUXT_PUBLIC_GTM_ID ? [process.env.NUXT_PUBLIC_GTM_ID] : [],
-  },
 
   alias: {
     '#constants': resolve('./app/constants'),

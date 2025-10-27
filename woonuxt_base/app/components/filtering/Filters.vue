@@ -64,18 +64,18 @@ const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, te
   @apply border rounded-xl outline-none leading-tight w-full p-2 transition-all;
 
   &.active {
-    @apply border-gray-400 pl-6;
+  @apply border-muted pl-6;
   }
 }
 
 @media (max-width: 768px) {
   #filters {
-    @apply bg-white h-full p-8 transform pl-2 transition-all ease-in-out bottom-0 left-4 -translate-x-[110vw] duration-300 overflow-auto fixed;
+  @apply bg-background h-full p-8 transform pl-2 transition-all ease-in-out bottom-0 left-4 -translate-x-[110vw] duration-300 overflow-auto fixed;
 
     box-shadow:
-      -100px 0 0 white,
-      -200px 0 0 white,
-      -300px 0 0 white;
+      -100px 0 0 var(--background),
+      -200px 0 0 var(--background),
+      -300px 0 0 var(--background);
     z-index: 60;
   }
 

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Input from '@/components/ui/input/Input.vue';
+import Button from '@/components/ui/button/Button.vue';
 const { cart, isUpdatingCoupon, applyCoupon, removeCoupon } = useCart();
 const couponCode = ref<string>('');
 const errorMessage = ref<string>('');
@@ -17,19 +19,20 @@ async function submitCoupon(): Promise<void> {
 <template>
   <div>
     <form class="flex gap-1" @submit.prevent="submitCoupon">
-      <input
+      <Input
         id="couponCode"
         v-model="couponCode"
         type="text"
         :placeholder="$t('shop.couponCode')"
-        class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm outline-none"
+        class="w-full"
         required />
-      <button
-        class="flex items-center justify-center px-4 py-2 text-white bg-gray-800 border rounded-md shadow-sm outline-none min-w-20"
+      <Button
+        type="submit"
+        class="min-w-20 flex items-center justify-center"
         :disabled="isUpdatingCoupon">
-        <LoadingIcon v-if="isUpdatingCoupon" color="#fff" size="16" />
+        <LoadingIcon v-if="isUpdatingCoupon" color="currentColor" size="16" />
         <span v-else>{{ $t('general.apply') }}</span>
-      </button>
+      </Button>
     </form>
     <Transition name="scale-y" mode="out-in">
       <div v-if="errorMessage" class="mt-2 text-xs text-red-600" v-html="errorMessage"></div>

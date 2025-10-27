@@ -19,9 +19,8 @@ const { cart, isUpdatingCart, isShowingCart } = useCart();
               Your shopping cart items
             </SheetDescription>
           </div>
-          <EmptyCart v-if="cart && !cart.isEmpty" class="rounded-lg shadow-sm p-1.5 hover:bg-destructive hover:text-destructive-foreground transition-colors" />
         </div>
-      </SheetHeader>
+  </SheetHeader>
 
       <ClientOnly>
         <template v-if="cart && !cart.isEmpty">

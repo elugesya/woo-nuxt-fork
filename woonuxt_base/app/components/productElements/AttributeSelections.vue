@@ -30,9 +30,6 @@ const updateAttrs = () => {
     const value = radioValue?.value ?? dropdownValue?.value ?? '';
     return { name, value };
   });
-
-  activeVariations.value = selectedVariations;
-  emit('attrs-changed', selectedVariations);
 };
 
 const setDefaultAttributes = () => {
@@ -40,8 +37,6 @@ const setDefaultAttributes = () => {
     defaultAttributes?.nodes.forEach((attr: VariationAttribute) => {
       const radio = document.querySelector(`.name-${attr.name?.toLowerCase()}[value="${attr.value}"]`) as HTMLInputElement;
       if (radio) radio.checked = true;
-      const dropdown = document.querySelector(`#${attr.name}`) as HTMLSelectElement;
-      if (dropdown) dropdown.value = attr.value || '';
     });
   }
 };
@@ -171,44 +166,34 @@ onMounted(() => {
 .color-green {
   @apply bg-green-500;
 }
-
 .color-blue {
   @apply bg-blue-500;
 }
-
 .color-red {
   @apply bg-red-500;
 }
-
 .color-yellow {
   @apply bg-yellow-500;
 }
-
 .color-orange {
   @apply bg-orange-500;
 }
-
 .color-purple {
   @apply bg-purple-500;
 }
-
 .color-black {
   @apply bg-background;
 }
-
 .color-white {
-  @apply bg-white border-2 border-gray-300;
+  @apply bg-background border-2 border;
 }
-
 .color-pink {
   @apply bg-pink-500;
 }
-
 .color-gray,
 .color-grey {
-  @apply bg-gray-500;
+  @apply bg-muted;
 }
-
 .color-brown {
   @apply bg-amber-700;
 }

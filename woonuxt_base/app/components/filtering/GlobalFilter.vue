@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Checkbox } from '@/components/ui/checkbox'
 const { getFilter, setFilter, isFiltersActive } = useFiltering();
 
 const { attribute } = defineProps({
@@ -27,10 +28,10 @@ const checkboxChanged = () => {
   </div>
   <div v-show="isOpen" class="mt-3 mr-1 max-h-[240px] grid gap-1 overflow-auto custom-scrollbar">
     <div v-for="term in attribute.terms" :key="term.slug" class="flex gap-2 items-center">
-      <input :id="term.slug" v-model="selectedTerms" type="checkbox" :value="term.slug" @change="checkboxChanged" />
+      <Checkbox :id="term.slug" v-model:checked="selectedTerms" :value="term.slug" @update:checked="checkboxChanged" />
       <label :for="term.slug" class="cursor-pointer m-0 text-sm flex items-center flex-wrap">
         <span v-html="term.name" />
-        <small v-if="attribute.showCount" class="ml-1 text-gray-400 tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>
+        <small v-if="attribute.showCount" class="ml-1 text-muted-foreground tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>
       </label>
     </div>
   </div>

@@ -1,5 +1,5 @@
 <template>
-  <form class="bg-white rounded-lg shadow" @submit.prevent="saveChanges">
+  <form class="bg-background rounded-lg shadow" @submit.prevent="saveChanges">
     <div class="grid p-8 gap-6 md:grid-cols-2">
       <h3 class="font-semibold text-xl col-span-full">{{ $t('billing.billing') }}</h3>
 
@@ -64,7 +64,7 @@
     <div class="grid p-8 gap-6 md:grid-cols-2">
       <div class="col-span-full flex items-center justify-between">
         <h3 class="font-semibold text-xl">{{ $t('general.shipping') }}</h3>
-        <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-700 hover:text-primary">
+  <label class="flex items-center gap-2 cursor-pointer text-sm text-foreground hover:text-primary">
           <input type="checkbox" v-model="useBillingForShipping" @change="copyBillingToShipping" class="rounded" />
           <span>Fatura bilgilerimi kullan</span>
         </label>
@@ -129,9 +129,9 @@
       </div>
     </div>
 
-    <div class="bg-white backdrop-blur-sm bg-opacity-75 border-t col-span-full p-4 sticky bottom-0 rounded-b-lg">
+  <div class="bg-background backdrop-blur-sm bg-opacity-75 border-t col-span-full p-4 sticky bottom-0 rounded-b-lg">
       <button
-        class="rounded-md flex font-semibold ml-auto text-white py-2 px-4 gap-4 items-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+  class="rounded-md flex font-semibold ml-auto text-primary-foreground py-2 px-4 gap-4 items-center disabled:bg-muted disabled:cursor-not-allowed"
         :class="button.color"
         :disabled="loading">
         <LoadingIcon v-if="loading" color="#fff" size="20" />

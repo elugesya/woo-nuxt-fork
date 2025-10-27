@@ -142,34 +142,37 @@ useSeoMeta({
         <template v-if="order.lineItems">
           <hr class="my-8" />
 
-          <div class="grid gap-2">
-            <div v-for="item in order.lineItems.nodes" :key="item.id" class="flex items-center justify-between gap-8">
-              <NuxtLink v-if="item.product?.node" :to="`/urun/${item.product.node.slug}`">
-                <template v-if="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl">
-                  <NuxtImg
-                    class="w-16 h-16 rounded-xl"
-                    :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl"
-                    :alt="item.variation?.node?.image?.altText || item.product.node?.image?.altText || 'Product image'"
-                    :title="item.variation?.node?.image?.title || item.product.node?.image?.title || 'Product image'"
-                    width="64"
-                    height="64"
-                    loading="lazy" />
-                </template>
-                <template v-else>
-                  <img
-                    class="w-16 h-16 rounded-xl"
-                    src="/images/placeholder.jpg"
-                    alt="Product image"
-                    width="64"
-                    height="64"
-                    loading="lazy" />
-                </template>
-              </NuxtLink>
-              <div class="flex-1 leading-tight">
-                {{ item.variation ? item.variation?.node?.name : item.product?.node.name! }}
+          <div class="flex flex-col gap-2">
+            <div v-for="item in order.lineItems.nodes" :key="item.id" class="flex items-center p-3 rounded-lg bg-card shadow-sm border border-border">
+              <div class="flex items-center" style="width:64px;min-width:64px;max-width:64px;">
+                <NuxtLink v-if="item.product?.node" :to="`/urun/${item.product.node.slug}`" class="block w-16 h-16">
+                  <template v-if="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl">
+                    <NuxtImg
+                      class="w-16 h-16 rounded-md object-cover bg-muted"
+                      :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl"
+                      :alt="item.variation?.node?.image?.altText || item.product.node?.image?.altText || 'Product image'"
+                      :title="item.variation?.node?.image?.title || item.product.node?.image?.title || 'Product image'"
+                      width="64"
+                      height="64"
+                      loading="lazy" />
+                  </template>
+                  <template v-else>
+                    <img
+                      class="w-16 h-16 rounded-md object-cover bg-muted"
+                      src="/images/placeholder.jpg"
+                      alt="Product image"
+                      width="64"
+                      height="64"
+                      loading="lazy" />
+                  </template>
+                </NuxtLink>
               </div>
-              <div class="text-sm text-gray-600">Qty. {{ item.quantity }}</div>
-              <span class="text-sm font-semibold">{{ formatPrice(item.total!) }}</span>
+              <div class="flex flex-1 flex-col min-w-0 px-3">
+                <div class="font-medium text-foreground truncate">{{ item.product?.node.name! }}</div>
+                <div v-if="item.variation" class="text-xs text-muted-foreground truncate">{{ item.variation?.node?.name }}</div>
+              </div>
+              <span class="inline-block px-2 py-1 rounded bg-muted text-xs text-muted-foreground font-semibold">x{{ item.quantity }}</span>
+              <span class="text-sm font-bold text-primary-foreground ml-2">{{ formatPrice(item.total!) }}</span>
             </div>
           </div>
         </template>

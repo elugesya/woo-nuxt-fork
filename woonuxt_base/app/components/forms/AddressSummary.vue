@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-white border rounded-md outline-none border-gray-200 shadow-sm w-full p-4">
+  <div class="bg-background border rounded-md outline-none border shadow-sm w-full p-4">
     <!-- Header with name and edit button -->
     <div class="flex items-start justify-between mb-4">
       <div class="flex items-center gap-3">
@@ -7,7 +7,7 @@
           <h3 v-if="address?.firstName || address?.lastName" class="text-lg font-semibold text-foreground">
             {{ [address.firstName, address.lastName].filter(Boolean).join(' ') }}
           </h3>
-          <h3 v-else class="text-lg font-medium text-gray-500">No address provided</h3>
+          <h3 v-else class="text-lg font-medium text-muted-foreground">No address provided</h3>
           <div v-if="shouldShowValidationWarning" class="flex items-center gap-1 mt-1">
             <Icon name="ion:warning" class="w-3 h-3 text-orange-500" />
             <span class="text-xs text-orange-600 font-medium">
@@ -27,7 +27,7 @@
     <div v-if="address && hasAddress" class="space-y-2">
       <div
         v-if="address.address1 || address.address2 || address.city || address.state || address.postcode || address.country"
-        class="flex items-center gap-2 text-gray-700">
+  class="flex items-center gap-2 text-foreground">
         <Icon name="ion:home" />
         <span class="text-sm">
           {{
@@ -38,18 +38,18 @@
         </span>
       </div>
 
-      <div v-if="address.phone" class="flex items-center gap-2 text-gray-700">
+  <div v-if="address.phone" class="flex items-center gap-2 text-foreground">
         <Icon name="ion:call" />
         <span class="text-sm">{{ address.phone }}</span>
       </div>
 
-      <div v-if="address.email" class="flex items-center gap-2 text-gray-700">
+  <div v-if="address.email" class="flex items-center gap-2 text-foreground">
         <Icon name="ion:mail" />
         <span class="text-sm">{{ address.email }}</span>
       </div>
     </div>
 
-    <div v-else class="flex items-center gap-2 text-gray-500 italic">
+  <div v-else class="flex items-center gap-2 text-muted-foreground italic">
       <Icon name="ion:add-circle-outline" />
       <span class="text-sm">Click edit to add address details</span>
     </div>

@@ -46,8 +46,8 @@ const labelFallback = (provider?: LoginProviderEnum | null) => {
       <div v-for="(loginClient, index) in socialLoginProviders" :key="index">
         <NuxtLink
           v-if="loginClient && loginClient?.authorizationUrl"
-          :to="loginClient?.authorizationUrl"
-          class="flex items-center justify-center gap-3 p-3 bg-white rounded-lg shadow-sm hover:shadow transition duration-100 ease-in-out">
+         :to="loginClient?.authorizationUrl"
+         class="flex items-center justify-center gap-3 p-3 bg-background rounded-lg shadow-sm hover:shadow transition duration-100 ease-in-out">
           <Icon v-if="loginClient.provider" :name="providerIcons[loginClient.provider as keyof typeof providerIcons]" size="20" />
           <icon v-else name="ion:log-in" size="20" />
           <span v-if="socialLoginsDisplay === 'buttons'">{{ loginClient.name || labelFallback(loginClient.provider) }}</span>
@@ -58,7 +58,7 @@ const labelFallback = (provider?: LoginProviderEnum | null) => {
     <!-- or continue with email -->
     <div class="flex items-center justify-center gap-4 mt-8 leading-none">
       <div class="border-b w-1/3 flex-1"></div>
-      <div class="text-gray-400">{{ $t('account.orContinueWithEmail') }}</div>
+      <div class="text-muted-foreground">{{ $t('account.orContinueWithEmail') }}</div>
       <div class="border-b w-1/3 flex-1"></div>
     </div>
   </div>

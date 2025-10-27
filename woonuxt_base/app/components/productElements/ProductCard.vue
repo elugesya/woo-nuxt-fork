@@ -41,7 +41,7 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
 </script>
 
 <template>
-  <Card class="group bg-white border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg">
+  <Card class="group bg-background border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg">
     <NuxtLink v-if="node.slug" :to="`/urun/${decodeURIComponent(node.slug)}`" :title="node.name" class="block">
       <div class="relative overflow-hidden">
         <SaleBadge :node class="absolute top-2 right-2 z-10" />
@@ -54,7 +54,7 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             :title="node.image?.title || node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
             :sizes="`sm:${imgWidth / 2}px md:${imgWidth}px`"
-            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-white" 
+            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-background" 
             placeholder
             placeholder-class="blur-xl" />
         </template>
@@ -66,7 +66,7 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             :alt="node.name || 'Product image'"
             :title="node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
-            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-white" />
+            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-background" />
         </template>
       </div>
       <CardContent class="p-4">

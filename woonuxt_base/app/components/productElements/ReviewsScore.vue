@@ -78,7 +78,7 @@ async function addComment() {
           <Icon class="text-yellow-400" name="ion:star" />
         </div>
         <div class="flex-1 relative">
-          <div class="rounded-full bg-gray-200 h-2.5 w-full"></div>
+          <div class="rounded-full bg-muted h-2.5 w-full"></div>
           <div class="rounded-full bg-yellow-400 h-2.5 top-0 left-0 absolute" :style="{ width: rating.percentage + '%' }"></div>
         </div>
       </div>
@@ -90,7 +90,7 @@ async function addComment() {
     </button>
     <transition class="ease-in-out transform transition-all" name="scale-y">
       <form v-if="show" @submit.prevent="addComment" class="writeReview">
-        <div class="w-full text-gray-500">
+  <div class="w-full text-muted-foreground">
           <div class="p-5 mt-3 grid gap-2 border rounded-lg">
             <div class="block text-center mb-1.5">
               <label class="text-center text-sm block relative m-auto">{{ $t('shop.rateReview') }} <span class="text-red-500">*</span></label>
@@ -145,7 +145,7 @@ async function addComment() {
 
 <style lang="postcss" scoped>
 .disable-star {
-  @apply bg-white shadow-sm text-gray-300 border border-gray-300;
+  @apply bg-background shadow-sm text-muted-foreground border border;
   transition: 0.15s ease-in-out;
 }
 .checked-star {
@@ -155,6 +155,6 @@ async function addComment() {
 }
 .writeReview input,
 .writeReview textarea {
-  @apply bg-white border rounded-md outline-none border-gray-300 shadow-inner w-full py-2 px-4;
+  @apply bg-background border rounded-md outline-none border shadow-inner w-full py-2 px-4;
 }
 </style>

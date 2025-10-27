@@ -71,14 +71,14 @@ useHead({
     <form class="mt-6 flex flex-col" @submit.prevent="handlePasswordReset">
       <label for="password" class="mb-4">
         {{ $t('account.newPassword') }} <span class="text-red-500">*</span><br />
-        <PasswordInput id="password" className=" border rounded-lg w-full p-3 px-4 bg-white" v-model="password" placeholder="New Password" :required="true" />
+        <PasswordInput id="password" className="border rounded-lg w-full p-3 px-4 bg-background" v-model="password" placeholder="New Password" :required="true" />
       </label>
 
       <label for="confirmPassword" class="mb-4">
         {{ $t('account.confirmNewPassword') }} <span class="text-red-500">*</span><br />
         <PasswordInput
           id="confirmPassword"
-          className="border rounded-lg w-full p-3 px-4 bg-white"
+          className="border rounded-lg w-full p-3 px-4 bg-background"
           v-model="confirmPassword"
           placeholder="Confirm Password"
           :required="true" />
@@ -94,9 +94,10 @@ useHead({
       </Transition>
 
       <button class="flex items-center justify-center gap-4 mt-4 text-lg">
-        <LoadingIcon v-if="isPending" stroke="4" size="16" color="#fff" />
-        <span>{{ $t('account.resetPassword') }}</span>
-      </button>
+        <ShadcnButton type="submit" class="w-full flex items-center justify-center gap-4 mt-4 text-lg">
+          <LoadingIcon v-if="isPending" stroke="4" size="16" color="currentColor" />
+          <span>{{ $t('account.resetPassword') }}</span>
+        </ShadcnButton>
     </form>
 
     <div class="my-8 text-center cursor-pointer">
@@ -106,12 +107,7 @@ useHead({
 </template>
 
 <style lang="postcss" scoped>
-input,
-button {
-  @apply border rounded-lg mb-4 w-full p-3 px-4 bg-white;
-}
-
-form button {
-  @apply rounded-lg font-bold bg-gray-800 text-white py-3 px-8 hover:bg-gray-800;
+input {
+  @apply border rounded-lg mb-4 w-full p-3 px-4 bg-background;
 }
 </style>
