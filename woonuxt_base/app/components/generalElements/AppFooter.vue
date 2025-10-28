@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const { wooNuxtVersionInfo } = useHelpers();
 const { wishlistLink } = useAuth();
+import EtbisQr from './EtbisQr.vue';
 </script>
 
 <template>
@@ -117,14 +118,14 @@ const { wishlistLink } = useAuth();
         </div>
       </div>
     </div>
-    <div class="container border-t flex items-center justify-center mb-4">
+    <div class="container border-t flex flex-col items-center justify-center mb-4">
       <div class="copywrite">
         <p class="py-4 text-xs text-center">
           <a href="https://netasolutions.com" :title="`NetaCommerce v${wooNuxtVersionInfo}`">{{ `NetaCommerce v${wooNuxtVersionInfo}` }}</a> - by
-          
         </p>
       </div>
-      <SocialIcons class="ml-auto" />
+      <EtbisQr />
+      <SocialIcons class="ml-auto mt-2" />
     </div>
   </footer>
 </template>

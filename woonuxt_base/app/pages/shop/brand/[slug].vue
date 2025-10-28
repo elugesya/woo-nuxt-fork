@@ -6,17 +6,12 @@ const { storeSettings } = useAppConfig()
 
 const brandSlug = (route.params.slug as string) || ''
 
-// Fetch all products with brands
-const { data } = await useAsyncGql('getProducts')
-const allProducts = (data.value?.products?.nodes || []) as Product[]
 
-// Filter products by brand
-function productHasBrand(product: Product, slug: string): boolean {
-  const brands = (product as any)?.brands?.nodes || []
-  return brands.some((brand: any) => brand?.slug === slug)
-}
-
-const productsInBrand = allProducts.filter((p: Product) => productHasBrand(p, brandSlug))
+// Fetch only products for the current brand using GraphQL filter
+const { data } = await useAsyncGql('getProducts', { filter: `brand[${brandSlug}]` })
+const productsInBrand = ((data.value?.products?.nodes || []) as Product[]).filter(product =>
+  product.brands?.nodes?.some(brand => brand.slug === brandSlug)
+)
 setProducts(productsInBrand)
 
 // Get brand name from first product or fallback to slug
