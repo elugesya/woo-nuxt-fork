@@ -135,8 +135,18 @@ const jsonLd = computed(() =>
                 },
                 deliveryTime: {
                   '@type': 'ShippingDeliveryTime',
-                  handlingTime: 'P0D',
-                  transitTime: 'P3D',
+                  handlingTime: {
+                    '@type': 'QuantitativeValue',
+                    minValue: 3,
+                    maxValue: 5,
+                    unitCode: 'd',
+                  },
+                  transitTime: {
+                    '@type': 'QuantitativeValue',
+                    minValue: 1,
+                    maxValue: 2,
+                    unitCode: 'd',
+                  },
                 },
                 shippingRate: {
                   '@type': 'MonetaryAmount',
