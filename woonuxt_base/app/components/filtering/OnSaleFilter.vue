@@ -1,27 +1,24 @@
 <script setup>
 const { getFilter, setFilter, isFiltersActive } = useFiltering();
-const selectedTerms = ref(getFilter('stock')?.length ? getFilter('stock') : ['IN_STOCK']);
+const checked = ref(false);
 
-// Varsayılan olarak filtreyi aktif et
 onMounted(() => {
-  if (!getFilter('stock')?.length) {
-    setFilter('stock', ['IN_STOCK']);
-  }
+  // Varsayılan olarak seçili
+  checked.value = true;
+  setFilter('stock', ['IN_STOCK']);
 });
 
 const isOpen = ref(true);
 
 watch(isFiltersActive, () => {
-  // uncheck all radio boxes when filters are cleared
-  if (!isFiltersActive.value) selectedTerms.value = [];
+  if (!isFiltersActive.value) checked.value = false;
 });
 
 const checkboxClicked = (e) => {
-  if (selectedTerms.value.length === 0) {
-    selectedTerms.value = [e.target.value];
-    setFilter('stock', [e.target.value]);
+  checked.value = e.target.checked;
+  if (checked.value) {
+    setFilter('stock', ['IN_STOCK']);
   } else {
-    selectedTerms.value = [];
     setFilter('stock', []);
   }
 };
@@ -36,7 +33,7 @@ const checkboxClicked = (e) => {
     <div v-if="isOpen" class="mt-3 mr-1 max-h-[240px] grid gap-1 overflow-auto custom-scrollbar">
       <div class="flex gap-2 items-center">
         <label for="stock-instock" class="cursor-pointer m-0 text-sm sr-only" aria-label="Sadece stoktakiler"> Sadece stoktakiler</label>
-        <input id="stock-instock" v-model="selectedTerms" type="checkbox" :value="'IN_STOCK'" aria-label="Sadece Stoktakiler" @click="checkboxClicked" />
+        <input id="stock-instock" v-model="checked" type="checkbox" aria-label="Sadece Stoktakiler" @change="checkboxClicked" />
       </div>
     </div>
   </div>
