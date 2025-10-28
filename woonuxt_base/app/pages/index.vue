@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ProductsOrderByEnum } from '#woo';
-const { siteName, description, shortDescription, siteImage } = useAppConfig();
+const siteName = process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_SHOP_NAME || '';
+const { description, shortDescription, siteImage } = useAppConfig();
 
 const { data } = await useAsyncGql('getProductCategories', { first: 6 });
 const productCategories = data.value?.productCategories?.nodes || [];
@@ -9,7 +10,7 @@ const { data: productData } = await useAsyncGql('getProducts', { first: 5, order
 const popularProducts = productData.value.products?.nodes || [];
 
 useSeoMeta({
-  title: `AnaSayfa`,
+  title: `${siteName} – AnaSayfa`,
   ogTitle: siteName,
   description: description,
   ogDescription: shortDescription,
