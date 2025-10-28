@@ -127,11 +127,11 @@ export function useFiltering() {
         })
         .every((condition: any) => condition);
 
-      // onSale filter
-      const onSale = getFilter('sale');
-      const saleItemsOnlyCondition = onSale.length ? product.onSale : true;
+  // stock filter
+  const stockFilter = getFilter('stock');
+  const inStockOnlyCondition = stockFilter.length ? product.stockStatus === 'IN_STOCK' : true;
 
-      return ratingCondition && priceCondition && attributeCondition && categoryCondition && saleItemsOnlyCondition;
+  return ratingCondition && priceCondition && attributeCondition && categoryCondition && inStockOnlyCondition;
     });
   }
 
