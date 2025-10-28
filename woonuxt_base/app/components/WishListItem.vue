@@ -6,7 +6,7 @@ const { product } = defineProps<{ product: Product }>();
 <template>
   <li class="flex py-4 gap-4 items-center">
     <NuxtLink v-if="product.slug" :to="`/urun/${decodeURIComponent(product.slug)}`">
-      <img
+      <NuxtImg
         v-if="product?.image?.cartSourceUrl"
         class="rounded-lg object-cover h-16 w-16"
         :src="product.image?.cartSourceUrl || product.image?.sourceUrl || '/images/placeholder.jpg'"

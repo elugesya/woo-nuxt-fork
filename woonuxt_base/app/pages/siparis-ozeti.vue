@@ -157,7 +157,7 @@ useSeoMeta({
                       loading="lazy" />
                   </template>
                   <template v-else>
-                    <img
+                    <NuxtImg
                       class="w-16 h-16 rounded-md object-cover bg-muted"
                       src="/images/placeholder.jpg"
                       alt="Product image"

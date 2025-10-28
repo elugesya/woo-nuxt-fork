@@ -24,12 +24,12 @@ useSeoMeta({
     <HeroBanner />
 
     <div class="container flex flex-wrap items-center justify-center my-16 text-center gap-x-8 gap-y-4 brand lg:justify-between">
-      <img src="/images/netamarine-logo.svg" alt="Brand 1" width="200" height="60" />
+  <NuxtImg src="/images/netamarine-logo.svg" alt="Brand 1" width="200" height="60" />
       <NuxtLink to="/shop/brand/parsun">
         <img src="/images/parsun-logo.svg" alt="Parsun" width="180" height="60" />
       </NuxtLink>
-      <img src="/images/makoshark-logo.svg" alt="Brand 3" width="200" height="60" />
-      <img src="/images/nxt-logo.svg" alt="Brand 4" width="130" height="60" />
+  <NuxtImg src="/images/makoshark-logo.svg" alt="Brand 3" width="200" height="60" />
+  <NuxtImg src="/images/nxt-logo.svg" alt="Brand 4" width="130" height="60" />
       <NuxtLink to="/shop/brand/btm">
         <img src="/images/btm-logo.svg" alt="BTM" width="140" height="60" />
       </NuxtLink>
@@ -68,7 +68,7 @@ useSeoMeta({
         </div>
       </div>
       <div class="flex items-center gap-8 p-8 bg-white rounded-lg">
-        <img src="/icons/support.svg" width="60" height="60" alt="Support 24/7" loading="lazy" />
+    <NuxtImg src="/icons/support.svg" width="60" height="60" alt="Support 24/7" loading="lazy" />
         <div>
           <h3 class="text-xl font-semibold">Destek 24/7</h3>
           <p class="text-sm">24/7 Online Destek</p>

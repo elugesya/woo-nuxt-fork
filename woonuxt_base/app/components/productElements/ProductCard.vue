@@ -59,7 +59,7 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             placeholder-class="blur-xl" />
         </template>
         <template v-else>
-          <img
+          <NuxtImg
             :width="imgWidth"
             :height="imgHeight"
             src="/images/placeholder.jpg"
