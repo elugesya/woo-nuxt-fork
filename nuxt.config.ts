@@ -143,6 +143,21 @@ export default defineNuxtConfig({
 
   components: [{ path: './components', pathPrefix: false }],
 
+  modules: [
+    'nuxt-gtag',
+  ],
+
+  // Google Analytics 4 & Tag Manager Configuration
+  gtag: {
+    id: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID || '',
+    enabled: !!process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID,
+    config: {
+      send_page_view: true,
+      cookie_flags: 'SameSite=None;Secure',
+    },
+    tags: process.env.NUXT_PUBLIC_GTM_ID ? [process.env.NUXT_PUBLIC_GTM_ID] : [],
+  },
+
   app: {
     baseURL: '/',
     buildAssetsDir: '/_nuxt/',
