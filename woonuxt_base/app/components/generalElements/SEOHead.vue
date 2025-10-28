@@ -96,58 +96,70 @@ const priceValidUntil = computed(() => {
 
 const jsonLd = computed(() =>
   JSON.stringify(
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: info?.name,
-    image: images.value.length ? images.value : [defaultImage.value],
-    description: description.value,
-    sku: (info as any)?.sku || undefined,
-    brand: brandName.value
-      ? {
-          '@type': 'Brand',
-          name: brandName.value,
-        }
-      : undefined,
-    aggregateRating:
-      info?.averageRating && info?.reviewCount
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: info?.name,
+      image: images.value.length ? images.value : [defaultImage.value],
+      description: description.value,
+      sku: (info as any)?.sku || undefined,
+      brand: brandName.value
         ? {
-            '@type': 'AggregateRating',
-            ratingValue: Number(info.averageRating),
-            reviewCount: Number(info.reviewCount),
+            '@type': 'Brand',
+            name: brandName.value,
           }
         : undefined,
-    review: reviewSchemas.value.length ? reviewSchemas.value : undefined,
-    offers:
-      price.value
-        ? {
-            '@type': 'Offer',
-            url: canonical,
-            priceCurrency: currency.value,
-            price: String(price.value),
-            priceValidUntil: priceValidUntil.value,
-            availability: availabilityMap[(info as any)?.stockStatus || 'IN_STOCK'] || 'https://schema.org/InStock',
-            shippingDetails: {
-              '@type': 'OfferShippingDetails',
-              shippingDestination: {
-                '@type': 'DefinedRegion',
-                addressCountry: 'TR',
+      aggregateRating:
+        info?.averageRating && info?.reviewCount
+          ? {
+              '@type': 'AggregateRating',
+              ratingValue: Number(info.averageRating),
+              reviewCount: Number(info.reviewCount),
+            }
+          : undefined,
+      review: reviewSchemas.value.length ? reviewSchemas.value : undefined,
+      offers:
+        price.value
+          ? {
+              '@type': 'Offer',
+              url: canonical,
+              priceCurrency: currency.value,
+              price: String(price.value),
+              priceValidUntil: priceValidUntil.value,
+              availability: availabilityMap[(info as any)?.stockStatus || 'IN_STOCK'] || 'https://schema.org/InStock',
+              shippingDetails: {
+                '@type': 'OfferShippingDetails',
+                shippingDestination: {
+                  '@type': 'DefinedRegion',
+                  addressCountry: 'TR',
+                },
+                deliveryTime: {
+                  '@type': 'ShippingDeliveryTime',
+                  handlingTime: 'P0D',
+                  transitTime: 'P3D',
+                },
+                shippingRate: {
+                  '@type': 'MonetaryAmount',
+                  value: 0,
+                  currency: currency.value,
+                  name: 'Ücretsiz Kargo',
+                },
               },
-            },
-            hasMerchantReturnPolicy: {
-              '@type': 'MerchantReturnPolicy',
-              applicableCountry: 'TR',
-              returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
-              merchantReturnDays: 14,
-              returnMethod: 'https://schema.org/ReturnByMail',
-              returnFees: 'https://schema.org/FreeReturn',
-            },
-          }
-        : undefined,
-  },
-  null,
-  2,
-));
+              hasMerchantReturnPolicy: {
+                '@type': 'MerchantReturnPolicy',
+                applicableCountry: 'TR',
+                returnPolicyCategory: 'https://schema.org/MerchantReturnFiniteReturnWindow',
+                merchantReturnDays: 14,
+                returnMethod: 'https://schema.org/ReturnByMail',
+                returnFees: 'https://schema.org/FreeReturn',
+              },
+            }
+          : undefined,
+    },
+    null,
+    2,
+  )
+);
 
 // Inject JSON-LD via head manager with innerHTML for proper rendering
 useHead(() => ({
