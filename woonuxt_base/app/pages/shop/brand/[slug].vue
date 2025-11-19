@@ -1,25 +1,41 @@
 <script setup lang="ts">
 const route = useRoute()
+const router = useRouter()
 const { setProducts, updateProductList } = useProducts()
 const { isQueryEmpty, frontEndUrl, stripHtml } = useHelpers()
 const { storeSettings } = useAppConfig()
+const { setFilter } = useFiltering()
 
 const brandSlug = (route.params.slug as string) || ''
 
+// Fetch all products - we'll filter by brand on the client side
+const { data } = await useAsyncGql('getProducts')
+const allProducts = (data.value?.products?.nodes || []) as Product[]
 
-// Fetch only products for the current brand using GraphQL filter
-const { data } = await useAsyncGql('getProducts', { filter: `brand[${brandSlug}]` })
-const productsInBrand = ((data.value?.products?.nodes || []) as Product[]).filter(product =>
-  product.brands?.nodes?.some(brand => brand.slug === brandSlug)
+// Filter products by product_brand taxonomy
+const productsInBrand = allProducts.filter(product => 
+  product.terms?.nodes?.some((term: any) => 
+    term.taxonomyName === 'product_brand' && term.slug === brandSlug
+  )
 )
+
 setProducts(productsInBrand)
+
+// Automatically select the brand filter in the sidebar
+onMounted(() => {
+  // Set the brand filter if not already set
+  if (!route.query.filter || !route.query.filter.toString().includes('product_brand')) {
+    setFilter('product_brand', [brandSlug])
+  }
+})
 
 // Get brand name from first product or fallback to slug
 const brandName = computed(() => {
   if (productsInBrand.length > 0) {
-    const brands = (productsInBrand[0] as any)?.brands?.nodes || []
-    const brand = brands.find((b: any) => b?.slug === brandSlug)
-    if (brand?.name) return brand.name
+    const brandTerm = productsInBrand[0].terms?.nodes?.find((term: any) => 
+      term.taxonomyName === 'product_brand' && term.slug === brandSlug
+    )
+    if (brandTerm?.name) return brandTerm.name
   }
   return brandSlug.replace(/[-_]/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase())
 })
@@ -37,10 +53,6 @@ useHead(() => ({
     { rel: 'canonical', href: canonical.value },
   ],
 }))
-
-onMounted(() => {
-  if (!isQueryEmpty.value) updateProductList()
-})
 
 watch(
   () => route.query,

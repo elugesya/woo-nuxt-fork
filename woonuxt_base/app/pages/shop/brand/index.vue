@@ -1,32 +1,32 @@
 <script setup lang="ts">
-// Fetch all products with brands
+// Fetch all products
 const { data: productsData } = await useAsyncGql('getProducts')
 const allProducts = (productsData.value?.products?.nodes || []) as Product[]
 
-// Extract unique brands from all products
+// Extract unique brands from all products using product_brand taxonomy
 const brandMap = new Map<string, any>()
 
 allProducts.forEach((product: Product) => {
-  const brands = (product as any)?.brands?.nodes || []
-  brands.forEach((brand: any) => {
-    if (brand?.slug) {
-      if (!brandMap.has(brand.slug)) {
-        brandMap.set(brand.slug, {
-          id: brand.databaseId || brand.slug,
-          name: brand.name,
-          slug: brand.slug,
-          description: brand.description || '',
+  const brandTerms = product.terms?.nodes?.filter((term: any) => term.taxonomyName === 'product_brand') || []
+  brandTerms.forEach((term: any) => {
+    if (term?.slug) {
+      if (!brandMap.has(term.slug)) {
+        brandMap.set(term.slug, {
+          id: term.databaseId || term.slug,
+          name: term.name,
+          slug: term.slug,
+          description: term.description || '',
           count: 1,
         })
       } else {
-        const existing = brandMap.get(brand.slug)
+        const existing = brandMap.get(term.slug)
         existing.count++
       }
     }
   })
 })
 
-const brands = Array.from(brandMap.values())
+const brands = Array.from(brandMap.values()).sort((a, b) => a.name.localeCompare(b.name))
 </script>
 
 <template>
