@@ -10,13 +10,23 @@ const { storeSettings } = useAppConfig();
 const { hideCategories } = defineProps({ hideCategories: { type: Boolean, default: false } });
 
 const globalProductAttributes = (runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES as WooNuxtFilter[]) || [];
-const taxonomies = globalProductAttributes.map((attr) => attr?.slug?.toUpperCase().replace(/_/g, '')) as TaxonomyEnum[];
+
+// Check if product_brand is already in global attributes, if not add it for the query
+const hasBrandAttribute = globalProductAttributes.some((attr) => attr.slug === 'product_brand');
+const attributesForQuery = hasBrandAttribute 
+  ? globalProductAttributes 
+  : [...globalProductAttributes, { slug: 'product_brand', label: 'Marka', openByDefault: true, showCount: true }];
+
+const taxonomies = attributesForQuery.map((attr) => attr?.slug?.toUpperCase().replace(/_/g, '')) as TaxonomyEnum[];
 
 const { data } = await useAsyncGql('getAllTerms', { taxonomies: [...taxonomies, TaxonomyEnum.PRODUCTCATEGORY] });
 const terms = data.value?.terms?.nodes;
 
 // Filter out the product category terms and the global product attributes with their terms
 const productCategoryTerms = terms?.filter((term) => term.taxonomyName === 'product_cat');
+
+// Get brand terms separately for dedicated brand filter
+const brandTerms = terms?.filter((term) => term.taxonomyName === 'product_brand');
 
 // Filter out the color attribute and the rest of the global product attributes
 const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, terms: terms?.filter((term) => term.taxonomyName === attr.slug) }));
@@ -28,6 +38,7 @@ const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, te
     <div class="relative z-30 grid mb-12 space-y-8 divide-y">
       <PriceFilter />
       <CategoryFilter v-if="!hideCategories" :terms="productCategoryTerms" />
+      <BrandFilter v-if="brandTerms && brandTerms.length > 0" :terms="brandTerms" />
       <div v-for="attribute in attributesWithTerms" :key="attribute.slug">
         <ColorFilter v-if="attribute.slug == 'pa_color' || attribute.slug == 'pa_colour'" :attribute />
         <GlobalFilter v-else :attribute />

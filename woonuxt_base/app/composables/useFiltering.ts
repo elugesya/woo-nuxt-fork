@@ -117,6 +117,10 @@ export function useFiltering() {
       const starRating = getFilter('rating') || [];
       const ratingCondition = starRating.length ? (product?.averageRating || 0) >= parseFloat(starRating[0] as string) : true;
 
+      // Brand filter
+      const brand = getFilter('product_brand') || [];
+      const brandCondition = brand.length ? product.terms?.nodes?.find((node: any) => node.taxonomyName === 'product_brand' && brand.includes(node.slug)) : true;
+
       // Product attribute filters
       const globalProductAttributes = runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES?.map((attribute: any) => attribute.slug) || [];
       const attributeCondition = globalProductAttributes
@@ -131,7 +135,7 @@ export function useFiltering() {
   const stockFilter = getFilter('stock');
   const inStockOnlyCondition = stockFilter.length ? product.stockStatus === 'IN_STOCK' : true;
 
-  return ratingCondition && priceCondition && attributeCondition && categoryCondition && inStockOnlyCondition;
+  return ratingCondition && priceCondition && attributeCondition && categoryCondition && brandCondition && inStockOnlyCondition;
     });
   }
 
