@@ -142,9 +142,14 @@ export function useFiltering() {
       const shaft = getFilter('pa_saft') || [];
       const shaftCondition = shaft.length ? product.terms?.nodes?.find((node: any) => node.taxonomyName === 'pa_saft' && shaft.includes(node.slug)) : true;
 
-      // Product attribute filters
-      const globalProductAttributes = runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES?.map((attribute: any) => attribute.slug) || [];
-      const attributeCondition = globalProductAttributes
+
+      // Product attribute filters (global + extra attributes)
+      const extraAttributes = ['pa_kontrol', 'pa_mars', 'pa_trim'];
+      const allAttributes = [
+        ...(runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES?.map((attribute: any) => attribute.slug) || []),
+        ...extraAttributes
+      ];
+      const attributeCondition = allAttributes
         .map((attribute: string) => {
           const attributeValues = getFilter(attribute) || [];
           if (!attributeValues.length) return true;

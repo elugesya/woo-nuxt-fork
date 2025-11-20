@@ -28,7 +28,19 @@ const checkboxChanged = () => {
   </div>
   <div v-show="isOpen" class="mt-3 mr-1 max-h-[240px] grid gap-1 overflow-auto custom-scrollbar">
     <div v-for="term in attribute.terms" :key="term.slug" class="flex gap-2 items-center">
-      <Checkbox :id="term.slug" v-model:checked="selectedTerms" :value="term.slug" @update:checked="checkboxChanged" />
+      <Checkbox
+        :id="term.slug"
+        :checked="selectedTerms.includes(term.slug)"
+        @update:checked="(checked) => {
+          if (checked) {
+            if (!selectedTerms.includes(term.slug)) selectedTerms.push(term.slug)
+          } else {
+            const idx = selectedTerms.indexOf(term.slug)
+            if (idx !== -1) selectedTerms.splice(idx, 1)
+          }
+          checkboxChanged()
+        }"
+      />
       <label :for="term.slug" class="cursor-pointer m-0 text-sm flex items-center flex-wrap">
         <span v-html="term.name" />
         <small v-if="attribute.showCount" class="ml-1 text-muted-foreground tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>

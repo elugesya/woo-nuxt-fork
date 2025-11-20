@@ -9,16 +9,29 @@ const { storeSettings } = useAppConfig();
 // hide-categories prop is used to hide the category filter on the product category page
 const { hideCategories } = defineProps({ hideCategories: { type: Boolean, default: false } });
 
+
 const globalProductAttributes = (runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES as WooNuxtFilter[]) || [];
 
-// Check if product_brand and pa_saft are already in global attributes, if not add them for the query
+// Ekstra attribute'lar
+const extraAttributes = [
+  { slug: 'pa_kontrol', label: 'Kontrol', openByDefault: false, showCount: true },
+  { slug: 'pa_mars', label: 'Marş', openByDefault: false, showCount: true },
+  { slug: 'pa_trim', label: 'Trim', openByDefault: false, showCount: true },
+];
+
 const hasBrandAttribute = globalProductAttributes.some((attr) => attr.slug === 'product_brand');
 const hasShaftAttribute = globalProductAttributes.some((attr) => attr.slug === 'pa_saft');
+const hasKontrol = globalProductAttributes.some((attr) => attr.slug === 'pa_kontrol');
+const hasMars = globalProductAttributes.some((attr) => attr.slug === 'pa_mars');
+const hasTrim = globalProductAttributes.some((attr) => attr.slug === 'pa_trim');
 
 const attributesForQuery = [
   ...globalProductAttributes,
   ...(!hasBrandAttribute ? [{ slug: 'product_brand', label: 'Marka', openByDefault: true, showCount: true }] : []),
   ...(!hasShaftAttribute ? [{ slug: 'pa_saft', label: 'Şaft', openByDefault: true, showCount: true }] : []),
+  ...(!hasKontrol ? [extraAttributes[0]] : []),
+  ...(!hasMars ? [extraAttributes[1]] : []),
+  ...(!hasTrim ? [extraAttributes[2]] : []),
 ];
 
 const taxonomies = attributesForQuery.map((attr) => attr?.slug?.toUpperCase().replace(/_/g, '')) as TaxonomyEnum[];
@@ -34,7 +47,9 @@ const brandTerms = terms?.filter((term) => term.taxonomyName === 'product_brand'
 const shaftTerms = terms?.filter((term) => term.taxonomyName === 'pa_saft');
 
 // Filter out the color attribute and the rest of the global product attributes
-const attributesWithTerms = globalProductAttributes.map((attr) => ({ ...attr, terms: terms?.filter((term) => term.taxonomyName === attr.slug) }));
+const attributesWithTerms = attributesForQuery
+  .filter(attr => attr.slug !== 'product_brand' && attr.slug !== 'pa_saft')
+  .map((attr) => ({ ...attr, terms: terms?.filter((term) => term.taxonomyName === attr.slug) }));
 </script>
 
 <template>

@@ -241,6 +241,23 @@ useHead(() => ({
                 <LazyWPAdminLink :link="`/wp-admin/post.php?post=${product.databaseId}&action=edit`">Edit</LazyWPAdminLink>
               </h1>
               <StarRating :rating="product.averageRating || 0" :count="product.reviewCount || 0" v-if="storeSettings.showReviews" />
+
+              <!-- Product Attributes as Key:Value -->
+              <div v-if="product.attributes && product.attributes.nodes && product.attributes.nodes.length" class="mb-4">
+                <div class="flex flex-wrap gap-2 text-sm">
+                  <template v-for="attr in product.attributes.nodes" :key="attr.id">
+                    <span v-if="(attr.options && attr.options.length) || (attr.terms && attr.terms.nodes && attr.terms.nodes.length)" class="bg-muted px-2 py-1 rounded">
+                      <strong>{{ attr.label || attr.name }}:</strong>
+                      <template v-if="attr.terms && attr.terms.nodes && attr.terms.nodes.length">
+                        {{ attr.terms.nodes.map(term => term.name).join(', ') }}
+                      </template>
+                      <template v-else-if="attr.options && attr.options.length">
+                        {{ attr.options.join(', ') }}
+                      </template>
+                    </span>
+                  </template>
+                </div>
+              </div>
             </div>
             <ProductPrice class="text-xl" :sale-price="type.salePrice" :regular-price="type.regularPrice" />
           </div>
