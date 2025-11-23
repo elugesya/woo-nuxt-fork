@@ -12,38 +12,38 @@ export default <Partial<Config>>{
     extend: {
       colors: {
         primary: {
-          light: '#B7A6E7',
-          DEFAULT: process.env.PRIMARY_COLOR || '#7F54B2',
-          dark: '#6C479C',
+          light: '#00A8CC', // Teal/Cyan
+          DEFAULT: '#003366', // Deep Ocean Blue
+          dark: '#002244',
         },
-        background: '#F8F9FB',
-        foreground: '#23272F',
-        border: '#E5E7EB',
-        input: '#F3F4F6',
-        ring: '#B7A6E7',
+        background: '#FAFAFA', // Clean Off-White
+        foreground: '#0F172A', // Slate 900
+        border: '#E2E8F0', // Slate 200
+        input: '#F1F5F9', // Slate 100
+        ring: '#00A8CC', // Teal
         secondary: {
-          DEFAULT: '#F3F4F6',
-          foreground: '#23272F',
+          DEFAULT: '#F0F4F8', // Soft Grey/Blue
+          foreground: '#0F172A',
         },
         destructive: {
           DEFAULT: '#EF4444',
           foreground: '#fff',
         },
         muted: {
-          DEFAULT: '#F3F4F6',
-          foreground: '#6B7280',
+          DEFAULT: '#F1F5F9',
+          foreground: '#64748B', // Slate 500
         },
         accent: {
-          DEFAULT: '#E0E7FF',
-          foreground: '#23272F',
+          DEFAULT: '#E0F2F1', // Light Teal
+          foreground: '#003366',
         },
         popover: {
           DEFAULT: '#fff',
-          foreground: '#23272F',
+          foreground: '#0F172A',
         },
         card: {
           DEFAULT: '#fff',
-          foreground: '#23272F',
+          foreground: '#0F172A',
         },
       },
       borderRadius: {
