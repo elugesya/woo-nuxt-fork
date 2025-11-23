@@ -112,6 +112,7 @@ useHead({
       <div v-if="isShowingMobileMenu" class="bg-black opacity-25 inset-0 z-40 fixed" @click="closeMobileMenu" />
     </Transition>
 
+    <FloatingWhatsAppButton />
     <LazyAppFooter hydrate-on-visible />
   </div>
 </template>
