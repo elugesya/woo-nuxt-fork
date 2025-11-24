@@ -41,7 +41,28 @@ const trustBadges = [
     description: '24/7 Online Destek',
     icon: '/icons/support.svg',
   },
+  {
+    title: 'Destek 24/7',
+    description: '24/7 Online Destek',
+    icon: '/icons/support.svg',
+  },
 ];
+
+// Handle redirect from payment gateway to homepage
+const route = useRoute();
+const router = useRouter();
+const lastOrderCookie = useCookie('woonuxt_last_order');
+
+onMounted(() => {
+  const { key } = route.query;
+  if (key && typeof key === 'string' && key.startsWith('wc_order')) {
+    // Check if we have a stored order ID for this key
+    const storedOrder = lastOrderCookie.value as any;
+    if (storedOrder && storedOrder.orderKey === key && storedOrder.orderId) {
+      router.push(`/odeme/siparis-alindi/${storedOrder.orderId}?key=${key}`);
+    }
+  }
+});
 </script>
 
 <template>

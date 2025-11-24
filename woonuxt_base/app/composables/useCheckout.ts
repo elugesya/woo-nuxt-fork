@@ -167,6 +167,10 @@ export function useCheckout() {
 
       // If checkout includes a redirect URL
       if (checkout?.redirect) {
+        // Persist order details to cookie for recovery if redirected to homepage
+        const lastOrderCookie = useCookie('woonuxt_last_order', { maxAge: 60 * 60 }); // 1 hour
+        lastOrderCookie.value = JSON.stringify({ orderId, orderKey });
+
         if (isPayPalPayment()) {
           // PayPal flow handled via popup window
           await handlePayPalRedirect(checkout, String(orderId), orderKey);
@@ -176,7 +180,7 @@ export function useCheckout() {
           // For hosted/redirect gateways (e.g., Tosla/Sanal POS), navigate current window
           // Backend snippet should rewrite return/cancel URLs to frontend routes
           let redirectUrl = checkout.redirect;
-          
+
           // If Tosla payment page, add cart total for installment calculation
           if (redirectUrl.includes('/odeme/kart-bilgileri')) {
             const { cart } = useCart();
@@ -187,21 +191,39 @@ export function useCheckout() {
             url.searchParams.set('total', cartTotal.toFixed(2));
             redirectUrl = url.toString();
           }
-          
+
+          // FIX: Intercept redirects that go to homepage with order key (common WC behavior)
+          // and redirect to our internal success page instead
+          try {
+            const urlObj = new URL(redirectUrl);
+            const hasOrderKey = urlObj.searchParams.has('key') && urlObj.searchParams.get('key')?.startsWith('wc_order');
+            const isHomePage = urlObj.pathname === '/' || urlObj.pathname === '';
+
+            if (hasOrderKey && (isHomePage || !redirectUrl.includes('siparis-alindi'))) {
+              // We have the orderId from checkout response
+              const finalUrl = `/odeme/siparis-alindi/${orderId}/?key=${orderKey}`;
+              router.push(finalUrl);
+              await finalizeCheckout(checkout);
+              return checkout;
+            }
+          } catch (e) {
+            // Invalid URL, ignore and proceed with original redirect
+          }
+
           window.location.assign(redirectUrl);
           return checkout; // stop further processing as we're leaving the page
         }
       } else if (checkoutPayload.paymentMethod === 'wc_alttantire') {
         // FALLBACK: Tosla gateway doesn't provide redirect in GraphQL response
         // Manually redirect to card details page
-    // Use RAW total to avoid locale formatting issues (e.g., 13.600,00)
-    const raw = parseFloat((cart.value?.rawTotal as string) || '0');
-    const cartTotal = Number.isFinite(raw) ? raw : 0;
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const redirectUrl = `${origin}/odeme/kart-bilgileri?order_id=${orderId}&key=${orderKey}&total=${cartTotal.toFixed(2)}`;
-        
-  //
-        
+        // Use RAW total to avoid locale formatting issues (e.g., 13.600,00)
+        const raw = parseFloat((cart.value?.rawTotal as string) || '0');
+        const cartTotal = Number.isFinite(raw) ? raw : 0;
+        const origin = typeof window !== 'undefined' ? window.location.origin : '';
+        const redirectUrl = `${origin}/odeme/kart-bilgileri?order_id=${orderId}&key=${orderKey}&total=${cartTotal.toFixed(2)}`;
+
+        //
+
         // Use window.location for full page reload (ensures Nuxt properly loads the route)
         window.location.href = redirectUrl;
         return checkout;

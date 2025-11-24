@@ -209,6 +209,7 @@ export const useGoogleAnalytics = () => {
     databaseId?: number
     orderNumber?: string
     total?: string
+    rawTotal?: string
     totalTax?: string
     shippingTotal?: string
     lineItems?: { nodes?: any[] }
@@ -220,7 +221,7 @@ export const useGoogleAnalytics = () => {
 
     window.gtag?.('event', 'purchase', {
       transaction_id: order.orderNumber || String(order.databaseId),
-      value: parseFloat(order.total || '0'),
+      value: order.rawTotal ? parseFloat(order.rawTotal) : parseFloat(order.total || '0'),
       tax: parseFloat(order.totalTax || '0'),
       shipping: parseFloat(order.shippingTotal || '0'),
       currency: config.public.CURRENCY_CODE || 'TRY',

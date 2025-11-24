@@ -35,14 +35,21 @@ onMounted(async () => {
   // Clear the cart once the order is confirmed to be loaded
   // This prevents the cart flash on the checkout page during navigation
   // Only clear if cart has items to avoid "Cart is empty" errors
+  // Clear the cart once the order is confirmed to be loaded
+  // This prevents the cart flash on the checkout page during navigation
+  // Only clear if cart has items to avoid "Cart is empty" errors
   if (order.value && isCheckoutPage.value && cart.value?.contents?.nodes?.length) {
-    await emptyCart();
-    await refreshCart();
+    try {
+      await emptyCart();
+      // await refreshCart(); // Removed to prevent potential session/cookie clearing on error
+    } catch (e) {
+      console.error('Error emptying cart:', e);
+    }
   }
 
   // Track purchase event (only on order-received page, not on order-summary)
   if (order.value && isCheckoutPage.value) {
-    trackPurchase(order.value);
+    trackPurchase(order.value as any);
   }
 
   /**
@@ -149,7 +156,7 @@ useSeoMeta({
                   <template v-if="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl">
                     <NuxtImg
                       class="w-16 h-16 rounded-md object-cover bg-muted"
-                      :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl"
+                      :src="item.variation?.node?.image?.sourceUrl || item.product.node?.image?.sourceUrl || ''"
                       :alt="item.variation?.node?.image?.altText || item.product.node?.image?.altText || 'Product image'"
                       :title="item.variation?.node?.image?.title || item.product.node?.image?.title || 'Product image'"
                       width="64"

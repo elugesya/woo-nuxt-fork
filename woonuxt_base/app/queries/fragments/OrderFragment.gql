@@ -7,6 +7,7 @@ fragment OrderFragment on Order {
   databaseId
   orderKey
   total
+  rawTotal: total(format: RAW)
   subtotal
   discountTotal
   rawDiscountTotal: discountTotal(format: RAW)

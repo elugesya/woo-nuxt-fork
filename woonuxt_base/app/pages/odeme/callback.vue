@@ -42,7 +42,7 @@ async function pollOrderStatus() {
       if (orderStatus === 'processing' || orderStatus === 'completed') {
         statusMessage.value = 'Ödemeniz başarıyla tamamlandı! Yönlendiriliyorsunuz...';
         await new Promise(r => setTimeout(r, 1200));
-        router.push(`/siparis-ozeti/${orderId.value}?key=${orderKey.value}`);
+        router.push(`/odeme/siparis-alindi/${orderId.value}?key=${orderKey.value}`);
         return;
       }
 
@@ -74,6 +74,10 @@ onMounted(pollOrderStatus);
 useHead({
   title: 'Ödeme Kontrol Ediliyor'
 });
+
+const reloadPage = () => {
+  window.location.reload();
+};
 </script>
 
 <template>
@@ -122,7 +126,7 @@ useHead({
         <NuxtLink to="/hesabim?tab=orders" class="px-5 py-3 bg-gray-800 text-white rounded hover:bg-gray-700 text-sm">
           Siparişlerimi Görüntüle
         </NuxtLink>
-        <button @click="() => window.location.reload()" class="px-5 py-3 bg-primary text-white rounded hover:opacity-90 text-sm">
+        <button @click="reloadPage" class="px-5 py-3 bg-primary text-white rounded hover:opacity-90 text-sm">
           Tekrar Kontrol Et
         </button>
       </div>

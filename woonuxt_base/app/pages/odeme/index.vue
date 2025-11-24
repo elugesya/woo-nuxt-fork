@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { loadStripe } from '@stripe/stripe-js';
 import type { Stripe, StripeElements, CreateSourceData, StripeCardElement } from '@stripe/stripe-js';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 
 const { t } = useI18n();
 const { query } = useRoute();
@@ -17,10 +23,14 @@ const isStripeElementReady = ref<boolean>(false);
 const stripeClientSecret = ref<string>('');
 
 const isCheckoutDisabled = computed<boolean>(() => {
-  if (isProcessingOrder.value || isUpdatingCart.value || !orderInput.value.paymentMethod) return true;
+  if (isProcessingOrder.value || isUpdatingCart.value || !orderInput.value.paymentMethod) {
+    console.log('Checkout disabled:', { isProcessing: isProcessingOrder.value, isUpdating: isUpdatingCart.value, hasPaymentMethod: !!orderInput.value.paymentMethod });
+    return true;
+  }
 
   // Check if Stripe is selected and element is not ready
   if (orderInput.value.paymentMethod?.id === 'stripe') {
+    if (!isStripeElementReady.value) console.log('Checkout disabled: Stripe element not ready');
     return !isStripeElementReady.value;
   }
 
@@ -91,6 +101,7 @@ const hasAnyShippingInfo = computed(() => {
 });
 
 const payNow = async () => {
+  console.log('payNow called');
   buttonText.value = t('general.processing');
 
   try {
@@ -286,7 +297,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="flex flex-col min-h-[600px]">
+  <div class="flex flex-col min-h-[600px] bg-muted/30 pb-20">
     <template v-if="cart && customer">
       <div v-if="cart.isEmpty" class="flex flex-col items-center justify-center flex-1 mb-12">
         <Icon name="ion:cart-outline" size="156" class="opacity-25 mb-5" />
@@ -299,188 +310,230 @@ useSeoMeta({
         </NuxtLink>
       </div>
 
-      <form v-else class="container flex flex-wrap items-start gap-8 my-16 justify-evenly lg:gap-20 pb-32 md:pb-0" @submit.prevent="payNow">
-        <div class="grid w-full max-w-2xl gap-8 checkout-form md:flex-1">
+      <form v-else class="container flex flex-wrap items-start gap-8 my-8 justify-evenly lg:gap-10" @submit.prevent="payNow">
+        <div class="grid w-full max-w-3xl gap-6 checkout-form md:flex-1">
           <!-- Customer details -->
-          <div v-if="!viewer && customer?.billing">
-            <h2 class="w-full mb-2 text-2xl font-semibold leading-none">{{ $t('checkout.contactInformation') }}</h2>
-            <p class="mt-1 text-sm text-gray-500">
-              {{ $t('checkout.alreadyHaveAccount') }} <NuxtLink to="/hesabim" @click="navigateToLogin('/odeme')" class="text-primary text-semibold">{{ $t('checkout.logIn') }}</NuxtLink>.
-            </p>
-            <div class="w-full mt-4">
-              <label for="email">{{ $t('billing.email') }}</label>
-              <input
-                v-model="customer.billing.email"
-                placeholder="johndoe@email.com"
-                autocomplete="email"
-                type="email"
-                name="email"
-                :class="{ 'has-error': isInvalidEmail }"
-                @blur="checkEmailOnBlur(customer.billing.email)"
-                @input="checkEmailOnInput(customer.billing.email)"
-                required />
-              <Transition name="scale-y" mode="out-in">
-                <div v-if="isInvalidEmail" class="mt-1 text-sm text-red-500">{{ $t('checkout.invalidEmailAddress') }}</div>
-              </Transition>
-            </div>
-            <template v-if="orderInput.createAccount">
-              <div class="w-full mt-4">
-                <label for="username">{{ $t('account.username') }}</label>
-                <input v-model="orderInput.username" placeholder="johndoe" autocomplete="username" type="text" name="username" required />
+          <Card v-if="!viewer && customer?.billing">
+            <CardHeader>
+              <CardTitle>{{ $t('checkout.contactInformation') }}</CardTitle>
+            </CardHeader>
+            <CardContent class="grid gap-4">
+              <p class="text-sm text-muted-foreground">
+                {{ $t('checkout.alreadyHaveAccount') }} <NuxtLink to="/hesabim" @click="navigateToLogin('/odeme')" class="text-primary font-semibold hover:underline">{{ $t('checkout.logIn') }}</NuxtLink>.
+              </p>
+              <div class="grid gap-2">
+                <Label for="email">{{ $t('billing.email') }}</Label>
+                <Input
+                  v-model="customer.billing.email"
+                  placeholder="johndoe@email.com"
+                  autocomplete="email"
+                  type="email"
+                  id="email"
+                  name="email"
+                  :class="{ 'border-destructive': isInvalidEmail }"
+                  @blur="checkEmailOnBlur(customer.billing.email)"
+                  @input="checkEmailOnInput(customer.billing.email)"
+                  required />
+                <Transition name="scale-y" mode="out-in">
+                  <div v-if="isInvalidEmail" class="text-sm text-destructive">{{ $t('checkout.invalidEmailAddress') }}</div>
+                </Transition>
               </div>
-              <div class="w-full my-2" v-if="orderInput.createAccount">
-                <label for="email">{{ $t('account.password') }}</label>
-                <PasswordInput id="password" class="my-2" v-model="orderInput.password" placeholder="••••••••••" :required="true" />
+              
+              <template v-if="orderInput.createAccount">
+                <div class="grid gap-2">
+                  <Label for="username">{{ $t('account.username') }}</Label>
+                  <Input v-model="orderInput.username" placeholder="johndoe" autocomplete="username" type="text" id="username" name="username" required />
+                </div>
+                <div class="grid gap-2">
+                  <Label for="password">{{ $t('account.password') }}</Label>
+                  <PasswordInput id="password" v-model="orderInput.password" placeholder="••••••••••" :required="true" />
+                </div>
+              </template>
+              
+              <div v-if="!viewer" class="flex items-center gap-2 mt-2">
+                <Checkbox id="create-account" :checked="orderInput.createAccount" @update:checked="orderInput.createAccount = $event" />
+                <Label for="create-account" class="cursor-pointer">{{ $t('checkout.createAccount') }}</Label>
               </div>
-            </template>
-            <div v-if="!viewer" class="flex items-center gap-2 my-2">
-              <label for="creat-account">{{ $t('checkout.createAccount') }}</label>
-              <input id="creat-account" v-model="orderInput.createAccount" type="checkbox" name="creat-account" />
-            </div>
-          </div>
+            </CardContent>
+          </Card>
 
-          <!-- Shipping Address Section -->
+          <!-- Billing Address Section -->
           <div v-if="cart?.availableShippingMethods?.length">
-            <h2 class="text-2xl font-semibold text-gray-900 mb-4 leading-none">{{ $t('checkout.billingAddress') }}</h2>
+            <Card>
+              <CardHeader>
+                <CardTitle>{{ $t('checkout.billingAddress') }}</CardTitle>
+              </CardHeader>
+              <CardContent class="grid gap-6">
+                <!-- For logged-in users: Show Summary or Form -->
+                <template v-if="viewer">
+                  <!-- Billing Address Summary or Form -->
+                  <div v-if="!isEditingBilling" class="space-y-4">
+                    <!-- Billing Address Summary -->
+                    <AddressSummary :address="customer?.billing" :show-validation-warnings="!!viewer" @edit="editBillingAddress" />
 
-            <!-- For logged-in users: Show Summary or Form -->
-            <template v-if="viewer">
-              <!-- Shipping Address Summary or Form -->
-              <div v-if="!isEditingShipping" class="space-y-4">
-                <!-- Shipping Address Summary -->
-                <AddressSummary :address="customer?.shipping" :show-validation-warnings="!!viewer" @edit="editShippingAddress" />
+                    <!-- Ship to Different Address Checkbox -->
+                    <div class="flex items-center gap-2">
+                      <Checkbox
+                        id="useSameAddress"
+                        :checked="shipToDifferentAddress"
+                        @update:checked="shipToDifferentAddress = $event"
+                      />
+                      <Label for="useSameAddress" class="cursor-pointer">
+                        {{ $t('billing.differentAddress') }}
+                      </Label>
+                    </div>
+                  </div>
 
-                <!-- Ship to Different Address Checkbox -->
-                <div class="flex items-center gap-3">
-                  <input
-                    id="useSameAddress"
-                    v-model="shipToDifferentAddress"
-                    type="checkbox"
-                    name="useSameAddress"
-                    class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
-                  <label for="useSameAddress" class="text-sm font-medium text-gray-700">
-                    {{ $t('billing.differentAddress') }}
-                  </label>
-                </div>
-              </div>
+                  <!-- Billing Address Form (when editing - stays open once clicked) -->
+                  <div v-else class="space-y-6">
+                    <div>
+                      <BillingDetails v-if="customer?.billing" v-model="customer.billing" />
+                    </div>
 
-              <!-- Shipping Address Form (when editing - stays open once clicked) -->
-              <div v-else class="space-y-6">
-                <div>
-                  <ShippingDetails v-if="customer?.shipping" v-model="customer.shipping" />
-                </div>
+                    <!-- Ship to Different Address Checkbox (also shown during editing) -->
+                    <div class="flex items-center gap-2">
+                      <Checkbox
+                        id="useSameAddressEdit"
+                        :checked="shipToDifferentAddress"
+                        @update:checked="shipToDifferentAddress = $event"
+                      />
+                      <Label for="useSameAddressEdit" class="cursor-pointer">
+                        {{ $t('billing.differentAddress') }}
+                      </Label>
+                    </div>
+                  </div>
+                </template>
 
-                <!-- Ship to Different Address Checkbox (also shown during editing) -->
-                <div class="flex items-center gap-3">
-                  <input
-                    id="useSameAddressEdit"
-                    v-model="shipToDifferentAddress"
-                    type="checkbox"
-                    name="useSameAddressEdit"
-                    class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
-                  <label for="useSameAddressEdit" class="text-sm font-medium text-gray-700">
-                    {{ $t('billing.differentAddress') }}
-                  </label>
-                </div>
-              </div>
-            </template>
+                <!-- For guest users: Always show form open -->
+                <template v-else>
+                  <div class="space-y-6">
+                    <BillingDetails v-if="customer?.billing" v-model="customer.billing" />
 
-            <!-- For guest users: Always show form open -->
-            <template v-else>
-              <div class="space-y-6">
-                <ShippingDetails v-if="customer?.shipping" v-model="customer.shipping" />
-
-                <!-- Ship to Different Address Checkbox -->
-                <div class="flex items-center gap-3">
-                  <input
-                    id="useSameAddressGuest"
-                    v-model="shipToDifferentAddress"
-                    type="checkbox"
-                    name="useSameAddressGuest"
-                    class="w-4 h-4 text-primary bg-white border-gray-300 rounded focus:ring-primary focus:ring-2" />
-                  <label for="useSameAddressGuest" class="text-sm font-medium text-gray-700">
-                    {{ $t('billing.differentAddress') }}
-                  </label>
-                </div>
-              </div>
-            </template>
+                    <!-- Ship to Different Address Checkbox -->
+                    <div class="flex items-center gap-2">
+                      <Checkbox
+                        id="useSameAddressGuest"
+                        :checked="shipToDifferentAddress"
+                        @update:checked="shipToDifferentAddress = $event"
+                      />
+                      <Label for="useSameAddressGuest" class="cursor-pointer">
+                        {{ $t('billing.differentAddress') }}
+                      </Label>
+                    </div>
+                  </div>
+                </template>
+              </CardContent>
+            </Card>
           </div>
 
           <div v-if="shipToDifferentAddress">
-            <div class="mb-6">
-              <h2 class="text-2xl font-semibold text-gray-900 mb-2 leading-none">{{ $t('checkout.shippingAddressTitle') }}</h2>
-            </div>
-            <BillingDetails v-if="customer?.billing" v-model="customer.billing" />
+            <Card>
+              <CardHeader>
+                <CardTitle>{{ $t('checkout.shippingAddressTitle') }}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ShippingDetails v-if="customer?.shipping" v-model="customer.shipping" />
+              </CardContent>
+            </Card>
           </div>
+          
           <!-- Fallback: If no shipping methods available, show billing details -->
           <div v-if="!cart?.availableShippingMethods?.length">
-            <h2 class="w-full mb-3 text-2xl font-semibold">{{ $t('billing.billingDetails') }}</h2>
-            <BillingDetails v-if="customer?.billing" v-model="customer.billing" />
+            <Card>
+              <CardHeader>
+                <CardTitle>{{ $t('billing.billingDetails') }}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <BillingDetails v-if="customer?.billing" v-model="customer.billing" />
+              </CardContent>
+            </Card>
           </div>
-
-          <hr />
 
           <!-- Shipping methods -->
           <div v-if="cart?.availableShippingMethods?.length">
-            <h3 class="mb-4 text-xl font-semibold leading-none">{{ $t('general.shippingSelect') }}</h3>
-            <ShippingOptions
-              v-if="cart.availableShippingMethods[0]?.rates && cart.chosenShippingMethods?.[0]"
-              :options="cart.availableShippingMethods[0].rates"
-              :active-option="cart.chosenShippingMethods[0]" />
+            <Card>
+              <CardHeader>
+                <CardTitle>{{ $t('general.shippingSelect') }}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ShippingOptions
+                  v-if="cart.availableShippingMethods[0]?.rates && cart.chosenShippingMethods?.[0]"
+                  :options="cart.availableShippingMethods[0].rates"
+                  :active-option="cart.chosenShippingMethods[0]" />
+              </CardContent>
+            </Card>
           </div>
 
           <hr />
 
           <!-- Pay methods -->
           <div v-if="paymentGateways?.nodes.length" class="mt-2 col-span-full">
-            <h2 class="mb-4 text-xl font-semibold leading-none">{{ $t('billing.paymentOptions') }}</h2>
-            <PaymentOptions v-model="orderInput.paymentMethod" class="mb-4" :paymentGateways />
-            <StripeElement v-if="stripe" v-show="orderInput.paymentMethod.id == 'stripe'" :stripe @updateElement="handleStripeElement" />
+            <Card>
+              <CardHeader>
+                <CardTitle>{{ $t('billing.paymentOptions') }}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <PaymentOptions v-model="orderInput.paymentMethod" class="mb-6" :paymentGateways />
+                <StripeElement v-if="stripe" v-show="orderInput.paymentMethod.id == 'stripe'" :stripe @updateElement="handleStripeElement" />
+              </CardContent>
+            </Card>
           </div>
-
-          <hr />
 
           <!-- Order note -->
           <div>
-            <h2 class="mb-4 text-xl font-semibold leading-none">{{ $t('shop.orderNote') }} ({{ $t('general.optional') }})</h2>
-            <textarea
-              id="order-note"
-              v-model="orderInput.customerNote"
-              name="order-note"
-              class="w-full min-h-[100px]"
-              rows="4"
-              :placeholder="$t('shop.orderNotePlaceholder')"></textarea>
+            <Card>
+              <CardHeader>
+                <CardTitle>{{ $t('shop.orderNote') }} <span class="text-muted-foreground text-sm font-normal">({{ $t('general.optional') }})</span></CardTitle>
+              </CardHeader>
+              <CardContent>
+                <textarea
+                  id="order-note"
+                  v-model="orderInput.customerNote"
+                  name="order-note"
+                  class="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  rows="4"
+                  :placeholder="$t('shop.orderNotePlaceholder')"></textarea>
+              </CardContent>
+            </Card>
           </div>
         </div>
 
         <!-- Desktop: OrderSummary with button inside -->
-        <div class="hidden md:block">
+        <div class="hidden md:block w-full max-w-md">
           <OrderSummary>
-            <button
-              class="flex items-center justify-center w-full gap-3 p-3 mt-4 font-semibold text-center text-white rounded-lg shadow-md bg-primary hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-gray-400"
-              :disabled="isCheckoutDisabled">
-              {{ buttonText }}<LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" />
-            </button>
+            <Button
+              class="w-full font-bold text-lg h-12 shadow-md text-white"
+              :disabled="isCheckoutDisabled"
+              size="lg"
+              type="submit"
+            >
+              {{ buttonText }}
+              <LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" class="ml-2" />
+            </Button>
           </OrderSummary>
         </div>
 
         <!-- Mobile: Show OrderSummary without button (button will be sticky at bottom) -->
-        <div class="block md:hidden">
+        <div class="block md:hidden w-full">
           <OrderSummary />
         </div>
 
         <!-- Mobile Sticky Payment Button -->
-        <div class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-white border-t shadow-lg md:hidden">
+        <div class="fixed bottom-0 left-0 right-0 z-50 p-4 bg-background border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:hidden">
           <div class="container mx-auto max-w-2xl">
             <div class="flex items-center justify-between mb-3">
-              <span class="text-sm text-gray-600">{{ $t('shop.total') }}</span>
-              <span class="text-lg font-bold text-gray-900" v-html="cart.total" />
+              <span class="text-sm text-muted-foreground">{{ $t('shop.total') }}</span>
+              <span class="text-lg font-bold text-foreground" v-html="cart.total" />
             </div>
-            <button
-              class="flex items-center justify-center w-full gap-3 p-4 font-semibold text-center text-white rounded-lg shadow-md bg-primary hover:bg-primary-dark disabled:cursor-not-allowed disabled:bg-gray-400"
-              :disabled="isCheckoutDisabled">
-              {{ buttonText }}<LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" />
-            </button>
+            <Button
+              class="w-full font-bold text-lg h-12 shadow-md text-white"
+              :disabled="isCheckoutDisabled"
+              size="lg"
+              type="submit"
+            >
+              {{ buttonText }}
+              <LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" class="ml-2" />
+            </Button>
           </div>
         </div>
       </form>
