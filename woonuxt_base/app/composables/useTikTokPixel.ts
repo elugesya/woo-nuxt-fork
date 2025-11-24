@@ -105,6 +105,44 @@ export const useTikTokPixel = () => {
     };
 
     /**
+     * Helper to parse price string to number
+     * Handles currency symbols, thousands separators, and decimal commas
+     */
+    const parsePrice = (price: string | number | undefined | null): number => {
+        if (price === undefined || price === null) return 0;
+        if (typeof price === 'number') return price;
+
+        // Remove currency symbols and non-numeric chars except . and ,
+        let cleanPrice = price.replace(/[^0-9.,]/g, '');
+
+        // If it has both . and , assume the last one is the decimal separator
+        if (cleanPrice.includes('.') && cleanPrice.includes(',')) {
+            const lastDotIndex = cleanPrice.lastIndexOf('.');
+            const lastCommaIndex = cleanPrice.lastIndexOf(',');
+
+            if (lastCommaIndex > lastDotIndex) {
+                // Comma is decimal separator (e.g. 1.234,56)
+                cleanPrice = cleanPrice.replace(/\./g, '').replace(',', '.');
+            } else {
+                // Dot is decimal separator (e.g. 1,234.56)
+                cleanPrice = cleanPrice.replace(/,/g, '');
+            }
+        } else if (cleanPrice.includes(',')) {
+            // If only comma, assume it's decimal separator if it looks like one (e.g. 12,50)
+            // But be careful with 1,000 (could be 1000). 
+            // Usually in TR/EU, comma is decimal. 
+            // Let's assume comma is decimal if it's the only separator and we are in TR context or generic.
+            // A safer bet for single separator is: if it has 3 digits after, it MIGHT be thousands, but 12,345 is ambiguous.
+            // Given the context of WooCommerce usually returning standard formats:
+            // If we have rawTotal (which is float string), we use that. 
+            // This fallback is for formatted strings.
+            cleanPrice = cleanPrice.replace(',', '.');
+        }
+
+        return parseFloat(cleanPrice) || 0;
+    };
+
+    /**
      * Track ViewContent event
      */
     const trackViewContent = (product: any) => {
@@ -118,7 +156,7 @@ export const useTikTokPixel = () => {
                     content_name: product.name,
                 },
             ],
-            value: parseFloat(product.salePrice || product.price || product.regularPrice || 0),
+            value: parsePrice(product.salePrice || product.price || product.regularPrice),
             currency: config.public.CURRENCY_CODE || 'TRY',
         });
     };
@@ -137,7 +175,7 @@ export const useTikTokPixel = () => {
                     content_name: product.name,
                 },
             ],
-            value: parseFloat(product.salePrice || product.price || product.regularPrice || 0) * quantity,
+            value: parsePrice(product.salePrice || product.price || product.regularPrice) * quantity,
             currency: config.public.CURRENCY_CODE || 'TRY',
         });
     };
@@ -156,7 +194,7 @@ export const useTikTokPixel = () => {
                     content_name: product.name,
                 },
             ],
-            value: parseFloat(product.salePrice || product.price || product.regularPrice || 0),
+            value: parsePrice(product.salePrice || product.price || product.regularPrice),
             currency: config.public.CURRENCY_CODE || 'TRY',
         });
     };
@@ -189,7 +227,7 @@ export const useTikTokPixel = () => {
         window.ttq.track('InitiateCheckout', {
             contents,
             currency: config.public.CURRENCY_CODE || 'TRY',
-            value: parseFloat(cart.total || '0'),
+            value: parsePrice(cart.total),
         });
     };
 
@@ -208,7 +246,7 @@ export const useTikTokPixel = () => {
         window.ttq.track('AddPaymentInfo', {
             contents,
             currency: config.public.CURRENCY_CODE || 'TRY',
-            value: parseFloat(cart.total || '0'),
+            value: parsePrice(cart.total),
         });
     };
 
@@ -224,7 +262,8 @@ export const useTikTokPixel = () => {
             content_name: item.product?.node?.name,
         }));
 
-        const value = order.rawTotal ? parseFloat(order.rawTotal) : parseFloat(order.total || '0');
+        // Prefer rawTotal if available, otherwise parse total
+        const value = order.rawTotal ? parseFloat(order.rawTotal) : parsePrice(order.total);
 
         window.ttq.track('PlaceAnOrder', {
             contents,

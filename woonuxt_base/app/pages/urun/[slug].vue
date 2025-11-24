@@ -265,7 +265,7 @@ useHead(() => ({
                   <span class="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">{{ attr.label || attr.name }}</span>
                   <span class="font-semibold text-foreground leading-tight">
                     <template v-if="attr.terms && attr.terms.nodes && attr.terms.nodes.length">
-                      {{ attr.terms.nodes.map(term => term.name).join(', ') }}
+                      {{ attr.terms.nodes.map((term: any) => term.name).join(', ') }}
                     </template>
                     <template v-else-if="attr.options && attr.options.length">
                       {{ attr.options.join(', ') }}
