@@ -67,7 +67,11 @@ export const useTikTokPixel = () => {
                 c.async = true;
                 c.src = r + '?sdkid=' + e + '&lib=' + t;
                 var s = document.getElementsByTagName('script')[0];
-                s.parentNode?.insertBefore(c, s);
+                if (s && s.parentNode) {
+                    s.parentNode.insertBefore(c, s);
+                } else {
+                    document.head.appendChild(c);
+                }
             };
 
             ttq.load(pixelId);

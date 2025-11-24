@@ -5,7 +5,6 @@ const { isShowingMobileMenu, toggleMobileMenu, addBodyClass, removeBodyClass } =
 const runtimeConfig = useRuntimeConfig();
 
 const siteName = runtimeConfig.public.SITE_NAME || 'WooNuxt';
-const siteName = runtimeConfig.public.SITE_NAME || 'WooNuxt';
 const frontEndUrl = runtimeConfig.public.FRONT_END_URL || 'http://localhost:3000';
 
 const { init: initTikTok } = useTikTokPixel();
