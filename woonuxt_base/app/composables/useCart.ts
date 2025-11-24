@@ -112,11 +112,9 @@ export function useCart() {
       const { emptyCart } = await GqlEmptyCart();
       updateCart(emptyCart?.cart);
     } catch (error: any) {
-      const errorMsg = getErrorMessage(error);
-      // Don't log error if cart is already empty
-      if (errorMsg && !errorMsg.toLowerCase().includes('cart is empty')) {
-        console.error('Error emptying cart:', errorMsg);
-      }
+      // Silently fail for empty cart errors or session issues during checkout finalization
+      // We don't want to trigger a page reload or redirect here
+      console.error('Error emptying cart:', error?.message || error);
     } finally {
       isUpdatingCart.value = false;
     }
