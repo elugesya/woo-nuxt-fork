@@ -50,6 +50,8 @@ onMounted(async () => {
   // Track purchase event (only on order-received page, not on order-summary)
   if (order.value && isCheckoutPage.value) {
     trackPurchase(order.value as any);
+    const { trackPurchase: trackTikTokPurchase } = useTikTokPixel();
+    trackTikTokPurchase(order.value);
   }
 
   /**

@@ -56,7 +56,10 @@ onMounted(async () => {
   }
 
   // Track product view
-  trackViewItem(product.value);
+  if (product.value) {
+    trackViewItem(product.value);
+    trackViewContent(product.value);
+  }
 });
 
 const updateSelectedVariations = (variations: VariationAttribute[]): void => {
