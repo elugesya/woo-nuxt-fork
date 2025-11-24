@@ -13,6 +13,10 @@ export function useWishlist() {
   function addToWishlist(item: Product): void {
     theList.value.push(item);
     localStorage.setItem('wishlist', JSON.stringify(theList.value));
+
+    // TikTok Pixel AddToWishlist
+    const { trackAddToWishlist } = useTikTokPixel();
+    trackAddToWishlist(item);
   }
 
   /**

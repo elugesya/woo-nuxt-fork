@@ -18,6 +18,13 @@ export function useSearching() {
     const { updateProductList } = useProducts();
     searchQuery.value = search;
     router.push({ query: { ...route.query, search: search || undefined } });
+
+    // TikTok Pixel Search
+    if (search) {
+      const { trackSearch } = useTikTokPixel();
+      trackSearch(search);
+    }
+
     setTimeout(() => {
       updateProductList();
     }, 50);

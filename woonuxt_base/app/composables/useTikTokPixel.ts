@@ -15,6 +15,17 @@ export const useTikTokPixel = () => {
     const isEnabled = !!pixelId && typeof window !== 'undefined';
 
     /**
+     * SHA-256 Hashing for PII
+     */
+    const sha256 = async (message: string) => {
+        if (!message) return '';
+        const msgBuffer = new TextEncoder().encode(message.trim().toLowerCase());
+        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+    };
+
+    /**
      * Initialize TikTok Pixel
      * Injects the script into the head
      */
@@ -80,17 +91,34 @@ export const useTikTokPixel = () => {
     };
 
     /**
+     * Identify User (PII)
+     */
+    const identify = async (userData: { email?: string; phone_number?: string; external_id?: string }) => {
+        if (!isEnabled || !window.ttq) return;
+
+        const hashedData: any = {};
+        if (userData.email) hashedData.email = await sha256(userData.email);
+        if (userData.phone_number) hashedData.phone_number = await sha256(userData.phone_number);
+        if (userData.external_id) hashedData.external_id = await sha256(userData.external_id);
+
+        window.ttq.identify(hashedData);
+    };
+
+    /**
      * Track ViewContent event
      */
     const trackViewContent = (product: any) => {
         if (!isEnabled || !window.ttq) return;
 
         window.ttq.track('ViewContent', {
-            content_id: product.sku || String(product.databaseId),
-            content_type: 'product',
-            content_name: product.name,
-            quantity: 1,
-            price: parseFloat(product.salePrice || product.price || product.regularPrice || 0),
+            contents: [
+                {
+                    content_id: product.sku || String(product.databaseId),
+                    content_type: 'product',
+                    content_name: product.name,
+                },
+            ],
+            value: parseFloat(product.salePrice || product.price || product.regularPrice || 0),
             currency: config.public.CURRENCY_CODE || 'TRY',
         });
     };
@@ -102,13 +130,47 @@ export const useTikTokPixel = () => {
         if (!isEnabled || !window.ttq) return;
 
         window.ttq.track('AddToCart', {
-            content_id: product.sku || String(product.databaseId),
-            content_type: 'product',
-            content_name: product.name,
-            quantity: quantity,
-            price: parseFloat(product.salePrice || product.price || product.regularPrice || 0),
-            currency: config.public.CURRENCY_CODE || 'TRY',
+            contents: [
+                {
+                    content_id: product.sku || String(product.databaseId),
+                    content_type: 'product',
+                    content_name: product.name,
+                },
+            ],
             value: parseFloat(product.salePrice || product.price || product.regularPrice || 0) * quantity,
+            currency: config.public.CURRENCY_CODE || 'TRY',
+        });
+    };
+
+    /**
+     * Track AddToWishlist event
+     */
+    const trackAddToWishlist = (product: any) => {
+        if (!isEnabled || !window.ttq) return;
+
+        window.ttq.track('AddToWishlist', {
+            contents: [
+                {
+                    content_id: product.sku || String(product.databaseId),
+                    content_type: 'product',
+                    content_name: product.name,
+                },
+            ],
+            value: parseFloat(product.salePrice || product.price || product.regularPrice || 0),
+            currency: config.public.CURRENCY_CODE || 'TRY',
+        });
+    };
+
+    /**
+     * Track Search event
+     */
+    const trackSearch = (searchTerm: string) => {
+        if (!isEnabled || !window.ttq) return;
+
+        window.ttq.track('Search', {
+            contents: [],
+            search_string: searchTerm,
+            currency: config.public.CURRENCY_CODE || 'TRY',
         });
     };
 
@@ -120,9 +182,8 @@ export const useTikTokPixel = () => {
 
         const contents = (cart.contents?.nodes || []).map((item: any) => ({
             content_id: item.product?.node?.sku || String(item.product?.node?.databaseId),
+            content_type: 'product',
             content_name: item.product?.node?.name,
-            quantity: item.quantity,
-            price: parseFloat(item.product?.node?.salePrice || item.product?.node?.price || 0),
         }));
 
         window.ttq.track('InitiateCheckout', {
@@ -133,42 +194,71 @@ export const useTikTokPixel = () => {
     };
 
     /**
-     * Track Purchase event
-     * Note: TikTok uses 'PlaceAnOrder' or 'CompletePayment' depending on strategy, 
-     * but 'PlaceAnOrder' or standard 'Purchase' (if mapped) is common. 
-     * TikTok standard events: https://ads.tiktok.com/help/article/standard-events-parameters
-     * We will use 'PlaceAnOrder' and 'CompletePayment' to be safe, or just 'PlaceAnOrder'.
-     * Actually, 'PlaceAnOrder' is the standard e-com event.
+     * Track AddPaymentInfo event
+     */
+    const trackAddPaymentInfo = (cart: any) => {
+        if (!isEnabled || !window.ttq) return;
+
+        const contents = (cart.contents?.nodes || []).map((item: any) => ({
+            content_id: item.product?.node?.sku || String(item.product?.node?.databaseId),
+            content_type: 'product',
+            content_name: item.product?.node?.name,
+        }));
+
+        window.ttq.track('AddPaymentInfo', {
+            contents,
+            currency: config.public.CURRENCY_CODE || 'TRY',
+            value: parseFloat(cart.total || '0'),
+        });
+    };
+
+    /**
+     * Track PlaceAnOrder / Purchase event
      */
     const trackPurchase = (order: any) => {
         if (!isEnabled || !window.ttq) return;
 
         const contents = (order.lineItems?.nodes || []).map((item: any) => ({
             content_id: item.product?.node?.sku || String(item.product?.node?.databaseId),
+            content_type: 'product',
             content_name: item.product?.node?.name,
-            quantity: item.quantity,
-            price: parseFloat(item.total || 0) / item.quantity, // approximate unit price
         }));
+
+        const value = order.rawTotal ? parseFloat(order.rawTotal) : parseFloat(order.total || '0');
 
         window.ttq.track('PlaceAnOrder', {
             contents,
             currency: config.public.CURRENCY_CODE || 'TRY',
-            value: order.rawTotal ? parseFloat(order.rawTotal) : parseFloat(order.total || '0'),
+            value,
         });
 
-        // Also track CompletePayment for good measure if needed, but PlaceAnOrder is usually sufficient for "Purchase"
-        window.ttq.track('CompletePayment', {
+        window.ttq.track('Purchase', {
             contents,
             currency: config.public.CURRENCY_CODE || 'TRY',
-            value: order.rawTotal ? parseFloat(order.rawTotal) : parseFloat(order.total || '0'),
+            value,
+        });
+    };
+
+    /**
+     * Track CompleteRegistration event
+     */
+    const trackCompleteRegistration = () => {
+        if (!isEnabled || !window.ttq) return;
+        window.ttq.track('CompleteRegistration', {
+            currency: config.public.CURRENCY_CODE || 'TRY',
         });
     };
 
     return {
         init,
+        identify,
         trackViewContent,
         trackAddToCart,
+        trackAddToWishlist,
+        trackSearch,
         trackInitiateCheckout,
+        trackAddPaymentInfo,
         trackPurchase,
+        trackCompleteRegistration,
     };
 };
