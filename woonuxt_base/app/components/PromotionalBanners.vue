@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const promos = [
   {
-    image: '/images/showcase/nxt-sup-weekend.jpg',
+    image: '/images/showcase/nxt-sup-weekend.webp',
     badge: 'Yaz Sezonu',
     title: 'Hafta Sonu Keyfi',
     description: 'NXT SUP Board ile akışa bırak. Kur, şişir ve denizin tadını çıkar!',
@@ -9,7 +9,7 @@ const promos = [
     link: '/urun-kategorisi/sup-boardlar',
   },
   {
-    image: '/images/showcase/zaphira-power.jpg',
+    image: '/images/showcase/zaphira-power.webp',
     badge: 'Elektrikli Teknoloji',
     title: 'ZAPHIRA E-Foil',
     description: 'Suyun üzerindeki güç. Kendi hızını anında ayarla, özgürlüğü yaşa!',
@@ -17,7 +17,7 @@ const promos = [
     link: '/urun-kategorisi/surf-board',
   },
   {
-    image: '/images/showcase/btm-aluminyum-taban-bot.jpg',
+    image: '/images/showcase/btm-aluminyum-taban-bot.webp',
     badge: 'Profesyonel Çözümler',
     title: 'BTM Alüminyum Taban Bot',
     description: 'Profesyonel kullanım için tasarlanmış dayanıklı çözümler',

@@ -8,12 +8,12 @@ const props = defineProps<Props>();
 // Map categories to their hero images
 const categoryImages: Record<string, { image: string; title: string; description: string }> = {
   'sup-board': {
-    image: '/images/showcase/zen-sup-board.jpg',
+    image: '/images/showcase/zen-sup-board.webp',
     title: 'SUP Board Koleksiyonu',
     description: 'Gücün ve zarafetin birleşimi - Denizde özgürlüğü yaşayın',
   },
   'e-foil': {
-    image: '/images/showcase/efoil-technology.jpg',
+    image: '/images/showcase/efoil-technology.webp',
     title: 'E-Foil Teknolojisi',
     description: 'Suyun üstünde adeta havalanan gelecek teknolojisi',
   },
@@ -23,12 +23,12 @@ const categoryImages: Record<string, { image: string; title: string; description
     description: 'Dayanıklılık ve performansın buluştuğu nokta',
   },
   'botlar': {
-    image: '/images/showcase/compact-boat.jpg',
+    image: '/images/showcase/compact-boat.webp',
     title: 'Botlar',
     description: 'Kompakt gücün yeni tanımı - Üstün performans',
   },
   'motorlar': {
-    image: '/images/showcase/mx-400.jpg',
+    image: '/images/showcase/mx-400.webp',
     title: 'Dıştan Takma Motorlar',
     description: 'Profesyonel kullanım için tasarlandı',
   },
