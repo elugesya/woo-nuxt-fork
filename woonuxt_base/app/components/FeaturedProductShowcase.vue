@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const features = [
   {
-    image: '/images/showcase/aerowave-efoil.jpg',
+    image: '/images/showcase/aerowave-efoil.webp',
     title: 'E-Foil Teknolojisi',
     subtitle: 'Geleceğin Su Sporları',
     description: 'Güçlü ve tamamen elektrikli AEROWAVE E-Foil ile dalga beklemeden hızlanın. Sessiz motor, uzun menzil ve yüksek stabilite ile suyun üstünde adeta havalan!',
@@ -10,7 +10,7 @@ const features = [
     imagePosition: 'left',
   },
   {
-    image: '/images/showcase/floral-sup-board.jpg',
+    image: '/images/showcase/floral-sup-board.webp',
     title: 'SUP Board Koleksiyonu',
     subtitle: 'Denizle Bütünleşin',
     description: 'FLORAL, CORAL, ZEN ve NIA modelleriyle denizin keyfini en renkli haliyle çıkarın. Tasarım ve dayanıklılığın mükemmel uyumu.',
@@ -19,7 +19,7 @@ const features = [
     imagePosition: 'right',
   },
   {
-    image: '/images/showcase/axion-52.jpg',
+    image: '/images/showcase/axion-52.webp',
     title: 'Profesyonel RIB Tekneleri',
     subtitle: 'Denizde Sınıf Atlayın',
     description: 'AXION 5.2 ile denizde sınıf atla. 5,23 m boyu, 3,50 m genişliği ve 11 kişilik kapasitesiyle profesyonel performans.',
