@@ -18,7 +18,7 @@ const categoryImages: Record<string, { image: string; title: string; description
     description: 'Suyun üstünde adeta havalanan gelecek teknolojisi',
   },
   'rib-botlar': {
-    image: '/images/showcase/rib-boat.png',
+    image: '/images/showcase/rib-boat.webp',
     title: 'Profesyonel RIB Tekneleri',
     description: 'Dayanıklılık ve performansın buluştuğu nokta',
   },

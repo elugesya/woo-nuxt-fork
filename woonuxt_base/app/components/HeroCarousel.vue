@@ -3,7 +3,7 @@ import { ref, onMounted, onUnmounted } from 'vue';
 
 const slides = [
   {
-    image: '/images/showcase/rib-boat.png',
+    image: '/images/showcase/rib-boat.webp',
     title: 'Profesyonel RIB Tekneleri',
     description: 'Dayanıklılık ve performansın buluştuğu nokta',
     cta: 'Ürünleri İncele',
