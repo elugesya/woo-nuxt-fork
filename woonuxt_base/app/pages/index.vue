@@ -67,7 +67,7 @@ onMounted(() => {
 
 <template>
   <main class="bg-background min-h-screen">
-    <HeroBanner />
+    <HeroCarousel />
 
     <!-- Brand Logos Section -->
     <div class="container py-12">
@@ -83,6 +83,9 @@ onMounted(() => {
         </NuxtLink>
       </div>
     </div>
+
+    <!-- Featured Products Showcase -->
+    <FeaturedProductShowcase />
 
     <!-- Shop by Category Section -->
     <section class="container py-16">
@@ -100,6 +103,9 @@ onMounted(() => {
         <CategoryCard v-for="(category, i) in productCategories" :key="i" class="w-full" :node="category" />
       </div>
     </section>
+
+    <!-- Promotional Banners -->
+    <PromotionalBanners />
 
     <!-- Trust Badges Section -->
     <section class="container py-16 bg-secondary/30 rounded-3xl my-12">

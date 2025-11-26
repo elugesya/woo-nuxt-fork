@@ -119,6 +119,9 @@ const isSortOpen = ref(false);
       <Filters v-if="storeSettings.showFilters" :hide-categories="true" class="hidden lg:block sticky top-24 min-w-[280px]" />
 
       <div class="w-full">
+        <!-- Category Hero Banner -->
+        <CategoryHeroBanner :category="categorySlug" />
+        
         <div class="flex items-center justify-between w-full gap-4 mt-8 md:gap-8">
           <ProductResultCount />
           <OrderByDropdown class="hidden md:inline-flex" v-if="storeSettings.showOrderByDropdown" />
