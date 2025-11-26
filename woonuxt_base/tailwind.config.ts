@@ -15,6 +15,7 @@ export default <Partial<Config>>{
           light: '#00A8CC', // Teal/Cyan
           DEFAULT: '#003366', // Deep Ocean Blue
           dark: '#002244',
+          foreground: '#FFFFFF',
         },
         background: '#FAFAFA', // Clean Off-White
         foreground: '#0F172A', // Slate 900

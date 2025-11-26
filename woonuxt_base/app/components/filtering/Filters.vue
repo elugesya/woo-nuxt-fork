@@ -48,13 +48,12 @@ const shaftTerms = terms?.filter((term) => term.taxonomyName === 'pa_saft');
 
 // Filter out the color attribute and the rest of the global product attributes
 const attributesWithTerms = attributesForQuery
-  .filter(attr => attr.slug !== 'product_brand' && attr.slug !== 'pa_saft')
+  .filter((attr): attr is WooNuxtFilter => !!attr && attr.slug !== 'product_brand' && attr.slug !== 'pa_saft')
   .map((attr) => ({ ...attr, terms: terms?.filter((term) => term.taxonomyName === attr.slug) }));
 </script>
 
 <template>
   <aside id="filters">
-    <OrderByDropdown class="block w-full md:hidden" />
     <div class="relative z-30 grid mb-12 space-y-8 divide-y">
       <PriceFilter />
       <CategoryFilter v-if="!hideCategories" :terms="productCategoryTerms" />
@@ -70,19 +69,12 @@ const attributesWithTerms = attributesForQuery
       <LazyResetFiltersButton v-if="isFiltersActive" />
     </div>
   </aside>
-  <div class="fixed inset-0 z-50 hidden bg-muted/80 filter-overlay" @click="removeBodyClass('show-filters')"></div>
 </template>
 
 <style lang="postcss">
-.show-filters .filter-overlay {
-  @apply block;
-}
-.show-filters {
-  overflow: hidden;
-}
 
 #filters {
-  @apply w-[280px];
+  @apply w-full lg:w-[280px];
 
   & .slider-connect {
     @apply bg-primary;
@@ -101,19 +93,4 @@ const attributesWithTerms = attributesForQuery
   }
 }
 
-@media (max-width: 768px) {
-  #filters {
-  @apply bg-background h-full p-8 transform pl-2 transition-all ease-in-out bottom-0 left-4 -translate-x-[110vw] duration-300 overflow-auto fixed;
-
-    box-shadow:
-      -100px 0 0 var(--background),
-      -200px 0 0 var(--background),
-      -300px 0 0 var(--background);
-    z-index: 60;
-  }
-
-  .show-filters #filters {
-    @apply transform-none;
-  }
-}
 </style>

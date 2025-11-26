@@ -44,7 +44,11 @@
     "contactUs": "Bize Ulaşın",
     "shippingReturns": "Kargo ve İade",
     "privacyPolicy": "Gizlilik Politikası",
-    "termsConditions": "Şartlar ve Koşullar"
+    "termsConditions": "Şartlar ve Koşullar",
+    "sortBy": "Sırala",
+    "filters": "Filtreler",
+    "all": "Tümü",
+    "showResults": "Sonuçları Göster"
   },
   "account": {
     "changePassword": "Şifre Değiştir",
@@ -81,9 +85,9 @@
     "failed": "Güncelleme başarısız"
   },
   "shop": {
-  "shopByCategory": "Kategoriye Göre Alışveriş",
-  "from": "Başlangıç",
-  "to": "Bitiş",
+    "shopByCategory": "Kategoriye Göre Alışveriş",
+    "from": "Başlangıç",
+    "to": "Bitiş",
     "popularProducts": "Popüler Ürünler",
     "availability": "Stok Durumu",
     "inStock": "Stokta",

@@ -21,7 +21,7 @@ onMounted(() => {
   // Track category product list view
   if (productsInCategory && productsInCategory.length > 0) {
     const categoryName = catData.value?.productCategory?.name || 'Category';
-    trackViewItemList(productsInCategory, categoryName);
+    trackViewItemList(productsInCategory as any, categoryName);
   }
 });
 
@@ -108,18 +108,21 @@ useHead(() => ({
     { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
   ],
 }));
+
+const isFilterOpen = ref(false);
+const isSortOpen = ref(false);
 </script>
 
 <template>
   <main>
     <div class="container flex items-start gap-16" v-if="productsInCategory.length">
-      <Filters v-if="storeSettings.showFilters" :hide-categories="true" />
+      <Filters v-if="storeSettings.showFilters" :hide-categories="true" class="hidden lg:block sticky top-24 min-w-[280px]" />
 
       <div class="w-full">
         <div class="flex items-center justify-between w-full gap-4 mt-8 md:gap-8">
           <ProductResultCount />
           <OrderByDropdown class="hidden md:inline-flex" v-if="storeSettings.showOrderByDropdown" />
-          <ShowFilterTrigger v-if="storeSettings.showFilters" class="md:hidden" />
+          <ShowFilterTrigger v-if="storeSettings.showFilters" class="md:hidden" @toggle-filters="isFilterOpen = true" />
         </div>
         <ProductGrid />
       </div>
@@ -127,5 +130,46 @@ useHead(() => ({
     <div v-else class="container my-8 text-center">
       <p class="text-gray-500">Bu kategoride ürün bulunamadı.</p>
     </div>
+
+    <!-- Mobile Sticky Filter Bar -->
+    <MobileFilterBar 
+      @open-filters="isFilterOpen = true" 
+      @open-sort="isSortOpen = true" 
+    />
+
+    <!-- Mobile Filter Drawer -->
+    <Sheet :open="isFilterOpen" @update:open="isFilterOpen = $event">
+      <SheetContent side="bottom" class="h-[90vh] rounded-t-xl p-0">
+        <div class="flex flex-col h-full">
+          <div class="flex items-center justify-between p-4 border-b">
+            <h2 class="text-lg font-semibold">{{ $t('general.filters') }}</h2>
+            <button @click="isFilterOpen = false" class="p-2 -mr-2 rounded-full hover:bg-muted">
+              <Icon name="lucide:x" class="w-5 h-5" />
+            </button>
+          </div>
+          <div class="flex-1 overflow-y-auto p-4">
+            <Filters :hide-categories="true" />
+          </div>
+          <div class="p-4 border-t bg-background">
+            <Button class="w-full" @click="isFilterOpen = false">{{ $t('general.showResults') }}</Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+
+    <!-- Mobile Sort Drawer -->
+    <Sheet :open="isSortOpen" @update:open="isSortOpen = $event">
+      <SheetContent side="bottom" class="rounded-t-xl">
+        <div class="flex flex-col gap-4 pb-8">
+          <div class="flex items-center justify-between pb-4 border-b">
+            <h2 class="text-lg font-semibold">{{ $t('general.sortBy') }}</h2>
+            <button @click="isSortOpen = false" class="p-2 -mr-2 rounded-full hover:bg-muted">
+              <Icon name="lucide:x" class="w-5 h-5" />
+            </button>
+          </div>
+          <OrderByDropdown :is-mobile="true" @close="isSortOpen = false" />
+        </div>
+      </SheetContent>
+    </Sheet>
   </main>
 </template>
