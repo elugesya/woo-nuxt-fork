@@ -41,11 +41,6 @@ const trustBadges = [
     description: '24/7 Online Destek',
     icon: '/icons/support.svg',
   },
-  {
-    title: 'Destek 24/7',
-    description: '24/7 Online Destek',
-    icon: '/icons/support.svg',
-  },
 ];
 
 // Handle redirect from payment gateway to homepage
