@@ -69,6 +69,11 @@ const organizationJsonLd = JSON.stringify(
       contactType: 'customer service',
     } : undefined,
     sameAs: [socialFacebook, socialTwitter, socialInstagram].filter(Boolean),
+    aggregateRating: runtimeConfig.public.ORGANIZATION_RATING_VALUE && runtimeConfig.public.ORGANIZATION_REVIEW_COUNT ? {
+      '@type': 'AggregateRating',
+      ratingValue: runtimeConfig.public.ORGANIZATION_RATING_VALUE,
+      reviewCount: runtimeConfig.public.ORGANIZATION_REVIEW_COUNT,
+    } : undefined,
   },
   null,
   2,

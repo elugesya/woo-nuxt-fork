@@ -11,7 +11,7 @@ let GQL_ORIGIN = '';
 try {
   const u = new URL(GQL_HOST);
   GQL_ORIGIN = `${u.protocol}//${u.host}`;
-} catch {}
+} catch { }
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-08-10',
@@ -46,15 +46,15 @@ export default defineNuxtConfig({
   components: [{ path: resolve('./app/components'), pathPrefix: false, extensions: ['.vue'] }],
 
   modules: [
-    resolve('./modules/woonuxt-bridge.ts'), 
-    'nuxt-graphql-client', 
-    '@nuxtjs/tailwindcss', 
-    '@nuxt/icon', 
-    '@nuxt/image', 
-    '@nuxtjs/i18n', 
-  'nuxt-gtag',
-  'shadcn-nuxt',
-  '@nuxtjs/color-mode',
+    resolve('./modules/woonuxt-bridge.ts'),
+    'nuxt-graphql-client',
+    '@nuxtjs/tailwindcss',
+    '@nuxt/icon',
+    '@nuxt/image',
+    '@nuxtjs/i18n',
+    'nuxt-gtag',
+    'shadcn-nuxt',
+    '@nuxtjs/color-mode',
   ],
 
 
@@ -114,6 +114,8 @@ export default defineNuxtConfig({
       // Shipping and Return Policy URLs for Product schema
       SHIPPING_DETAILS_URL: process.env.NUXT_PUBLIC_SHIPPING_DETAILS_URL || '/kargo-ve-teslimat',
       RETURN_POLICY_URL: process.env.NUXT_PUBLIC_RETURN_POLICY_URL || '/iade-ve-degisim',
+      ORGANIZATION_RATING_VALUE: process.env.NUXT_PUBLIC_ORGANIZATION_RATING_VALUE || '',
+      ORGANIZATION_REVIEW_COUNT: process.env.NUXT_PUBLIC_ORGANIZATION_REVIEW_COUNT || '',
     },
   },
 
@@ -149,26 +151,26 @@ export default defineNuxtConfig({
       '/odeme/siparis-alindi/**': { prerender: false },
       '/siparis-ozeti/**': { prerender: false },
       // Cache control headers for different content types
-      '/**': { 
-        headers: { 
+      '/**': {
+        headers: {
           'Cache-Control': 'public, max-age=0, must-revalidate',
           'X-Content-Type-Options': 'nosniff',
-        } 
+        }
       },
-      '/_nuxt/**': { 
-        headers: { 
+      '/_nuxt/**': {
+        headers: {
           'Cache-Control': 'public, max-age=31536000, immutable',
-        } 
+        }
       },
-      '/images/**': { 
-        headers: { 
+      '/images/**': {
+        headers: {
           'Cache-Control': 'public, max-age=31536000, immutable',
-        } 
+        }
       },
-      '/icons/**': { 
-        headers: { 
+      '/icons/**': {
+        headers: {
           'Cache-Control': 'public, max-age=31536000, immutable',
-        } 
+        }
       },
     },
   },
