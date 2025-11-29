@@ -91,6 +91,8 @@
     "price": "Price",
     "category": "Category | Categories",
     "youMayLike": "You May Also Like",
+    "upsell": "You May Also Like",
+    "crossSell": "Frequently Bought Together",
     "wishlist": "Wishlist",
     "wishlistRemove": "Remove from Wishlist",
     "wishlistAdd": "Add to Wishlist",

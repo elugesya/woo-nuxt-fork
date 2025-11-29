@@ -354,6 +354,16 @@ useHead(() => ({
       <div v-if="product.description || product.reviews" class="my-32">
         <ProductTabs :product />
       </div>
+      <div class="my-32" v-if="(product as any).upsell?.nodes?.length">
+        <div class="mb-4 text-xl font-semibold">{{ $t('shop.upsell') }}</div>
+        <LazyProductRow :products="(product as any).upsell.nodes" class="grid-cols-2 md:grid-cols-4 lg:grid-cols-5" />
+      </div>
+
+      <div class="my-32" v-if="(product as any).crossSell?.nodes?.length">
+        <div class="mb-4 text-xl font-semibold">{{ $t('shop.crossSell') }}</div>
+        <LazyProductRow :products="(product as any).crossSell.nodes" class="grid-cols-2 md:grid-cols-4 lg:grid-cols-5" />
+      </div>
+
       <div class="my-32" v-if="product.related && storeSettings.showRelatedProducts">
         <div class="mb-4 text-xl font-semibold">{{ $t('shop.youMayLike') }}</div>
         <LazyProductRow :products="product.related.nodes" class="grid-cols-2 md:grid-cols-4 lg:grid-cols-5" />

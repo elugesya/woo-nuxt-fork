@@ -28,6 +28,41 @@ query getProduct($slug: ID!) {
         ...ExternalProduct
       }
     }
+    ... on SimpleProduct {
+      upsell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+      crossSell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+    }
+    ... on VariableProduct {
+      upsell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+      crossSell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+    }
+    ... on ExternalProduct {
+      id
+    }
     reviews {
       averageRating
       edges {
