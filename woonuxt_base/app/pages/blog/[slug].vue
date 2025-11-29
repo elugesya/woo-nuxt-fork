@@ -48,9 +48,9 @@ const breadcrumbJsonLd = computed(() =>
         { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
         { '@type': 'ListItem', position: 2, name: 'Blog', item: `${frontEndUrl}/blog` },
         post.value?.categories?.nodes?.[0]
-          ? { '@type': 'ListItem', position: 3, name: post.value.categories.nodes[0].name, item: `${frontEndUrl}/blog/kategori/${post.value.categories.nodes[0].slug}` }
+          ? { '@type': 'ListItem', position: 3, name: post.value.categories.nodes[0].name || 'Kategori', item: `${frontEndUrl}/blog/kategori/${post.value.categories.nodes[0].slug}` }
           : undefined,
-        { '@type': 'ListItem', position: post.value?.categories?.nodes?.[0] ? 4 : 3, name: stripHtml(post.value?.title || ''), item: canonical.value },
+        { '@type': 'ListItem', position: post.value?.categories?.nodes?.[0] ? 4 : 3, name: stripHtml(post.value?.title) || 'Blog Yazısı', item: canonical.value },
       ].filter(Boolean),
     },
     null,

@@ -28,7 +28,7 @@ useSeoMeta({
 });
 
 // Structured Data: BreadcrumbList + ItemList for category
-const { frontEndUrl } = useHelpers();
+const { frontEndUrl, stripHtml } = useHelpers();
 const breadcrumbJsonLd = computed(() =>
   JSON.stringify(
     {
@@ -37,7 +37,7 @@ const breadcrumbJsonLd = computed(() =>
       itemListElement: [
         { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
         { '@type': 'ListItem', position: 2, name: 'Blog', item: `${frontEndUrl}/blog` },
-        { '@type': 'ListItem', position: 3, name: category.value?.name || slug, item: `${frontEndUrl}/blog/kategori/${slug}` },
+        { '@type': 'ListItem', position: 3, name: category.value?.name || slug || 'Kategori', item: `${frontEndUrl}/blog/kategori/${slug}` },
       ],
     },
     null,
@@ -48,7 +48,7 @@ const breadcrumbJsonLd = computed(() =>
 const itemListJsonLd = computed(() => {
   const items = (posts.value || []).slice(0, 10).map((p: any, idx: number) => ({
     '@type': 'ListItem', position: idx + 1, url: `${frontEndUrl}/blog/${p.slug}`,
-    name: p?.title,
+    name: stripHtml(p?.title) || 'Blog Yazısı',
   }));
   return JSON.stringify(
     {
