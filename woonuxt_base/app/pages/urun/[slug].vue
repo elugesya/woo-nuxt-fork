@@ -150,7 +150,7 @@ const offers = computed(() => ({
 const aggregateRating = computed(() => {
   const rating = parseFloat((product.value?.averageRating as any) || '0');
   const count = Number(product.value?.reviewCount || 0);
-  if (!rating || !count) return undefined;
+  if (count === 0) return undefined;
   return {
     '@type': 'AggregateRating',
     ratingValue: rating,
@@ -158,6 +158,24 @@ const aggregateRating = computed(() => {
     bestRating: 5,
     worstRating: 1,
   } as Record<string, any>;
+});
+
+const reviews = computed(() => {
+  const reviewsData = (product.value as any)?.reviews?.edges || [];
+  return reviewsData.map((edge: any) => ({
+    '@type': 'Review',
+    reviewRating: {
+      '@type': 'Rating',
+      ratingValue: edge.rating || 5,
+      bestRating: 5,
+    },
+    author: {
+      '@type': 'Person',
+      name: edge.node?.author?.node?.name || 'Anonymous',
+    },
+    datePublished: edge.node?.date,
+    reviewBody: stripHtml(edge.node?.content || ''),
+  }));
 });
 
 const productJsonLd = computed(() =>
@@ -170,9 +188,13 @@ const productJsonLd = computed(() =>
       image: productImages.value,
       sku: product.value?.sku || undefined,
       category: primaryCategory.value?.name || undefined,
-      brand: siteName || undefined,
+      brand: {
+        '@type': 'Brand',
+        name: siteName || undefined,
+      },
       offers: offers.value,
       aggregateRating: aggregateRating.value,
+      review: reviews.value.length ? reviews.value : undefined,
     },
     null,
     2,
