@@ -94,6 +94,12 @@ const priceValidUntil = computed(() => {
   return date.toISOString();
 });
 
+// Validate SKU - only include if it's a non-empty string
+const validSku = computed(() => {
+  const sku = (info as any)?.sku;
+  return sku && typeof sku === 'string' && sku.trim().length > 0 ? sku.trim() : undefined;
+});
+
 const jsonLd = computed(() =>
   JSON.stringify(
     {
@@ -102,7 +108,7 @@ const jsonLd = computed(() =>
       name: info?.name,
       image: images.value.length ? images.value : [defaultImage.value],
       description: description.value,
-      sku: (info as any)?.sku || undefined,
+      sku: validSku.value,
       brand: brandName.value
         ? {
             '@type': 'Brand',
@@ -137,15 +143,15 @@ const jsonLd = computed(() =>
                   '@type': 'ShippingDeliveryTime',
                   handlingTime: {
                     '@type': 'QuantitativeValue',
-                    minValue: 3,
-                    maxValue: 5,
-                    unitCode: 'd',
+                    minValue: 0,
+                    maxValue: 1,
+                    unitCode: 'DAY',
                   },
                   transitTime: {
                     '@type': 'QuantitativeValue',
                     minValue: 1,
-                    maxValue: 2,
-                    unitCode: 'd',
+                    maxValue: 3,
+                    unitCode: 'DAY',
                   },
                 },
                 shippingRate: {

@@ -178,6 +178,12 @@ const reviews = computed(() => {
   }));
 });
 
+// Validate SKU - only include if it's a non-empty string
+const validSku = computed(() => {
+  const sku = product.value?.sku;
+  return sku && typeof sku === 'string' && sku.trim().length > 0 ? sku.trim() : undefined;
+});
+
 const productJsonLd = computed(() =>
   JSON.stringify(
     {
@@ -186,7 +192,7 @@ const productJsonLd = computed(() =>
       name: product.value?.name,
       description: stripHtml(product.value?.shortDescription || product.value?.description || ''),
       image: productImages.value,
-      sku: product.value?.sku || undefined,
+      sku: validSku.value,
       category: primaryCategory.value?.name || undefined,
       brand: {
         '@type': 'Brand',
