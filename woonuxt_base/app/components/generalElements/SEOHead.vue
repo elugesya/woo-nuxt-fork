@@ -3,10 +3,10 @@ const { frontEndUrl, wooNuxtSEO, stripHtml } = useHelpers();
 const { path } = useRoute();
 const { info } = defineProps({ info: { type: Object as PropType<Product>, required: true } });
 
-const title = info.name;
-const canonical = `${frontEndUrl}${path}`;
 const runtimeConfig = useRuntimeConfig();
 const siteName = runtimeConfig.public?.SITE_NAME || 'WooNuxt';
+const title = computed(() => `${info.name} | ${siteName}`);
+const canonical = `${frontEndUrl}${path}`;
 
 const img = useImage();
 const imageURL = computed(() => info.image?.sourceUrl ?? '/images/placeholder.jpg');
@@ -195,6 +195,7 @@ useHead(() => ({
     <Meta v-if="description" name="description" hid="description" :content="description" />
     <Meta name="image" hid="image" :content="defaultImage" />
     <Meta property="og:site_name" hid="og:site_name" :content="siteName" />
+    <Meta property="og:type" hid="og:type" content="product" />
     <Meta property="og:url" hid="og:url" :content="canonical" />
     <Meta v-if="info.name" property="og:title" hid="og:title" :content="info.name" />
     <Meta v-if="description" property="og:description" hid="og:description" :content="description" />
@@ -206,6 +207,10 @@ useHead(() => ({
     <Meta v-if="description" name="twitter:description" hid="twitter:description" :content="description" />
     <Meta name="twitter:image" hid="twitter:image" :content="twitterImage" />
     <Meta name="twitter:url" hid="twitter:url" :content="canonical" />
+    <!-- Product-specific Open Graph tags for Google Shopping -->
+    <Meta v-if="price" property="product:price:amount" hid="product:price:amount" :content="String(price)" />
+    <Meta v-if="price" property="product:price:currency" hid="product:price:currency" :content="currency" />
+    <Meta property="product:availability" hid="product:availability" :content="(info as any)?.stockStatus || 'IN_STOCK'" />
     <Link rel="canonical" hid="canonical" :href="canonical" />
   </Head>
 </template>
