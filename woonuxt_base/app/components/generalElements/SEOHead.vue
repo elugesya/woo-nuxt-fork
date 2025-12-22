@@ -5,7 +5,7 @@ const { info } = defineProps({ info: { type: Object as PropType<Product>, requir
 
 const runtimeConfig = useRuntimeConfig();
 const siteName = runtimeConfig.public?.SITE_NAME || 'WooNuxt';
-const title = computed(() => `${info.name} | ${siteName}`);
+const title = computed(() => (info.name ? `${info.name} | ${siteName}` : siteName));
 const canonical = `${frontEndUrl}${path}`;
 
 const img = useImage();
@@ -100,6 +100,29 @@ const validSku = computed(() => {
   return sku && typeof sku === 'string' && sku.trim().length > 0 ? sku.trim() : undefined;
 });
 
+// Aggregate Rating Logic
+const avgRating = computed(() => {
+  const rating = (info as any)?.averageRating || (info as any)?.reviews?.averageRating || 0;
+  return Number(rating);
+});
+const reviewCount = computed(() => {
+  const count = (info as any)?.reviewCount || (info as any)?.reviews?.edges?.length || 0;
+  return Number(count);
+});
+
+const aggregateRatingSchema = computed(() => {
+  if (reviewCount.value > 0) {
+    return {
+      '@type': 'AggregateRating',
+      ratingValue: avgRating.value || 5,
+      reviewCount: reviewCount.value,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+  return undefined;
+});
+
 const jsonLd = computed(() =>
   JSON.stringify(
     {
@@ -115,14 +138,7 @@ const jsonLd = computed(() =>
             name: brandName.value,
           }
         : undefined,
-      aggregateRating:
-        info?.averageRating && info?.reviewCount
-          ? {
-              '@type': 'AggregateRating',
-              ratingValue: Number(info.averageRating),
-              reviewCount: Number(info.reviewCount),
-            }
-          : undefined,
+      aggregateRating: aggregateRatingSchema.value,
       review: reviewSchemas.value.length ? reviewSchemas.value : undefined,
       offers:
         price.value
