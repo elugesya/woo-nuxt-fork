@@ -33,3 +33,6 @@ logs
 *.pem
 
 woonuxt-settings
+
+# Product data exports
+products/
