@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Checkbox } from '@/components/ui/checkbox'
 const { getFilter, setFilter, isFiltersActive } = useFiltering();
 
 const { attribute } = defineProps({
@@ -22,28 +21,16 @@ const checkboxChanged = () => {
 </script>
 
 <template>
-  <div class="cursor-pointer flex font-semibold mt-8 leading-none justify-between items-center text-foreground" @click="isOpen = !isOpen">
+  <div class="cursor-pointer flex font-semibold mt-8 leading-none justify-between items-center text-gray-900 dark:text-white" @click="isOpen = !isOpen">
     <span>{{ filterTitle }}</span>
-    <Icon name="ion:chevron-down-outline" class="transform" :class="isOpen ? 'rotate-180' : ''" />
+    <Icon name="ion:chevron-down-outline" class="transform text-gray-600 dark:text-gray-400" :class="isOpen ? 'rotate-180' : ''" />
   </div>
-  <div v-show="isOpen" class="mt-3 mr-1 max-h-[240px] grid gap-1 overflow-auto custom-scrollbar">
+  <div v-show="isOpen" class="mt-3 mr-1 max-h-60 grid gap-1 overflow-auto custom-scrollbar">
     <div v-for="term in attribute.terms" :key="term.slug" class="flex gap-2 items-center">
-      <Checkbox
-        :id="term.slug"
-        :checked="selectedTerms.includes(term.slug)"
-        @update:checked="(checked) => {
-          if (checked) {
-            if (!selectedTerms.includes(term.slug)) selectedTerms.push(term.slug)
-          } else {
-            const idx = selectedTerms.indexOf(term.slug)
-            if (idx !== -1) selectedTerms.splice(idx, 1)
-          }
-          checkboxChanged()
-        }"
-      />
-      <label :for="term.slug" class="cursor-pointer m-0 text-sm flex items-center flex-wrap">
+      <input :id="term.slug" v-model="selectedTerms" type="checkbox" :value="term.slug" @change="checkboxChanged" />
+      <label :for="term.slug" class="cursor-pointer m-0 text-sm flex items-center flex-wrap text-gray-700 dark:text-gray-300">
         <span v-html="term.name" />
-        <small v-if="attribute.showCount" class="ml-1 text-muted-foreground tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>
+        <small v-if="attribute.showCount" class="ml-1 text-gray-400 dark:text-gray-500 tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>
       </label>
     </div>
   </div>

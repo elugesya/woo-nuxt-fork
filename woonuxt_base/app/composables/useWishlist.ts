@@ -2,6 +2,7 @@
  * @name useWishlist
  * @description A composable that handles the wishlist in local storage
  */
+import type { Product } from '#types/gql';
 
 export function useWishlist() {
   const theList = useState<Product[]>('wishlist', () => []);
@@ -13,10 +14,6 @@ export function useWishlist() {
   function addToWishlist(item: Product): void {
     theList.value.push(item);
     localStorage.setItem('wishlist', JSON.stringify(theList.value));
-
-    // TikTok Pixel AddToWishlist
-    const { trackAddToWishlist } = useTikTokPixel();
-    trackAddToWishlist(item);
   }
 
   /**

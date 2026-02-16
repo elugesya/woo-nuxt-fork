@@ -18,7 +18,6 @@ query getProducts($after: String, $slug: [String], $first: Int = 9999, $orderby:
       reviewCount
       ...Terms
       ...ProductCategories
-      ...ProductBrands
       ...SimpleProduct
       ...VariableProduct
       ...ExternalProduct

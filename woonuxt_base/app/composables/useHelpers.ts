@@ -4,12 +4,13 @@ import pkg from '../../../woonuxt_base/package.json';
 export function useHelpers() {
   const route = useRoute();
   const runtimeConfig = useRuntimeConfig();
+  const requestOrigin = import.meta.server ? useRequestURL().origin : import.meta.client ? window.location.origin : undefined;
 
   const isShowingMobileMenu = useState<boolean>('isShowingMobileMenu', () => false);
   const wooNuxtVersionInfo: string = pkg.version || '0.0.0';
   const productsPerPage: number = runtimeConfig.public?.PRODUCTS_PER_PAGE || 24;
   const wooNuxtSEO = Array.isArray(runtimeConfig.public?.WOO_NUXT_SEO) ? runtimeConfig.public?.WOO_NUXT_SEO : [];
-  const frontEndUrl = runtimeConfig.public?.FRONT_END_URL?.replace(/\/$/, '') || null;
+  const frontEndUrl = runtimeConfig.public?.FRONT_END_URL?.replace(/\/$/, '') || requestOrigin;
   const isDev: boolean = process.env.NODE_ENV === 'development';
   const FALLBACK_IMG = '/images/placeholder.jpg';
 
@@ -21,36 +22,10 @@ export function useHelpers() {
   }
 
   /**
-   * Formats an array of variation objects by removing spaces and hyphens from the 'name' and 'value' properties.
-   * @param {VariationAttribute[]} arr - The array of variation objects to format. Each object should have 'name' and 'value' properties.
-   * @returns {VariationAttribute[]} The formatted array of variation objects.
-   */
-  const formatVariationArrays = (arr: VariationAttribute[]): VariationAttribute[] =>
-    arr.map((a) => ({ ...a, name: a.name?.replace(/[-\s]/g, '') || '', value: a.value?.replace(/[-\s]/g, '') || '' }));
-
-  /**
-   * Determines if two arrays of variations are equal by comparing the formatted arrays.
-   * @param {VariationAttribute[]} a1 - The first array of variations to compare.
-   * @param {VariationAttribute[]} a2 - The second array of variations to compare.
-   * @returns {boolean} True if the arrays are equal, false otherwise.
-   */
-  const arraysEqual = (a1: VariationAttribute[], a2: VariationAttribute[]): boolean =>
-    JSON.stringify(formatVariationArrays(a1)) === JSON.stringify(formatVariationArrays(a2));
-
-  // Formats an array of variations by converting the name and value properties to lowercase.
-  const formatArray = (arr: VariationAttribute[]): Array<{ name: string; value: string }> => {
-    return arr.map((v) => {
-      let name = v.name?.toLowerCase() || '';
-      name = name.startsWith('pa_') ? name.replace('pa_', '') : name;
-      const value = v.value?.toLowerCase() || '';
-      return { name, value };
-    });
-  };
-
-  /**
    * Clears all cookies.
    */
   function clearAllCookies(): void {
+    if (!import.meta.client) return;
     const cookies = document.cookie.split(';');
     for (const cookie of cookies) {
       const eqPos = cookie.indexOf('=');
@@ -63,6 +38,7 @@ export function useHelpers() {
    * Clear all local storage.
    */
   function clearAllLocalStorage(): void {
+    if (!import.meta.client) return;
     localStorage.clear();
   }
 
@@ -84,6 +60,7 @@ export function useHelpers() {
    * @param {string} className - The class to remove.
    */
   function removeBodyClass(className: string): void {
+    if (!import.meta.client) return;
     const body = document.querySelector('body');
     body?.classList.remove(className);
   }
@@ -93,6 +70,7 @@ export function useHelpers() {
    * @param {string} className - The class to add.
    */
   function addBodyClass(className: string): void {
+    if (!import.meta.client) return;
     const body = document.querySelector('body');
     body?.classList.add(className);
   }
@@ -102,31 +80,10 @@ export function useHelpers() {
    * @param {string} className - The class to toggle.
    */
   function toggleBodyClass(className: string): void {
+    if (!import.meta.client) return;
     const body = document.querySelector('body');
     body?.classList.contains(className) ? body.classList.remove(className) : body?.classList.add(className);
   }
-
-  /**
-   * Checks for variation type of 'any' and returns an array of the indexes of those variations.
-   * @param {Product} product - The product to check.
-   * @returns {number[]} An array of the indexes of variations with a type of 'any'.
-   */
-  const checkForVariationTypeOfAny = (product: Product): number[] => {
-    const numberOfVariation = product?.attributes?.nodes?.length ?? 0;
-    let indexOfTypeAny = [] as number[];
-
-    for (let index = 0; index < numberOfVariation; index++) {
-      const tempArray = [] as string[];
-      product?.variations?.nodes?.forEach((element) => {
-        const value = element.attributes?.nodes[index]?.value;
-        if (typeof value === 'string') tempArray.push(value);
-      });
-
-      if (!tempArray.some(Boolean)) indexOfTypeAny.push(index);
-    }
-
-    return indexOfTypeAny;
-  };
 
   /**
    * Determines if the route query is empty.
@@ -159,6 +116,7 @@ export function useHelpers() {
    * Scrolls to the top of the page.
    */
   const scrollToTop = () => {
+    if (!import.meta.client) return;
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -185,24 +143,54 @@ export function useHelpers() {
     };
   };
 
+  type GqlErrorMessage = { message?: string | null };
+  type GqlErrorLike = { gqlErrors?: GqlErrorMessage[] };
+
+  const isGqlErrorLike = (value: unknown): value is GqlErrorLike => {
+    return typeof value === 'object' && value !== null && 'gqlErrors' in value;
+  };
+
   /**
    * Extract GraphQL error message and optionally log it
    * @param error - GraphQL error object
    * @returns The error message or undefined
    */
-  const getErrorMessage = (error: any): string | undefined => {
-    const errorMessage = error?.gqlErrors?.[0]?.message;
+  const getErrorMessage = (error: unknown): string | undefined => {
+    const errorMessage = isGqlErrorLike(error) ? (error.gqlErrors?.[0]?.message ?? undefined) : undefined;
 
     // Check for server errors that require clearing cookies and reloading
-    const serverErrors = ['The iss do not match with this server', 'Invalid session token', 'expired token'];
+    const serverErrors = ['The iss do not match with this server', 'Invalid session token', 'expired token', 'invalid-secret-key'];
     const shouldClearAndReload = serverErrors.some((serverError) => errorMessage?.toLowerCase().includes(serverError.toLowerCase()));
 
-    if (shouldClearAndReload) {
+    if (shouldClearAndReload && import.meta.client) {
       clearAllCookies();
       window.location.reload();
     }
 
     return errorMessage;
+  };
+
+  /**
+   * Check GraphQL response extensions for authentication errors
+   * This handles cases where WordPress returns 403 with valid data but auth errors in extensions.debug
+   * @param response - GraphQL response object that may contain extensions.debug array
+   */
+  const checkGraphQLExtensions = (response: any): void => {
+    if (!import.meta.client) return;
+    const debugMessages = response?.extensions?.debug;
+    if (!Array.isArray(debugMessages)) return;
+
+    const serverErrors = ['invalid-secret-key', 'expired token', 'Invalid session token'];
+    const hasAuthError = debugMessages.some((debug: any) =>
+      serverErrors.some((serverError) => debug?.message?.toLowerCase().includes(serverError.toLowerCase())),
+    );
+
+    if (hasAuthError) {
+      console.warn('Authentication error detected in GraphQL response extensions. Clearing cookies and reloading...');
+      clearAllCookies();
+      clearAllLocalStorage();
+      window.location.reload();
+    }
   };
 
   /**
@@ -226,9 +214,8 @@ export function useHelpers() {
     wooNuxtSEO,
     frontEndUrl,
     isDev,
+    checkGraphQLExtensions,
     FALLBACK_IMG,
-    formatArray,
-    arraysEqual,
     clearAllCookies,
     clearAllLocalStorage,
     replaceQueryParam,
@@ -236,7 +223,6 @@ export function useHelpers() {
     removeBodyClass,
     toggleBodyClass,
     toggleMobileMenu,
-    checkForVariationTypeOfAny,
     formatDate,
     formatPrice,
     scrollToTop,

@@ -1,10 +1,9 @@
 {
   "name": "woonuxt",
-  "version": "4.7.4",
+  "version": "4.14.0",
   "main": "./nuxt.config.ts",
   "type": "module",
-  "dependencies": {
-    "@vueuse/core": "^14.0.0",
-    "reka-ui": "^2.6.0"
+  "imports": {
+    "#tailwind": "./app/assets/css/main.css"
   }
 }

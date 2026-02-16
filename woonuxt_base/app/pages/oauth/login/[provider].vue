@@ -16,10 +16,10 @@ if (code && state && provider && !error) {
   // Try to use stored return URL, otherwise go to my-account
   const redirectResult = handlePostLoginRedirect();
   if (!redirectResult) {
-    router.push({ name: 'hesabim', query: { ...route.query, provider } });
+    router.push({ name: 'my-account', query: { ...route.query, provider } });
   }
 } else {
-  router.push('/hesabim');
+  router.push('/my-account');
 }
 </script>
 

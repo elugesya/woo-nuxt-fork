@@ -16,7 +16,6 @@ mutation login($username: String!, $password: String!) {
     user {
       name
       username
-      email
     }
     # The following fields are available if WPGraphQL for WooCommerce is installed.
     sessionToken

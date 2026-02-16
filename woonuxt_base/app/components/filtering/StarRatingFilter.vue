@@ -1,11 +1,7 @@
 <script setup lang="ts">
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { Label } from '@/components/ui/label'
-import { ChevronDown } from 'lucide-vue-next'
-
 const { getFilter, setFilter, isFiltersActive } = await useFiltering();
 
-const selectedTerms = ref<string>(getFilter('rating')?.[0] || '');
+const selectedTerms = ref<string[]>(getFilter('rating'));
 const isOpen = ref(true);
 
 /**
@@ -13,63 +9,60 @@ const isOpen = ref(true);
  * @example If the user clicks the 'clear filters' button, the isFiltersActive variable would change to false.
  */
 watch(isFiltersActive, () => {
-  if (!isFiltersActive.value) selectedTerms.value = '';
+  if (!isFiltersActive.value) selectedTerms.value = [];
 });
 
 /**
  * @param {string} rating - This is a string instead of a number because the setFilter function is used globally and it only accepts strings.
- * @description This sets the filter to the selected rating.
+ * @description This sets the filter to the selected rating. If the rating is already selected, it will be removed from the filter.
  */
-const radioChanged = (rating: string): void => {
-  setFilter('rating', rating ? [rating] : []);
+const radioClicked = (rating: string): void => {
+  setFilter('rating', selectedTerms.value.includes(rating) ? [] : [rating]);
 };
 </script>
 
 <template>
   <div>
-    <button 
-      class="flex w-full cursor-pointer items-center justify-between py-4 font-medium transition-all hover:text-primary"
-      @click="isOpen = !isOpen">
+    <div class="cursor-pointer flex font-semibold pt-8 pb-4 leading-none justify-between items-center text-gray-900 dark:text-white" @click="isOpen = !isOpen">
       <span>{{ $t('shop.rating') }}</span>
-      <ChevronDown class="h-4 w-4 shrink-0 transition-transform duration-200" :class="isOpen ? 'rotate-180' : ''" />
-    </button>
-    <div v-show="isOpen" class="pb-4">
-      <RadioGroup v-model="selectedTerms" class="space-y-3" @update:model-value="radioChanged">
-        <div class="flex items-center space-x-2">
-          <RadioGroupItem id="star-five" value="5" />
-          <Label for="star-five" class="flex items-center cursor-pointer">
-            <StarRating :rating="5" :size="16" />
-          </Label>
-        </div>
-        <div class="flex items-center space-x-2">
-          <RadioGroupItem id="star-four" value="4" />
-          <Label for="star-four" class="flex items-center cursor-pointer">
-            <StarRating :rating="4" :size="16" />
-            <span class="ml-1 text-xs text-muted-foreground">& {{ $t('general.up') }}</span>
-          </Label>
-        </div>
-        <div class="flex items-center space-x-2">
-          <RadioGroupItem id="star-three" value="3" />
-          <Label for="star-three" class="flex items-center cursor-pointer">
-            <StarRating :rating="3" :size="16" />
-            <span class="ml-1 text-xs text-muted-foreground">& {{ $t('general.up') }}</span>
-          </Label>
-        </div>
-        <div class="flex items-center space-x-2">
-          <RadioGroupItem id="star-two" value="2" />
-          <Label for="star-two" class="flex items-center cursor-pointer">
-            <StarRating :rating="2" :size="16" />
-            <span class="ml-1 text-xs text-muted-foreground">& {{ $t('general.up') }}</span>
-          </Label>
-        </div>
-        <div class="flex items-center space-x-2">
-          <RadioGroupItem id="star-one" value="1" />
-          <Label for="star-one" class="flex items-center cursor-pointer">
-            <StarRating :rating="1" :size="16" />
-            <span class="ml-1 text-xs text-muted-foreground">& {{ $t('general.up') }}</span>
-          </Label>
-        </div>
-      </RadioGroup>
+      <Icon v-show="isOpen" name="ion:chevron-up-outline" class="dark:text-gray-400" />
+      <Icon v-show="!isOpen" name="ion:chevron-down-outline" class="dark:text-gray-400" />
+    </div>
+    <div v-if="isOpen" class="mt-3 text-sm grid text-gray-500 dark:text-gray-300 gap-3">
+      <div class="cursor-pointer flex gap-2 items-center">
+        <input id="star-five" v-model="selectedTerms" type="radio" value="5" aria-label="5 stars" @click="radioClicked('5')" />
+        <label class="flex items-center" for="star-five">
+          <StarRating :rating="5" :size="16" />
+        </label>
+      </div>
+      <div class="cursor-pointer flex gap-2 items-center">
+        <input id="star-four" v-model="selectedTerms" type="radio" value="4" aria-label="4 stars" @click="radioClicked('4')" />
+        <label class="flex items-center" for="star-four">
+          <StarRating :rating="4" :size="16" />
+          <span class="ml-1 text-xs">& {{ $t('general.up') }}</span>
+        </label>
+      </div>
+      <div class="cursor-pointer flex gap-2 items-center">
+        <input id="star-three" v-model="selectedTerms" type="radio" value="3" aria-label="3 stars" @click="radioClicked('3')" />
+        <label class="flex items-center" for="star-three">
+          <StarRating :rating="3" :size="16" />
+          <span class="ml-1 text-xs">& {{ $t('general.up') }}</span>
+        </label>
+      </div>
+      <div class="cursor-pointer flex gap-2 items-center">
+        <input id="star-two" v-model="selectedTerms" type="radio" value="2" aria-label="2 stars" @click="radioClicked('2')" />
+        <label class="flex items-center" for="star-two">
+          <StarRating :rating="2" :size="16" />
+          <span class="ml-1 text-xs">& {{ $t('general.up') }}</span>
+        </label>
+      </div>
+      <div class="cursor-pointer flex gap-2 items-center">
+        <input id="star-one" v-model="selectedTerms" type="radio" value="1" aria-label="1 star" @click="radioClicked('1')" />
+        <label class="flex items-center" for="star-one">
+          <StarRating :rating="1" :size="16" />
+          <span class="ml-1 text-xs">& {{ $t('general.up') }}</span>
+        </label>
+      </div>
     </div>
   </div>
 </template>

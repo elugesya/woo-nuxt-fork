@@ -1,107 +1,32 @@
 <script setup lang="ts">
 const route = useRoute();
-const { isShowingCart } = useCart();
+const { isShowingCart, toggleCart } = useCart();
 const { isShowingMobileMenu, toggleMobileMenu, addBodyClass, removeBodyClass } = useHelpers();
-const runtimeConfig = useRuntimeConfig();
+const { siteName } = useAppConfig();
+const config = useRuntimeConfig();
 
-const siteName = runtimeConfig.public.SITE_NAME || 'WooNuxt';
-const frontEndUrl = runtimeConfig.public.FRONT_END_URL || 'http://localhost:3000';
+const primaryColor = computed(() => config.public.PRIMARY_COLOR || '#7f54b2');
 
-const { init: initTikTok } = useTikTokPixel();
-
-onMounted(() => {
-  initTikTok();
-});
-
-//
-
-const closeMobileMenu = () => {
+const closeCartAndMenu = () => {
+  toggleCart(false);
   toggleMobileMenu(false);
 };
 
-// Sheet handles its own body scroll lock for cart
-// Only manage mobile menu scroll lock
-watch(isShowingMobileMenu, () => {
-  isShowingMobileMenu.value ? addBodyClass('overflow-hidden') : removeBodyClass('overflow-hidden');
+watch([isShowingCart, isShowingMobileMenu], () => {
+  isShowingCart.value || isShowingMobileMenu.value ? addBodyClass('overflow-hidden') : removeBodyClass('overflow-hidden');
 });
 
 watch(
   () => route.path,
-  () => {
-    isShowingCart.value = false;
-    closeMobileMenu();
-  },
+  () => closeCartAndMenu(),
 );
-import MobileMenu from "./components/generalElements/MobileMenu.vue";
 
 useHead({
   titleTemplate: `%s - ${siteName}`,
-});
-
-// Organization + WebSite JSON-LD site-wide (dynamic from env)
-// Sanitize potential misconfigured env values (quotes, inline comments)
-const rawLogoPath = runtimeConfig.public.ORGANIZATION_LOGO || '/logo.svg';
-const cleanedLogoPath = String(rawLogoPath)
-  .replace(/^['"]|['"]$/g, '')
-  .split('#')[0]
-  .trim();
-const logoPath = cleanedLogoPath || '/logo.svg';
-const logoUrl = logoPath.startsWith('http')
-  ? logoPath
-  : `${frontEndUrl}${logoPath.startsWith('/') ? '' : '/'}${logoPath}`;
-const contactEmail = runtimeConfig.public.ORGANIZATION_CONTACT_EMAIL;
-const contactPhone = runtimeConfig.public.ORGANIZATION_PHONE;
-const socialFacebook = runtimeConfig.public.ORGANIZATION_SOCIAL_FACEBOOK;
-const socialTwitter = runtimeConfig.public.ORGANIZATION_SOCIAL_TWITTER;
-const socialInstagram = runtimeConfig.public.ORGANIZATION_SOCIAL_INSTAGRAM;
-
-const organizationJsonLd = JSON.stringify(
-  {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
-    name: siteName,
-    url: frontEndUrl,
-    logo: logoUrl,
-    contactPoint: contactEmail || contactPhone ? {
-      '@type': 'ContactPoint',
-      email: contactEmail || undefined,
-      telephone: contactPhone || undefined,
-      contactType: 'customer service',
-    } : undefined,
-    sameAs: [socialFacebook, socialTwitter, socialInstagram].filter(Boolean),
-    aggregateRating: runtimeConfig.public.ORGANIZATION_RATING_VALUE && runtimeConfig.public.ORGANIZATION_REVIEW_COUNT ? {
-      '@type': 'AggregateRating',
-      ratingValue: runtimeConfig.public.ORGANIZATION_RATING_VALUE,
-      reviewCount: runtimeConfig.public.ORGANIZATION_REVIEW_COUNT,
-    } : undefined,
-  },
-  null,
-  2,
-);
-
-const websiteJsonLd = JSON.stringify(
-  {
-    '@context': 'https://schema.org',
-    '@type': 'WebSite',
-    name: siteName,
-    url: frontEndUrl,
-    potentialAction: {
-      '@type': 'SearchAction',
-      target: {
-        '@type': 'EntryPoint',
-        urlTemplate: `${frontEndUrl}/urunler?search={search_term_string}`,
-      },
-      'query-input': 'required name=search_term_string',
+  style: [
+    {
+      innerHTML: `:root { --color-primary: ${primaryColor.value}; }`,
     },
-  },
-  null,
-  2,
-);
-
-useHead({
-  script: [
-    { type: 'application/ld+json', innerHTML: organizationJsonLd },
-    { type: 'application/ld+json', innerHTML: websiteJsonLd },
   ],
 });
 </script>
@@ -111,7 +36,9 @@ useHead({
   <div class="flex flex-col min-h-screen">
     <AppHeader />
 
-    <LazyCart />
+    <Transition name="slide-from-right">
+      <Cart v-if="isShowingCart" />
+    </Transition>
 
     <Transition name="slide-from-left">
       <MobileMenu v-if="isShowingMobileMenu" />
@@ -120,77 +47,19 @@ useHead({
     <NuxtPage />
 
     <Transition name="fade">
-      <div v-if="isShowingMobileMenu" class="bg-black opacity-25 inset-0 z-40 fixed" @click="closeMobileMenu" />
+      <div v-if="isShowingCart || isShowingMobileMenu" class="bg-black opacity-25 inset-0 z-40 fixed" @click="closeCartAndMenu" />
     </Transition>
 
-    <FloatingWhatsAppButton />
     <LazyAppFooter hydrate-on-visible />
   </div>
 </template>
 
 <style lang="postcss">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-}
+@reference "#tailwind";
 
 html,
 body {
-  @apply bg-gray-100 text-gray-900;
+  @apply bg-gray-100 dark:bg-[#18202f] text-gray-900 dark:text-gray-100;
   scroll-behavior: smooth;
 }
 
@@ -200,15 +69,7 @@ img {
 }
 
 pre {
-  @apply rounded bg-gray-800 my-8 text-xs text-white p-4 whitespace-pre-wrap overflow-auto;
-}
-
-select {
-  @apply bg-white border rounded-md font-medium border-gray-300 flex-1 text-sm p-1.5 pr-12 pl-4 text-gray-500 relative inline-flex items-center hover:bg-gray-50 focus:z-20 py-2 px-4 appearance-none;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' viewBox='0 0 16 16'%3E%3Cpath stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 6l4 4 4-4'/%3E%3C/svg%3E")
-    center right 10px no-repeat;
-  background-size: 1rem;
-  padding-right: 2.5rem;
+  @apply rounded-sm bg-gray-800 my-8 text-xs text-white p-4 whitespace-pre-wrap overflow-auto;
 }
 
 /* Slide-from-right & Slide-from-left */
@@ -268,11 +129,11 @@ select {
 
 .custom-scrollbar::-webkit-scrollbar-track,
 .custom-scrollbar::-webkit-scrollbar {
-  @apply rounded bg-gray-100 w-1.5;
+  @apply rounded-sm bg-gray-100 w-1.5;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply rounded bg-gray-400;
+  @apply rounded-sm bg-gray-400;
 }
 
 @keyframes fadeIn {
@@ -344,7 +205,7 @@ img.skeleton {
 
 input[type='checkbox'],
 input[type='radio'] {
-  @apply bg-white border rounded-lg cursor-pointer font-sans outline-none border-gray-300 w-full p-3 transition-all duration-150 appearance-none hover:border-primary;
+  @apply bg-white border rounded-lg cursor-pointer font-sans outline-hidden border-gray-300 w-full p-3 transition-all duration-150 appearance-none hover:border-primary dark:bg-gray-700 dark:border-gray-600;
 
   width: 1em;
   height: 1em;
@@ -352,6 +213,10 @@ input[type='radio'] {
   cursor: pointer;
   border-radius: 4px;
   padding: 0;
+}
+
+.dark input {
+  color-scheme: dark;
 }
 
 input[type='radio'] {
@@ -392,12 +257,12 @@ input[type='radio']:after {
 input[type='checkbox']:checked:after,
 input[type='checkbox'] + label,
 input[type='radio'] + label {
-  @apply cursor-pointer text-gray-600 hover:text-primary;
+  @apply cursor-pointer text-gray-600 dark:text-gray-400 hover:text-primary;
 }
 
 input[type='checkbox']:checked + label,
 input[type='radio']:checked + label {
-  @apply text-gray-800 hover:text-primary-dark;
+  @apply text-gray-800 dark:text-white hover:text-primary-dark;
 }
 
 input[type='checkbox']:checked,
