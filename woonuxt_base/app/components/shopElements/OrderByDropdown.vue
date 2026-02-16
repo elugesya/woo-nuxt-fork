@@ -1,4 +1,7 @@
 <script setup>
+import { Button } from '@/components/ui/button'
+import { Select, SelectTrigger, SelectItem, SelectValue } from '@/components/ui/select'
+import SelectContent from '@/components/ui/select/SelectContent.vue'
 const { getOrderQuery, setOrderQuery } = await useSorting();
 const { storeSettings } = useAppConfig();
 const selectedOrder = ref(getOrderQuery());
@@ -12,23 +15,25 @@ watch([orderby, order], () => {
 </script>
 
 <template>
-  <div class="inline-flex ml-auto -space-x-px shadow-xs rounded-md isolate">
-    <button
-      class="relative inline-flex items-center p-2 text-sm font-medium text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-l-md hover:bg-gray-50 dark:hover:bg-gray-600 focus:z-20"
+  <div class="inline-flex ml-auto -space-x-px shadow-sm rounded-m isolate">
+    <Button
+      variant="outline"
+      class="rounded-l-md"
       aria-label="Sort"
       @click="order = order === 'ASC' ? 'DESC' : 'ASC'">
       <Icon name="ion:filter-outline" size="18" :class="order === 'ASC' ? 'rotate-180' : ''" class="transition-transform transform transform-origin-center" />
-    </button>
-    <select
-      name="orderby"
-      v-model="orderby"
-      class="select bg-white dark:bg-gray-700 dark:text-white border border-gray-300 dark:border-gray-600 rounded-l-none! border-l-0 text-sm leading-5 py-1.5"
-      aria-label="Order by">
-      <option value="date">{{ $t('general.latest') }}</option>
-      <option value="alphabetically">{{ $t('general.alphabetically') }}</option>
-      <option value="price">{{ $t('shop.price') }}</option>
-      <option v-if="storeSettings.showReviews" value="rating">{{ $t('shop.rating') }}</option>
-      <option value="discount">{{ $t('shop.discount') }}</option>
-    </select>
+    </Button>
+    <Select v-model="orderby">
+      <SelectTrigger class="rounded-l-none min-w-[120px]">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="date">{{ $t('general.latest') }}</SelectItem>
+        <SelectItem value="alphabetically">{{ $t('general.alphabetically') }}</SelectItem>
+        <SelectItem value="price">{{ $t('shop.price') }}</SelectItem>
+        <SelectItem v-if="storeSettings.showReviews" value="rating">{{ $t('shop.rating') }}</SelectItem>
+        <SelectItem value="discount">{{ $t('shop.discount') }}</SelectItem>
+      </SelectContent>
+    </Select>
   </div>
 </template>

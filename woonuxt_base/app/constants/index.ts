@@ -1,5 +1,3 @@
-import type { GeoLocation } from '#types/gql';
-
 export const countries: GeoLocation[] = [
   { name: 'Afghanistan', code: 'AF' },
   { name: 'Åland Islands', code: 'AX' },

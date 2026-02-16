@@ -1,0 +1,28 @@
+ .installment-table-div table{
+    width: 100%;
+}
+ .installment-table-div label{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+}
+ .installment-table-div table tr td{
+    border-top: 1px solid #e5e5e5;
+     /*padding: 1em 0px;*/
+}
+ .installment-table-div table tr th{
+     padding-top: 5px;
+     padding-bottom: 5px;
+     white-space: nowrap;
+ }
+ .installment-table-div > span{
+    font-size: 1.3rem;
+    margin-top: 10px;
+}
+
+ .installment-table-div table thead tr th:first-child, .installment-table-div table tbody tr td:first-child{
+    width: 5px;
+    padding-right: 10px;
+    min-width: 5px!important;
+     vertical-align: middle;
+}

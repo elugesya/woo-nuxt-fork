@@ -1,29 +1,15 @@
 <script setup>
-const { toggleCart, cart } = useCart();
-// Watch for changes in the cart count and animate the badge when the count increases
-watch(
-  () => cart.value?.contents?.itemCount ?? 0,
-  (newCount, oldCount) => {
-    if (newCount > oldCount) {
-      const trigger = document.querySelector('.cart-trigger');
-      const badge = trigger?.querySelector('.cart-badge');
-      if (badge) {
-        badge.classList.add('animate-popIn');
-        setTimeout(() => badge.classList.remove('animate-popIn'), 300);
-      }
-    }
-  },
-);
+const { isShowingCart, cart } = useCart();
 </script>
 
 <template>
-  <div class="cart-trigger relative cursor-pointer inline-flex" title="Cart" @click="toggleCart">
+  <div class="relative cursor-pointer inline-flex" title="Cart" @click="isShowingCart = !isShowingCart">
     <Icon name="ion:cart-outline" size="22" class="mr-1 md:mr-0" />
     <ClientOnly>
       <Transition name="popIn" mode="out-in">
         <span
           v-if="cart?.contents?.itemCount > 0"
-          class="cart-badge bg-primary rounded-full text-white leading-none min-w-4 p-0.75 -top-1 -right-1 md:-right-2 text-[10px] absolute inline-flex justify-center items-center tabular-nums">
+          class="bg-primary rounded-full text-white leading-none min-w-[16px] p-[3px] -top-1 -right-1 md:-right-2 text-[10px] absolute inline-flex justify-center items-center">
           {{ cart?.contents?.itemCount }}
         </span>
       </Transition>
@@ -31,7 +17,7 @@ watch(
   </div>
 </template>
 
-<style>
+<style lang="postcss">
 /* popIn */
 .popIn-enter-active,
 .popIn-leave-active {
@@ -41,19 +27,5 @@ watch(
 .popIn-enter-from,
 .popIn-leave-to {
   transform: scale(0);
-}
-
-/* Additional animation for the cart badge when count increases */
-.cart-badge.animate-popIn {
-  animation: cartPop 250ms cubic-bezier(0.2, 0.9, 0.3, 1.3);
-}
-
-@keyframes cartPop {
-  50% {
-    transform: scale(1.25);
-  }
-  100% {
-    background-color: var(--color-primary-dark);
-  }
 }
 </style>

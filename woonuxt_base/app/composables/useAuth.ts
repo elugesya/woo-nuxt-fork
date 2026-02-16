@@ -1,20 +1,14 @@
 import type {
-  ApiResponse,
-  AuthResponse,
   CreateAccountInput,
-  Customer,
-  DownloadableItem,
-  LoginClient,
+  LoginClientFragment,
   LoginInput,
-  Order,
   RegisterCustomerInput,
   ResetPasswordEmailMutationVariables,
   ResetPasswordKeyMutationVariables,
-  Viewer,
-} from '#types/gql';
+} from '#gql';
 
 export const useAuth = () => {
-  const { refreshCart, updateCart } = useCart();
+  const { refreshCart } = useCart();
   const { clearAllCookies, getErrorMessage } = useHelpers();
   const router = useRouter();
 
@@ -44,18 +38,18 @@ export const useAuth = () => {
     const route = currentRoute || (typeof window !== 'undefined' ? window.location.pathname + window.location.search : '');
 
     // Only store return URL if it's not already the login page
-    if (route && route !== '/my-account') {
+    if (route && route !== '/hesabim') {
       setReturnUrl(route);
     }
 
     // Navigate to login page
-    return navigateTo('/my-account');
+    return navigateTo('/hesabim');
   };
 
   // High-level function to handle post-login redirect
   const handlePostLoginRedirect = () => {
     const returnUrl = getReturnUrl();
-    if (returnUrl && returnUrl !== '/my-account') {
+    if (returnUrl && returnUrl !== '/hesabim') {
       clearReturnUrl();
       return navigateTo(returnUrl);
     }
@@ -71,13 +65,20 @@ export const useAuth = () => {
       if (login?.user && login?.authToken) {
         useGqlToken(login.authToken);
         await refreshCart();
+
+        // TikTok Pixel Identify
+        const { identify } = useTikTokPixel();
+        identify({
+          email: login.user.email || undefined,
+          // phone_number: login.user.phone || undefined, // Add if available in GQL response
+        });
       }
 
       isPending.value = false;
       return {
         success: true,
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
 
       return {
@@ -98,6 +99,13 @@ export const useAuth = () => {
       if (response.login?.authToken) {
         useGqlToken(response.login.authToken);
         await refreshCart();
+
+        // TikTok Pixel Identify
+        const { identify } = useTikTokPixel();
+        identify({
+          email: (response.login as any).user?.email || undefined,
+        });
+
         if (viewer.value === null) {
           return {
             success: false,
@@ -110,7 +118,7 @@ export const useAuth = () => {
       return {
         success: true,
       };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
 
       return {
@@ -128,23 +136,19 @@ export const useAuth = () => {
     try {
       const { logout } = await GqlLogout();
       if (logout) {
-        // Clear auth token/header before refreshing cart to avoid stale auth state.
-        useGqlToken(null);
-        useGqlHeaders({ Authorization: '' });
-
+        await refreshCart();
         clearAllCookies();
-
+        customer.value = { billing: {}, shipping: {} };
         clearReturnUrl(); // Clear any stored return URL on logout
-        updateCart({}); // Clear cart on logout
-        updateViewer(null);
       }
       return { success: true };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
       return { success: false, error: errorMsg };
     } finally {
-      if (router.currentRoute.value.path === '/my-account' && viewer.value === null) {
-        router.push('/my-account');
+      updateViewer(null);
+      if (router.currentRoute.value.path === '/hesabim' && viewer.value === null) {
+        router.push('/hesabim');
       } else {
         router.push('/');
       }
@@ -154,13 +158,20 @@ export const useAuth = () => {
   async function registerUser(userInfo: RegisterCustomerInput): Promise<AuthResponse> {
     isPending.value = true;
     try {
-      await GqlRegisterCustomer({ input: userInfo });
+      const { registerCustomer } = await GqlRegisterCustomer({ input: userInfo });
+
+      // TikTok Pixel Identify & CompleteRegistration
+      const { identify, trackCompleteRegistration } = useTikTokPixel();
+      identify({
+        email: userInfo.email || undefined,
+      });
+      trackCompleteRegistration();
+
       return { success: true };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
-      return { success: false, error: errorMsg };
-    } finally {
       isPending.value = false;
+      return { success: false, error: errorMsg };
     }
   }
 
@@ -190,7 +201,7 @@ export const useAuth = () => {
         return { success: true };
       }
       return { success: false, error: 'There was an error sending the reset password email. Please try again later.' };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
       isPending.value = false;
       return { success: false, error: errorMsg };
@@ -207,8 +218,9 @@ export const useAuth = () => {
         return { success: true };
       }
       return { success: false, error: 'There was an error resetting the password. Please try again later.' };
-    } catch (error: unknown) {
+    } catch (error: any) {
       isPending.value = false;
+      const gqlError = error?.gqlErrors?.[0];
       return { success: false, error: getErrorMessage(error) };
     }
   };
@@ -222,7 +234,7 @@ export const useAuth = () => {
         return { success: true, data: orderNodes };
       }
       return { success: false, error: 'There was an error getting your orders. Please try again later.' };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
       return { success: false, error: errorMsg };
     }
@@ -237,7 +249,7 @@ export const useAuth = () => {
         return { success: true, data: downloadNodes };
       }
       return { success: false, error: 'There was an error getting your downloads. Please try again later.' };
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMsg = getErrorMessage(error);
       return { success: false, error: errorMsg };
     }
@@ -248,7 +260,7 @@ export const useAuth = () => {
   };
 
   const avatar = computed(() => viewer.value?.avatar?.url ?? null);
-  const wishlistLink = computed<string>(() => (viewer.value ? '/my-account?tab=wishlist' : '/wishlist'));
+  const wishlistLink = computed<string>(() => (viewer.value ? '/hesabim?tab=wishlist' : '/istek-listesi'));
 
   return {
     viewer,

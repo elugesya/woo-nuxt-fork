@@ -1,5 +1,4 @@
 // Example: ?orderby=price&order=asc
-import type { Product } from '#types/gql';
 
 export function useSorting() {
   const route = useRoute();

@@ -1,13 +1,11 @@
 <script setup lang="ts">
-import type { Product } from '#types/gql';
-
 const { removeFromWishlist } = useWishlist();
 const { product } = defineProps<{ product: Product }>();
 </script>
 
 <template>
   <li class="flex py-4 gap-4 items-center">
-    <NuxtLink v-if="product.slug" :to="`/product/${decodeURIComponent(product.slug)}`">
+    <NuxtLink v-if="product.slug" :to="`/urun/${decodeURIComponent(product.slug)}`">
       <img
         v-if="product?.image?.cartSourceUrl"
         class="rounded-lg object-cover h-16 w-16"
@@ -19,8 +17,8 @@ const { product } = defineProps<{ product: Product }>();
         loading="lazy" />
     </NuxtLink>
     <div>
-      <NuxtLink v-if="product.slug" class="text-lg leading-tight" :to="`/product/${decodeURIComponent(product.slug)}`">{{ product.name }}</NuxtLink>
-      <ProductPrice :sale-price="product.salePrice ?? undefined" :regular-price="product.regularPrice ?? undefined" class="ml-auto" />
+      <NuxtLink v-if="product.slug" class="text-lg leading-tight" :to="`/urun/${decodeURIComponent(product.slug)}`">{{ product.name }}</NuxtLink>
+      <ProductPrice :sale-price="product.salePrice" :regular-price="product.regularPrice" class="ml-auto" />
     </div>
     <div class="ml-auto">
       <button v-if="product.databaseId" title="Remove Item" @click="removeFromWishlist(product.databaseId)">

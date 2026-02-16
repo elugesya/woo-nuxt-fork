@@ -2,7 +2,9 @@ fragment ProductVariation on ProductVariation {
   name
   databaseId
   price
+  rawPrice: price(format: RAW)
   regularPrice
+  rawRegularPrice: regularPrice(format: RAW)
   salePrice
   rawSalePrice: salePrice(format: RAW)
   slug

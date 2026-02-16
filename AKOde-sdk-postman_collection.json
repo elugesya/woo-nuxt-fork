@@ -1,0 +1,151 @@
+{
+	"info": {
+		"_postman_id": "ea810247-97d9-4f38-a3df-65fda04ff97e",
+		"name": "AKODE-SDK test",
+		"description": "AKÖde Entegrasyon Dokümanı Plugin dosyasında paylaşılan açıklamalar  ilgili işlemlerin açıklamasına eklenmiştir",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "3D ile Ödeme",
+			"item": [
+				{
+					"name": "3D için token alma: threeDPayment",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientId\": \"1000000032\",\n    \"apiUser\": \"Entegrasyon_01\",\n    \"Rnd\": 4887,\n    \"timeSpan\": \"20210622085112\",\n    \"Hash\": \"XGM+2EEvOzDLOLR+c2yn9puK6DMIHsABZ4lKtcMa8Xx7oCojKo75A40Knm7\\/eIVP3r8qPXpZkTElm3aLw+e34A==\",\n    \"callbackUrl\": \"http:\\/\\/localhost\\/akode-payment-sdk\\/examples\\/3d.php?return=1\",\n    \"orderId\": \"123004\",\n    \"amount\": 1000,\n    \"currency\": 949,\n    \"installmentCount\": \"0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://payment.testdgpf.dgpaysit.com/api/Payment/threeDPayment",
+							"protocol": "https",
+							"host": [
+								"payment",
+								"testdgpf",
+								"dgpaysit",
+								"com"
+							],
+							"path": [
+								"api",
+								"Payment",
+								"threeDPayment"
+							]
+						},
+						"description": "Bu işlemin aşağıdaki formatta bir response dönmesi bekleniyor.\n\n{\n\t\"code\": 0,\n\t\"message\": \"Başarılı\",\n\t\"threeDSessionId\": \"***\"\n}"
+					},
+					"response": []
+				},
+				{
+					"name": "3D işlemi devamı : ProcessCardForm",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ThreeDSessionId\": \"P0541C322BE3D47809A0570E80506A39C85AA126C0ECD4F64989D771A4764BB58\",\n    \"CardHolderName\": \"John Doe\",\n    \"CardNo\": \"4159560047417732\",\n    \"ExpireDate\": \"0824\",\n    \"Cvv\": \"123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://payment.testdgpf.dgpaysit.com/api/Payment/ProcessCardForm",
+							"protocol": "https",
+							"host": [
+								"payment",
+								"testdgpf",
+								"dgpaysit",
+								"com"
+							],
+							"path": [
+								"api",
+								"Payment",
+								"ProcessCardForm"
+							]
+						},
+						"description": "ProcessCardForm\n\nOrtak ödeme sayfasının kullanılmadığı durumda bu method çağırılacaktır. Ödeme işlemi başlatıldıktan sonra kart bilgilerinin iletileceği methoddur.\n\nThreeDSessionId=***********&\nCardHolderName=***********&\nCardNo=***********&\nExpireDate=***********&\nCvv=***********"
+					},
+					"response": []
+				}
+			],
+			"description": "Tek çekim, taksitli ve tek tıkla ödeme işlemleri için uygundur. İşleme gönderilen kartın bakiyesinden ilgili miktarı çekme işlemi yapar. 3D secure başlatılması için session açar ve sessionId döner. Bu servisten dönen threeDsessionId iframe yöntemiyle 3Dyönlendirme servis url’ine eklenerek 3D doğrulama akışının yapılması sağlanır. Eğer 3D doğrulama başarılı ise Sistem otomatik olarak ödemeye gönderir.\nTaksitli / Taksitsiz işlem yapılabilir."
+		},
+		{
+			"name": "Ortak Ödeme Sayfası",
+			"item": [
+				{
+					"name": "Ortak Ödeme Sayfası için token alma: startPaymentThreeDSession",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientId\": \"1000000032\",\n    \"apiUser\": \"Entegrasyon_01\",\n    \"Rnd\": 2522,\n    \"timeSpan\": \"20210622090815\",\n    \"Hash\": \"13UClJJ8q1faB8wghHR7zpJ46Dxa8ZnGulNaLnSuNabxp3+k2oQ3iKh0iU3FvgNM003yptjTgCOnqWse3T1Vjg==\",\n    \"callbackUrl\": \"http:\\/\\/localhost\\/akode-payment-sdk\\/examples\\/3d.php?return=1\",\n    \"orderId\": \"123005\",\n    \"amount\": 1000,\n    \"currency\": 949,\n    \"installmentCount\": \"0\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://payment.testdgpf.dgpaysit.com/api/Payment/startPaymentThreeDSession",
+							"protocol": "https",
+							"host": [
+								"payment",
+								"testdgpf",
+								"dgpaysit",
+								"com"
+							],
+							"path": [
+								"api",
+								"Payment",
+								"startPaymentThreeDSession"
+							]
+						},
+						"description": "Server tarafından startThreeDSession servisi ile threeDSessionId alınarak client tarafına iletilir."
+					},
+					"response": []
+				},
+				{
+					"name": "Ortak Ödeme Sayfası, iframe url /threeDSecure",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://payment.testdgpf.dgpaysit.com/api/Payment/threeDSecure?id=P188F839CE22F40B685EBB7F72760A8442B4D352696F4448A9EDE18C1373BF92B",
+							"protocol": "https",
+							"host": [
+								"payment",
+								"testdgpf",
+								"dgpaysit",
+								"com"
+							],
+							"path": [
+								"api",
+								"Payment",
+								"threeDSecure"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "P188F839CE22F40B685EBB7F72760A8442B4D352696F4448A9EDE18C1373BF92B"
+								}
+							]
+						},
+						"description": "client tarafında browser aracılığıyla threeDSecure url’ine get işlemi gerçekleştirilir. Parametre olarak threeDSessionId değerleri eklenir. threeDSessionId: 3D doğrulama işleminde kullanılan benzersiz değerdir.\n\nÖrnek : &lt;iframe src=\"https://**/threeDSecure?id=****\" height=\"250\" width=\"400\">&lt;/iframe>"
+					},
+					"response": []
+				}
+			],
+			"description": "15 Ortak Ödeme Sayfası\n\nMethod Name : threeDSecure\n \nServer tarafından startThreeDSession servisi ile threeDSessionId alınarak client tarafına iletilir.\nclient tarafında browser aracılığıyla threeDSecure url’ine get işlemi gerçekleştirilir.\nParametre olarak threeDSessionId değerleri eklenir.\nthreeDSessionId: 3D doğrulama işleminde kullanılan benzersiz değerdir.\n\nNot: Kullanıcının bankanın 3D sayfasına yönlendirme yapılabilmesi için browser desteği gerekmektedir.\nİşlem sonucunu threeDSessionResult servisinden de öğrenebilirsiniz.\n\nÖrnek :\n &lt;iframe src=\"https://******/threeDSecure?id=****\"\n            height=\"250\" width=\"400\">&lt;/iframe>"
+		}
+	]
+}

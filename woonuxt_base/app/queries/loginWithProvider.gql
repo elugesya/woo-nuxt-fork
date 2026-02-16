@@ -3,5 +3,8 @@ mutation loginWithProvider($input: LoginInput!) {
     authToken
     refreshToken
     authTokenExpiration
+    user {
+      email
+    }
   }
 }

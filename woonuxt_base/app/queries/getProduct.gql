@@ -1,10 +1,9 @@
-query getProduct($slug: ID!, $frontEndUrl: String = "") {
+query getProduct($slug: ID!) {
   product(id: $slug, idType: SLUG) {
     name
     type
     databaseId
     id
-    fullYoastHead(sanitize: true, frontendUrl: $frontEndUrl)
     metaData {
       id
       key
@@ -18,6 +17,7 @@ query getProduct($slug: ID!, $frontEndUrl: String = "") {
     ...ProductWithAttributes
     ...ProductCategories
     ...Terms
+  ...ProductBrands
     ...SimpleProduct
     ...VariableProduct
     ...ExternalProduct
@@ -27,6 +27,41 @@ query getProduct($slug: ID!, $frontEndUrl: String = "") {
         ...VariableProduct
         ...ExternalProduct
       }
+    }
+    ... on SimpleProduct {
+      upsell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+      crossSell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+    }
+    ... on VariableProduct {
+      upsell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+      crossSell(first: 5) {
+        nodes {
+          ...SimpleProduct
+          ...VariableProduct
+          ...ExternalProduct
+        }
+      }
+    }
+    ... on ExternalProduct {
+      id
     }
     reviews {
       averageRating

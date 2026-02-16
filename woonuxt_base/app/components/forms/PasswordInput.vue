@@ -1,42 +1,53 @@
 <script setup lang="ts">
-const showPassword = ref(false);
+import { Icon } from '@iconify/vue'
+import { Input } from '@/components/ui/input'
 
-const { modelValue, className, placeholder, required } = defineProps({
-  modelValue: { type: String, default: '' },
-  className: { type: String, default: '' },
-  placeholder: { type: String, default: '' },
-  autocomplete: { type: String, default: 'new-password' },
-  required: { type: Boolean, default: false },
-});
+const showPassword = ref(false)
 
-const emit = defineEmits(['update:modelValue']);
+interface PasswordInputProps {
+  modelValue: string
+  className?: string
+  placeholder?: string
+  autocomplete?: string
+  required?: boolean
+}
+
+const props = withDefaults(defineProps<PasswordInputProps>(), {
+  className: '',
+  placeholder: '',
+  autocomplete: 'new-password',
+  required: false,
+})
+
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+}>()
 
 const handleInputChanged = (e: Event) => {
-  const target = e.target as HTMLInputElement;
-  emit('update:modelValue', target.value);
-};
+  const target = e.target as HTMLInputElement
+  emit('update:modelValue', target.value)
+}
 </script>
 
 <template>
   <div class="relative flex items-center w-full">
-    <input
+    <Input
       :type="showPassword ? 'text' : 'password'"
-      class="flex items-center flex-1"
-      :value="modelValue"
+      :model-value="modelValue"
       @input="handleInputChanged"
       :class="className"
       :placeholder="placeholder"
       :autocomplete="autocomplete"
-      :required="required" />
-    <Icon name="ion:eye-outline" size="20" class="absolute cursor-pointer right-4" @click="showPassword = !showPassword" v-if="showPassword" />
-    <Icon name="ion:eye-off-outline" size="20" class="absolute cursor-pointer right-4" @click="showPassword = !showPassword" v-else />
+      :required="required"
+    />
+    <button
+      type="button"
+      class="absolute right-3 cursor-pointer hover:text-foreground/80 transition-colors"
+      @click="showPassword = !showPassword"
+      :aria-label="showPassword ? 'Hide password' : 'Show password'"
+    >
+      <Icon v-if="showPassword" icon="lucide:eye" class="h-5 w-5" />
+      <Icon v-else icon="lucide:eye-off" class="h-5 w-5" />
+    </button>
   </div>
 </template>
-
-<style scoped>
-@reference "#tailwind";
-
-input {
-  @apply bg-white border border-gray-300 rounded-md shadow-inner outline-hidden w-full py-2 px-4 text-base leading-6 text-gray-900 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
-}
-</style>

@@ -1,0 +1,167 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Project-Id-Version: WooCommerce ALTTANTIRE Gateway\n"
+"POT-Creation-Date: 2021-02-08 21:01+0530\n"
+"PO-Revision-Date: 2021-02-08 21:01+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.8.7\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-WPHeader: wc-alttantire.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.js\n"
+
+#: includes/wc-alttantire-gateway.php:7
+msgid "ALTTANTIRE"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:8
+msgid "Woocommerce payment gateway for Sanal POS"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:10
+msgid "Credit/Debit Card"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:24
+msgid "Enable/Disable"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:26
+msgid "Enable ALTTANTIRE"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:30
+msgid "Title"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:32
+msgid "This controls the title which the user sees during checkout."
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:33
+msgid "ALTTANTIRE Payment"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:37
+msgid "Description"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:39
+msgid "This controls the description which the user sees during checkout."
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:40
+msgid "Pay with Credit/Debit card"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:43
+msgid "Public Key"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:49
+msgid "Private Key"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:55
+msgid "3D Mode"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:60
+msgid "On"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:61
+msgid "Auto"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:62
+msgid "Off"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:66
+msgid "Installment"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:68
+msgid "Installment Payment Support"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:72 includes/wc-alttantire-gateway.php:255
+msgid "Shipping Charge"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:74
+msgid "Include Shipping Charge"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:78
+msgid "Total Tax"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:80
+msgid "Include Tax"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:84
+msgid "Sandbox/Production"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:108
+msgid "Card Holder Name"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:109
+msgid "Name"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:190
+msgid "Payment parameter missing"
+msgstr ""
+
+#: includes/wc-alttantire-gateway.php:262
+msgid "Tax"
+msgstr ""
+
+#: wc-alttantire.php:57
+msgid "Settings"
+msgstr ""
+
+#: wc-alttantire.php:63
+msgid ""
+"ALTTANTIRE Payment Gateway requires the WooCommerce plugin to be installed and "
+"active."
+msgstr ""
+
+#: wc-alttantire.php:83
+msgid "ALTTANTIRE Payment Failed"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+msgid "WooCommerce ALTTANTIRE Gateway"
+msgstr ""
+
+#. Plugin URI of the plugin/theme
+msgid "https://#/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Allows you to use ALTTANTIRE payment gateway with the WooCommerce plugin."
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Alttantire Yazılım Çözümleri"
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "mailto:info@alttantire.com"
+msgstr ""

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import Input from '@/components/ui/input/Input.vue';
+import Button from '@/components/ui/button/Button.vue';
 const { cart, isUpdatingCoupon, applyCoupon, removeCoupon } = useCart();
 const couponCode = ref<string>('');
 const errorMessage = ref<string>('');
@@ -17,15 +19,19 @@ async function submitCoupon(): Promise<void> {
 <template>
   <div>
     <form class="flex gap-1" @submit.prevent="submitCoupon">
-      <input
+      <Input
         id="couponCode"
         v-model="couponCode"
         type="text"
         :placeholder="$t('shop.couponCode')"
-        class="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-xs outline-hidden dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+        class="w-full"
         required />
-      <Button :loading="isUpdatingCoupon" :disabled="couponCode === ''" type="submit" variant="primary" class="min-w-20">
-        {{ $t('general.apply') }}
+      <Button
+        type="submit"
+        class="min-w-20 flex items-center justify-center"
+        :disabled="isUpdatingCoupon">
+        <LoadingIcon v-if="isUpdatingCoupon" color="currentColor" size="16" />
+        <span v-else>{{ $t('general.apply') }}</span>
       </Button>
     </form>
     <Transition name="scale-y" mode="out-in">
@@ -34,7 +40,9 @@ async function submitCoupon(): Promise<void> {
     <Transition name="scale-y" mode="out-in">
       <div v-if="cart && cart.appliedCoupons" class="text-xs font-semibold uppercase flex flex-wrap gap-2">
         <div v-for="(coupon, index) in cart.appliedCoupons" :key="coupon?.code || index" class="flex flex-wrap mt-2 flex-2">
-          <div v-if="coupon?.code" class="bg-primary/5 border-primary/10 border rounded-md flex text-primary leading-none p-1.5 gap-1 items-center">
+          <div
+            v-if="coupon?.code"
+            class="bg-primary border-primary border rounded-md flex bg-opacity-5 border-opacity-10 text-primary leading-none p-1.5 gap-1 items-center">
             <span v-html="coupon.code" />
             <Icon name="ion:close" class="rounded-full cursor-pointer hover:bg-primary hover:text-white" @click="removeCoupon(coupon.code)" />
           </div>

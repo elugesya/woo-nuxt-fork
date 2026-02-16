@@ -1,5 +1,3 @@
-import type { Product } from '#types/gql';
-
 let allProducts = [] as Product[];
 
 export function useProducts() {

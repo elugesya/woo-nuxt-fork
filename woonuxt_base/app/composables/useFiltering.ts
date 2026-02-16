@@ -3,8 +3,6 @@
  * @description A composable that handles the filtering of products. For reference this
  * is what the filter query looks like: ?filter=pa_color[green,blue],pa_size[md]
  */
-import type { Product } from '#types/gql';
-
 export function useFiltering() {
   const route = useRoute();
   const router = useRouter();
@@ -119,9 +117,39 @@ export function useFiltering() {
       const starRating = getFilter('rating') || [];
       const ratingCondition = starRating.length ? (product?.averageRating || 0) >= parseFloat(starRating[0] as string) : true;
 
-      // Product attribute filters
-      const globalProductAttributes = runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES?.map((attribute: any) => attribute.slug) || [];
-      const attributeCondition = globalProductAttributes
+      // Brand filter
+      const brand = getFilter('product_brand') || [];
+      const brandCondition = brand.length ? product.terms?.nodes?.find((node: any) => node.taxonomyName === 'product_brand' && brand.includes(node.slug)) : true;
+
+      // Power (pa_guc) filter - numeric range filter
+      const powerRange = getFilter('pa_guc') || [];
+      let powerCondition = true;
+      if (powerRange.length === 2) {
+        const productPowerTerms = product.terms?.nodes?.filter((node: any) => node.taxonomyName === 'pa_guc');
+        if (productPowerTerms && productPowerTerms.length > 0) {
+          // Check if any power term is within the range
+          powerCondition = productPowerTerms.some((term: any) => {
+            const powerValue = parseFloat(term.name || '0');
+            return powerValue >= parseFloat(powerRange[0] as string) && powerValue <= parseFloat(powerRange[1] as string);
+          });
+        } else {
+          // If no power term, don't show the product when power filter is active
+          powerCondition = false;
+        }
+      }
+
+      // Shaft (pa_saft) filter
+      const shaft = getFilter('pa_saft') || [];
+      const shaftCondition = shaft.length ? product.terms?.nodes?.find((node: any) => node.taxonomyName === 'pa_saft' && shaft.includes(node.slug)) : true;
+
+
+      // Product attribute filters (global + extra attributes)
+      const extraAttributes = ['pa_kontrol', 'pa_mars', 'pa_trim'];
+      const allAttributes = [
+        ...(runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES?.map((attribute: any) => attribute.slug) || []),
+        ...extraAttributes
+      ];
+      const attributeCondition = allAttributes
         .map((attribute: string) => {
           const attributeValues = getFilter(attribute) || [];
           if (!attributeValues.length) return true;
@@ -129,11 +157,11 @@ export function useFiltering() {
         })
         .every((condition: any) => condition);
 
-      // onSale filter
-      const onSale = getFilter('sale');
-      const saleItemsOnlyCondition = onSale.length ? product.onSale : true;
+  // stock filter
+  const stockFilter = getFilter('stock');
+  const inStockOnlyCondition = stockFilter.length ? product.stockStatus === 'IN_STOCK' : true;
 
-      return ratingCondition && priceCondition && attributeCondition && categoryCondition && saleItemsOnlyCondition;
+  return ratingCondition && priceCondition && attributeCondition && categoryCondition && brandCondition && powerCondition && shaftCondition && inStockOnlyCondition;
     });
   }
 

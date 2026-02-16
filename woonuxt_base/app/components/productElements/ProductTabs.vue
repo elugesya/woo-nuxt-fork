@@ -1,41 +1,37 @@
 <script setup lang="ts">
-import type { Product } from '#types/gql';
-
 const { product } = defineProps({
   product: { type: Object as PropType<Product>, required: true },
 });
 const { storeSettings } = useAppConfig();
-const { t } = useI18n();
 
-const reviewCount = computed(() => ('reviewCount' in product ? (product.reviewCount ?? undefined) : undefined));
-
-const tabs = computed(() => {
-  const tabList = [];
-
-  if (product.description) {
-    tabList.push({
-      label: t('shop.productDescription'),
-    });
-  }
-
-  if (storeSettings.showReviews) {
-    tabList.push({
-      label: t('shop.reviews'),
-      badge: reviewCount.value,
-    });
-  }
-
-  return tabList;
-});
-
-const activeTab = ref(0);
+const initialTab = product.description ? 0 : 1;
+const show = ref(initialTab);
 </script>
 
 <template>
-  <Tabs v-if="tabs.length" v-model="activeTab" :tabs="tabs">
-    <template #default="{ activeTab: currentTab }">
-      <div v-if="currentTab === 0 && product.description" class="font-light prose dark:prose-invert" v-html="product.description" />
-      <ProductReviews v-else-if="currentTab === 1 || (currentTab === 0 && !product.description)" :product="product" />
-    </template>
-  </Tabs>
+  <div>
+    <nav class="border-b flex gap-8 tabs">
+      <button v-if="product.description" type="button" :class="show === 0 ? 'active' : ''" @click.prevent="show = 0">
+        {{ $t('shop.productDescription') }}
+      </button>
+      <button v-if="storeSettings.showReviews" type="button" :class="show === 1 ? 'active' : ''" @click.prevent="show = 1">
+        {{ $t('shop.reviews') }} ({{ product.reviewCount }})
+      </button>
+    </nav>
+    <div class="tab-contents">
+      <div v-if="show === 0 && product.description" class="font-light mt-8 prose" v-html="product.description" />
+      <ProductReviews v-if="show === 1" :product="product" />
+    </div>
+  </div>
 </template>
+
+<style lang="postcss" scoped>
+.tabs button {
+  @apply border-transparent border-b-2 text-lg pb-8;
+  margin-bottom: -1px;
+}
+
+.tabs button.active {
+  @apply border-primary text-primary;
+}
+</style>

@@ -1,4 +1,5 @@
 <script setup>
+import { Checkbox } from '@/components/ui/checkbox'
 const { getFilter, setFilter, isFiltersActive } = useFiltering();
 
 const props = defineProps({
@@ -28,16 +29,27 @@ const checkboxChanged = () => {
 
 <template>
   <div v-if="terms.length">
-    <div class="cursor-pointer flex font-semibold mt-8 leading-none justify-between items-center text-gray-900 dark:text-white" @click="isOpen = !isOpen">
+  <div class="cursor-pointer flex font-semibold mt-8 leading-none justify-between items-center text-foreground" @click="isOpen = !isOpen">
       <span>{{ label || $t('shop.category', 2) }}</span>
-      <Icon name="ion:chevron-down-outline" class="transform text-gray-600 dark:text-gray-300" :class="isOpen ? 'rotate-180' : ''" />
+      <Icon name="ion:chevron-down-outline" class="transform" :class="isOpen ? 'rotate-180' : ''" />
     </div>
-    <div v-show="isOpen" class="mt-3 mr-1 max-h-60 grid gap-1.5 overflow-auto custom-scrollbar">
+    <div v-show="isOpen" class="mt-3 mr-1 max-h-[240px] grid gap-1.5 overflow-auto custom-scrollbar">
       <div v-for="term in terms" :key="term.slug" class="flex gap-2 items-start">
-        <input :id="term.slug" v-model="selectedTerms" type="checkbox" :value="term.slug" @change="checkboxChanged" />
-        <label :for="term.slug" class="cursor-pointer m-0 text-sm flex-1 leading-tight text-gray-700 dark:text-gray-300">
+        <Checkbox
+          :id="term.slug"
+          :checked="selectedTerms.includes(term.slug)"
+          @update:checked="val => {
+            if (val) {
+              if (!selectedTerms.includes(term.slug)) selectedTerms.push(term.slug)
+            } else {
+              selectedTerms = selectedTerms.filter(s => s !== term.slug)
+            }
+            checkboxChanged()
+          }"
+        />
+        <label :for="term.slug" class="cursor-pointer m-0 text-sm flex-1 leading-tight">
           <span v-html="term.name" />
-          <small v-if="showCount" class="ml-1 text-gray-400 dark:text-gray-500 tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>
+          <small v-if="showCount" class="ml-1 text-muted-foreground tabular-nums" aria-hidden="true">({{ term.count || 0 }})</small>
         </label>
       </div>
     </div>

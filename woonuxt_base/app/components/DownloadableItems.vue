@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { DownloadableItem } from '#types/gql';
-
 const { formatDate } = useHelpers();
 
 const props = defineProps({
@@ -21,7 +19,7 @@ const props = defineProps({
     <tbody>
       <tr v-for="item in props.downloadableItems" :key="item.id">
         <td class="rounded-l-lg">
-          <NuxtLink v-if="item.product" :to="`/product/${item.product.slug}`" class="hover:underline">{{ item.product.name }}</NuxtLink>
+          <NuxtLink v-if="item.product" :to="`/urun/${item.product.slug}`" class="hover:underline">{{ item.product.name }}</NuxtLink>
         </td>
         <td>{{ item.downloadsRemaining || '∞' }}</td>
         <td>{{ item.accessExpires ? formatDate(item.accessExpires) : 'Never' }}</td>
@@ -33,11 +31,9 @@ const props = defineProps({
   </table>
 </template>
 
-<style scoped>
-@reference "#tailwind";
-
+<style lang="postcss" scoped>
 tbody tr:nth-child(odd) {
-  @apply bg-gray-50 dark:bg-gray-700/50;
+  background-color: #fafafa;
 }
 
 thead tr {
@@ -45,11 +41,11 @@ thead tr {
 }
 
 tbody tr {
-  @apply text-xs sm:text-sm text-gray-500 dark:text-gray-400;
+  @apply text-xs sm:text-sm text-gray-500;
 }
 
 td,
 th {
-  @apply py-2 px-3 dark:text-gray-300;
+  @apply py-2 px-3;
 }
 </style>
