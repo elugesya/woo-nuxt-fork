@@ -66,7 +66,8 @@ COPY . .
 RUN rm -rf node_modules
 
 RUN pnpm install --frozen-lockfile
-RUN npm install --platform=linux --arch=x64 sharp
+# Rebuild sharp for linux/x64 platform using environment variables (pnpm doesn't support --platform/--arch flags)
+RUN npm_config_platform=linux npm_config_arch=x64 pnpm rebuild sharp
 # Ensure production mode during static generation so robots.txt and sitemap use prod rules
 RUN NODE_ENV=production pnpm run generate
 
