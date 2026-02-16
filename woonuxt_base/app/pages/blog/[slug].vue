@@ -9,7 +9,56 @@ if (!post.value) {
   throw createError({ statusCode: 404, statusMessage: 'Blog yazısı bulunamadı' });
 }
 
-const { formatDate } = useHelpers();
+const { formatDate, stripHtml } = useHelpers();
+
+// Generate SEO-friendly alt text for featured image if not set
+const featuredImageAlt = computed(() => {
+  const altText = post.value?.featuredImage?.node?.altText;
+  if (altText) return altText;
+  // Fallback: generate alt text from post title
+  const title = stripHtml(post.value?.title || '');
+  return `${title} - Öne Çıkan Görsel`;
+});
+
+// Process blog content to add internal links for products and categories
+const processedContent = computed(() => {
+  if (!post.value?.content) return '';
+
+  let content = post.value.content;
+
+  // Define products and their URLs
+  const products = [
+    { name: 'AeroWave e-Foil SurfBoard', url: '/urun/aerowave-e-foil-surfboard' },
+    { name: 'Zaphira Elektrikli Surf Board', url: '/urun/zaphira-elektirkli-surf-board' },
+    { name: 'AeroWave e-Foil', url: '/urun/aerowave-e-foil-surfboard' },
+    { name: 'Zaphira', url: '/urun/zaphira-elektirkli-surf-board' },
+  ];
+
+  // Define categories and their URLs
+  const categories = [
+    { name: 'Şişme Deniz Botları', url: '/urun-kategorisi/sisme-deniz-botlari' },
+    { name: 'Dıştan Takma Motorlar', url: '/urun-kategorisi/distan-takma-motorlar' },
+    { name: 'Sabit Tabanlı RIB Botlar', url: '/urun-kategorisi/sabit-tabanli-rib-botlar' },
+    { name: 'Surf Board', url: '/urun-kategorisi/surf-board' },
+    { name: 'Elektrikli Surf Board', url: '/urun-kategorisi/surf-board' },
+    { name: 'e-Foil', url: '/urun-kategorisi/surf-board' },
+  ];
+
+  // Only link plain text mentions (not already in links)
+  const allItems = [...products, ...categories];
+
+  for (const item of allItems) {
+    // Pattern to find the product name NOT inside an HTML tag or already linked
+    // This regex looks for the product name that's not already inside <a> tags
+    const regex = new RegExp(`(?<!<a[^>]*>)(?<!<a[^>]*href[^=]*=[^"'\\s]*[\'"])(${item.name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})(?![^<]*</a>)(?![^<]*>)`, 'gi');
+
+    content = content.replace(regex, (match) => {
+      return `<a href="${item.url}" class="text-primary hover:underline font-medium" title="${match}">${match}</a>`;
+    });
+  }
+
+  return content;
+});
 
 // SEO
 const seoTitle = post.value?.seo?.title || post.value?.title;
@@ -29,7 +78,7 @@ useSeoMeta({
 });
 
 // Structured Data: Article + BreadcrumbList
-const { frontEndUrl, stripHtml } = useHelpers();
+const { frontEndUrl } = useHelpers();
 const runtimeConfig = useRuntimeConfig();
 const siteName = runtimeConfig.public.SITE_NAME || 'Site';
 // Sanitize potential misconfigured env values (quotes, inline comments) for logo
@@ -77,6 +126,8 @@ const articleJsonLd = computed(() =>
         name: siteName,
         logo: { '@type': 'ImageObject', url: logoUrl },
       },
+      keywords: post.value?.tags?.nodes?.map((tag: any) => tag.name).join(', ') || undefined,
+      inLanguage: 'tr-TR',
     },
     null,
     2,
@@ -137,7 +188,7 @@ useHead(() => ({
       <div v-if="post.featuredImage?.node" class="mb-8 rounded-lg overflow-hidden">
         <NuxtImg
           :src="post.featuredImage.node.sourceUrl"
-          :alt="post.featuredImage.node.altText || post.title"
+          :alt="featuredImageAlt"
           :width="post.featuredImage.node.mediaDetails?.width"
           :height="post.featuredImage.node.mediaDetails?.height"
           class="w-full h-auto"
@@ -146,7 +197,7 @@ useHead(() => ({
       </div>
 
       <!-- Content -->
-      <div class="prose prose-lg max-w-none mb-12" v-html="post.content" />
+      <div class="prose prose-lg max-w-none mb-12" v-html="processedContent" />
 
       <!-- Tags -->
       <div v-if="post.tags?.nodes?.length" class="py-8 border-t border-gray-200">
@@ -210,6 +261,14 @@ useHead(() => ({
 
 .prose :deep(code) {
   @apply bg-gray-100 px-2 py-1 rounded text-sm;
+}
+
+.prose :deep(a[href*="/urun/"]) {
+  @apply text-primary font-semibold hover:text-primary/80 underline decoration-2 underline-offset-2;
+}
+
+.prose :deep(a[href*="/urun-kategorisi/"]) {
+  @apply text-primary hover:text-primary/80 underline decoration-2 underline-offset-2;
 }
 
 .prose :deep(pre) {
