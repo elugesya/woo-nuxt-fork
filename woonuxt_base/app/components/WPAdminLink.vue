@@ -29,6 +29,8 @@ const linkStartsWithWpAdmin = link?.startsWith('/wp-admin') || false;
 </template>
 
 <style scoped lang="postcss">
+@import "tailwindcss";
+@import "../assets/css/theme.css";
 .wp-admin-link {
   @apply inline-flex items-center bg-yellow-400 leading-tight py-1 px-2 rounded gap-1 text-xs text-yellow-900 border-b border-yellow-500 uppercase transition-all duration-100 ease-in-out;
 

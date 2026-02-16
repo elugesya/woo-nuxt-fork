@@ -72,6 +72,8 @@ const attributesWithTerms = attributesForQuery
 </template>
 
 <style lang="postcss">
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 
 #filters {
   @apply w-full lg:w-[280px];

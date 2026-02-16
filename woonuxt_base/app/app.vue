@@ -129,9 +129,7 @@ useHead({
 </template>
 
 <style lang="postcss">
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "./assets/css/main.css";
 
 @layer base {
   :root {

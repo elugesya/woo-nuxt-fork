@@ -31,6 +31,8 @@ const setActiveOption = async (id) => {
 </template>
 
 <style lang="postcss" scoped>
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 .shipping-options {
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 

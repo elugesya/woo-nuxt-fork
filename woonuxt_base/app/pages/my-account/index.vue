@@ -114,7 +114,8 @@ useSeoMeta({
 </template>
 
 <style scoped>
-@reference "#tailwind";
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 
 .nav-link {
   @apply flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium text-gray-700 dark:text-gray-300 transition-all duration-200 mb-1;

@@ -545,6 +545,8 @@ useSeoMeta({
 </template>
 
 <style lang="postcss">
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 .checkout-form input[type='text'],
 .checkout-form input[type='email'],
 .checkout-form input[type='tel'],

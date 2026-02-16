@@ -144,6 +144,8 @@ async function addComment() {
 </template>
 
 <style lang="postcss" scoped>
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 .disable-star {
   @apply bg-background shadow-sm text-muted-foreground border border;
   transition: 0.15s ease-in-out;

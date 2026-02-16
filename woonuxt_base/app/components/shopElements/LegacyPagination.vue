@@ -88,6 +88,8 @@ const numberSrc = (pageNumber: number) => {
 </template>
 
 <style lang="postcss" scoped>
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 .prev,
 .next,
 .page-number {

@@ -25,6 +25,8 @@ const { isSwiping, lengthX } = useSwipe(el, {
 </script>
 
 <style lang="postcss">
+@import "tailwindcss";
+@import "../../assets/css/theme.css";
 .underlay {
   @apply flex p-4 inset-0 transition-all justify-end absolute items-center;
 }

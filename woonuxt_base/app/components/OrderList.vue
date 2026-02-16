@@ -50,6 +50,8 @@ const goToOrder = (orderNumber: string): void => {
 </template>
 
 <style lang="postcss" scoped>
+@import "tailwindcss";
+@import "../assets/css/theme.css";
 tbody tr:nth-child(odd) {
   background-color: #fafafa;
 }
