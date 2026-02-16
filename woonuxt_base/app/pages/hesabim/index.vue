@@ -100,8 +100,6 @@ useSeoMeta({
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 nav a {
   @apply rounded-md transition-colors;
 

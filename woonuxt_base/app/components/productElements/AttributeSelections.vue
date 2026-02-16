@@ -163,8 +163,6 @@ onMounted(() => {
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 .color-green {
   @apply bg-green-500;
 }

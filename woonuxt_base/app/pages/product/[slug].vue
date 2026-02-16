@@ -358,7 +358,7 @@ const addToCartLoading = computed(() => (isOptimisticCartMode.value ? false : is
                 type="number"
                 min="1"
                 aria-label="Quantity"
-                class="flex items-center justify-center w-20 gap-4 p-2 text-left bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-hidden dark:text-white" />
+                class="flex items-center justify-center w-20 gap-4 p-2 text-left bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none dark:text-white" />
               <Button class="flex-1 w-full" :disabled="disabledAddToCart" :loading="addToCartLoading" type="submit">
                 {{ $t('shop.addToCart') }}
               </Button>
@@ -367,7 +367,7 @@ const addToCartLoading = computed(() => (isOptimisticCartMode.value ? false : is
               v-if="externalProduct?.externalUrl"
               :href="externalProduct.externalUrl"
               target="_blank"
-              class="rounded-lg flex font-bold bg-gray-800 dark:bg-gray-700 text-white text-center min-w-37.5 p-2.5 gap-4 items-center justify-center focus:outline-hidden hover:bg-gray-700 dark:hover:bg-gray-600">
+              class="rounded-lg flex font-bold bg-gray-800 dark:bg-gray-700 text-white text-center min-w-37.5 p-2.5 gap-4 items-center justify-center focus:outline-none hover:bg-gray-700 dark:hover:bg-gray-600">
               {{ externalProduct?.buttonText || 'View product' }}
             </a>
           </form>

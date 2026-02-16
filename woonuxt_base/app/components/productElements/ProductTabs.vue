@@ -26,8 +26,6 @@ const show = ref(initialTab);
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 .tabs button {
   @apply border-transparent border-b-2 text-lg pb-8;
   margin-bottom: -1px;

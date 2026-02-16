@@ -106,8 +106,6 @@ useHead({
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 input {
   @apply border rounded-lg mb-4 w-full p-3 px-4 bg-background;
 }

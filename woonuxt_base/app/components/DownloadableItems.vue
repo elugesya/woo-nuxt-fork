@@ -32,8 +32,6 @@ const props = defineProps({
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../assets/css/theme.css";
 tbody tr:nth-child(odd) {
   background-color: #fafafa;
 }

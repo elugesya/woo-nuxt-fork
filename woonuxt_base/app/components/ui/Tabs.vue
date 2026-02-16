@@ -53,8 +53,6 @@ const selectTab = (index: number) => {
 </template>
 
 <style scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 
 .tabs {
   @apply border-gray-200 dark:border-gray-700;

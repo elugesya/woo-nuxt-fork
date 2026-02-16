@@ -7,8 +7,6 @@
 </template>
 
 <style lang="postcss">
-@import "tailwindcss";
-@import "../assets/css/theme.css";
 .account-form input[type='text'],
 .account-form input[type='email'],
 .account-form input[type='tel'],

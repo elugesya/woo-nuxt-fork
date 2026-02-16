@@ -174,8 +174,6 @@ useHead(() => ({
 </template>
 
 <style scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 
 .prose :deep(img) {
   @apply rounded-lg;

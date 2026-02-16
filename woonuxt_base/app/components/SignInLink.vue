@@ -40,8 +40,6 @@ const handleClick = (event: Event) => {
 </template>
 
 <style scoped lang="postcss">
-@import "tailwindcss";
-@import "../assets/css/theme.css";
 .pop-in-enter-active,
 .pop-in-leave-active {
   transition: transform 0.3s;

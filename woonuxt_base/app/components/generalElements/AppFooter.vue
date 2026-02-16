@@ -131,8 +131,6 @@ import EtbisQr from './EtbisQr.vue';
 </template>
 
 <style scoped lang="postcss">
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 a {
   @apply hover:underline;
 }

@@ -1,6 +1,5 @@
 import { createResolver } from '@nuxt/kit';
 import { defineNuxtConfig } from 'nuxt/config';
-import tailwindcss from '@tailwindcss/vite';
 
 const { resolve } = createResolver(import.meta.url);
 
@@ -49,6 +48,7 @@ export default defineNuxtConfig({
   modules: [
     resolve('./modules/woonuxt-bridge.ts'),
     'nuxt-graphql-client',
+    '@nuxtjs/tailwindcss',
     '@nuxt/icon',
     '@nuxt/image',
     '@nuxtjs/i18n',
@@ -56,11 +56,6 @@ export default defineNuxtConfig({
     'shadcn-nuxt',
     '@nuxtjs/color-mode',
   ],
-
-  // Tailwind CSS v4 via Vite plugin
-  vite: {
-    plugins: [tailwindcss()],
-  },
 
 
 

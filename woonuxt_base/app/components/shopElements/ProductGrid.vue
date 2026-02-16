@@ -26,8 +26,6 @@ const props = defineProps({
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 .product-grid {
   @apply my-4 min-h-[600px] grid transition-all gap-4 md:gap-8 lg:my-8;
 }

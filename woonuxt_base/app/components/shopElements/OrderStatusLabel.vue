@@ -9,8 +9,6 @@ const readableStatus = computed(() => props.order?.status?.replace(/_/g, ' ') ||
 </template>
 
 <style lang="postcss" scoped>
-@import "tailwindcss";
-@import "../../assets/css/theme.css";
 .order-status {
   @apply border rounded-md font-semibold bg-gray-100 text-xs leading-none p-1.5 inline-block;
 }
