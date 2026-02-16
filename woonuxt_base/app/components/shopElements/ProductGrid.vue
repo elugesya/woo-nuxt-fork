@@ -19,7 +19,7 @@ const props = defineProps({
       <TransitionGroup name="shrink" tag="div" mode="in-out" class="product-grid" :class="gridClass">
         <ProductCard v-for="(node, i) in productsToShow" :key="node.id || i" :node :index="i" />
       </TransitionGroup>
-      <Pagination />
+      <ProductPagination />
     </section>
     <NoProductsFound v-else />
   </Transition>
