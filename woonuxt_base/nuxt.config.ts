@@ -132,12 +132,19 @@ export default defineNuxtConfig({
         pages.push({ name, path, file: resolve(`./app/pages/${file}`) });
       };
 
+      // Products page pagination
       addPage('product-page-pager', '/urunler/sayfa/:pageNumber', 'urunler.vue');
+      // Category pages
       addPage('product-category-page', '/urun-kategorisi/:categorySlug', 'urun-kategorisi/[slug].vue');
       addPage('product-category-page-pager', '/urun-kategorisi/:categorySlug/sayfa/:pageNumber', 'urun-kategorisi/[slug].vue');
+      addPage('product-category-page-en', '/product-category/:categorySlug', 'urun-kategorisi/[slug].vue');
+      addPage('product-category-page-pager-en', '/product-category/:categorySlug/page/:pageNumber', 'urun-kategorisi/[slug].vue');
+      // Brand pages
+      addPage('brand-page-pager', '/shop/brand/:slug/page/:pageNumber', 'shop/brand/[slug].vue');
+      // Order pages
       addPage('order-received', '/odeme/siparis-alindi/:orderId', 'siparis-ozeti.vue');
       addPage('order-summary', '/siparis-ozeti/:orderId', 'siparis-ozeti.vue');
-      // Ensure card details page is explicitly registered
+      // Checkout pages
       addPage('card-details', '/odeme/kart-bilgileri', 'odeme/kart-bilgileri.vue');
     },
   },
