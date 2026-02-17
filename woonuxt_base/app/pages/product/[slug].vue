@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#gql/default';
 import type { ExternalProduct, ProductDetail, SimpleProduct, VariableProduct, Variation, VariationAttribute } from '#types/gql';
+import { useProductSeo } from '~/app/composables/useProductSeo';
 
 const route = useRoute();
 const router = useRouter();
@@ -9,6 +10,7 @@ const { addToCart, isUpdatingCart, isAddingToCart, isOptimisticCartMode } = useC
 const { frontEndUrl } = useHelpers();
 const { t } = useI18n();
 const slug = route.params.slug as string;
+const { getEnhancedSEO } = useProductSeo();
 
 const { data } = await useAsyncGql('getProduct', { slug, frontEndUrl });
 if (!data.value?.product) {
@@ -17,6 +19,9 @@ if (!data.value?.product) {
 
 const product = ref<ProductDetail>(data?.value?.product);
 const quantity = ref<number>(1);
+
+// Enhanced SEO data - Always use dynamic generation for display
+const dynamicEnhancedSEO = computed(() => getEnhancedSEO(product.value));
 const activeVariation = ref<Variation | null>(null);
 const variation = ref<VariationAttribute[]>([]);
 const attrValues = ref();
@@ -396,6 +401,20 @@ const addToCartLoading = computed(() => (isOptimisticCartMode.value ? false : is
             <ShareButton :product />
           </div>
         </div>
+      </div>
+      <!-- Enhanced SEO Components -->
+      <div class="my-12">
+        <ProductEnhancedDescription
+          v-if="dynamicEnhancedSEO?.enhancedDescription"
+          :description="dynamicEnhancedSEO.enhancedDescription"
+          :product-name="product.name" />
+        <ProductSpecifications
+          v-if="dynamicEnhancedSEO?.specifications && dynamicEnhancedSEO.specifications.length > 0"
+          :specifications="dynamicEnhancedSEO.specifications"
+          :product-name="product.name" />
+        <ProductFAQ
+          v-if="dynamicEnhancedSEO?.faqs && dynamicEnhancedSEO.faqs.length > 0"
+          :faqs="dynamicEnhancedSEO.faqs" />
       </div>
       <div v-if="product.description || product.reviews" class="my-32">
         <ProductTabs :product />

@@ -123,6 +123,115 @@ const aggregateRatingSchema = computed(() => {
   return undefined;
 });
 
+// FAQ Schema from product meta data
+const productFAQs = computed(() => {
+  const metaData = (info as any)?.metaData || [];
+  const faqData = metaData.find((m: any) => m.key === 'product_faq');
+  if (faqData?.value) {
+    try {
+      return JSON.parse(faqData.value);
+    } catch {
+      return [];
+    }
+  }
+  return [];
+});
+
+const faqSchema = computed(() => {
+  if (!productFAQs.value || productFAQs.value.length === 0) return null;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: productFAQs.value.map((faq: any) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+});
+
+// Enhanced description with additional properties
+const enhancedDescription = computed(() => {
+  const metaData = (info as any)?.metaData || [];
+  const descData = metaData.find((m: any) => m.key === 'enhanced_description');
+  if (descData?.value) {
+    try {
+      return JSON.parse(descData.value);
+    } catch {
+      return null;
+    }
+  }
+  return null;
+});
+
+const additionalProperties = computed(() => {
+  const props: any[] = [];
+
+  // Add features as properties
+  if (enhancedDescription.value?.features && Array.isArray(enhancedDescription.value.features)) {
+    enhancedDescription.value.features.forEach((feature: string) => {
+      props.push({
+        '@type': 'PropertyValue',
+        name: 'Özellik',
+        value: feature,
+      });
+    });
+  }
+
+  // Add specifications as properties
+  if (enhancedDescription.value?.specifications) {
+    Object.entries(enhancedDescription.value.specifications).forEach(([key, value]) => {
+      props.push({
+        '@type': 'PropertyValue',
+        name: key,
+        value: String(value),
+      });
+    });
+  }
+
+  return props.length > 0 ? props : undefined;
+});
+
+// Breadcrumb Schema
+const breadcrumbSchema = computed(() => {
+  const categories = (info as any)?.productCategories?.nodes || [];
+  const items = [
+    {
+      '@type': 'ListItem',
+      position: 1,
+      name: 'Ana Sayfa',
+      item: frontEndUrl,
+    },
+  ];
+
+  // Add categories
+  categories.forEach((cat: any, index: number) => {
+    items.push({
+      '@type': 'ListItem',
+      position: index + 2,
+      name: cat.name,
+      item: `${frontEndUrl}/product-category/${cat.slug}`,
+    });
+  });
+
+  // Add current product
+  items.push({
+    '@type': 'ListItem',
+    position: items.length + 1,
+    name: info.name,
+    item: canonical,
+  });
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items,
+  };
+});
+
 const jsonLd = computed(() =>
   JSON.stringify(
     {
@@ -140,6 +249,7 @@ const jsonLd = computed(() =>
         : undefined,
       aggregateRating: aggregateRatingSchema.value,
       review: reviewSchemas.value.length ? reviewSchemas.value : undefined,
+      additionalProperty: additionalProperties.value,
       offers:
         price.value
           ? {
@@ -194,15 +304,33 @@ const jsonLd = computed(() =>
 );
 
 // Inject JSON-LD via head manager with innerHTML for proper rendering
-useHead(() => ({
-  script: [
+useHead(() => {
+  const scripts: any[] = [
     {
       key: 'product-jsonld',
       type: 'application/ld+json',
       innerHTML: jsonLd.value,
     },
-  ],
-}));
+  ];
+
+  // Add FAQ schema if available
+  if (faqSchema.value) {
+    scripts.push({
+      key: 'product-faq-jsonld',
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify(faqSchema.value),
+    });
+  }
+
+  // Add Breadcrumb schema
+  scripts.push({
+    key: 'breadcrumb-jsonld',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify(breadcrumbSchema.value),
+  });
+
+  return { script: scripts };
+});
 </script>
 
 <template>
