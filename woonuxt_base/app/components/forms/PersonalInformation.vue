@@ -67,7 +67,7 @@ async function saveChanges() {
       </CardContent>
       
       <CardFooter class="border-t bg-muted/50">
-        <Button
+        <CustomButton
           type="submit"
           :variant="button.variant"
           :disabled="loading"
@@ -75,7 +75,7 @@ async function saveChanges() {
         >
           <Spinner v-if="loading" size="sm" class="mr-2" />
           <span>{{ button.text }}</span>
-        </Button>
+        </CustomButton>
       </CardFooter>
     </form>
   </Card>

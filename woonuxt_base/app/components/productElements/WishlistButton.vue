@@ -12,7 +12,7 @@ const toggleWishlist = () => (isWishlisted.value && product.databaseId ? removeF
 </script>
 
 <template>
-  <Button 
+  <CustomButton 
     type="button" 
     variant="ghost" 
     size="sm"
@@ -22,5 +22,5 @@ const toggleWishlist = () => (isWishlisted.value && product.databaseId ? removeF
     <Icon v-if="isWishlisted" icon="lucide:heart" class="h-4 w-4 fill-red-500 text-red-500" />
     <Icon v-else icon="lucide:heart" class="h-4 w-4" />
     <span>{{ isWishlisted ? $t('shop.wishlistRemove') : $t('shop.wishlistAdd') }}</span>
-  </Button>
+  </CustomButton>
 </template>

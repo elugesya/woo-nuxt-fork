@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#woo';
+import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#gql/default';
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 
@@ -253,7 +253,7 @@ useHead(() => ({
   <main class="container relative py-6 xl:max-w-7xl">
     <div v-if="product">
       <SEOHead :info="product" />
-      <Breadcrumb :product class="mb-6" v-if="storeSettings.showBreadcrumbOnSingleProduct" />
+      <ProductBreadcrumb :product class="mb-6" v-if="storeSettings.showBreadcrumbOnSingleProduct" />
 
       <div class="flex flex-col gap-10 md:flex-row md:justify-between lg:gap-24">
         <ProductImageGallery
@@ -348,9 +348,9 @@ useHead(() => ({
               v-if="isExternalProduct && product.externalUrl"
               :href="product.externalUrl"
               target="_blank">
-              <Button class="w-full md:w-auto">
+              <CustomButton class="w-full md:w-auto">
                 {{ product?.buttonText || 'View product' }}
-              </Button>
+              </CustomButton>
             </a>
           </form>
 

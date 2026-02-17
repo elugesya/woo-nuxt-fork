@@ -421,9 +421,9 @@ useSeoMeta({
         </div>
 
         <OrderSummary>
-          <Button :loading="isProcessingOrder" :disabled="isCheckoutDisabled" size="lg" type="submit" class="w-full mt-4">
+          <CustomButton :loading="isProcessingOrder" :disabled="isCheckoutDisabled" size="lg" type="submit" class="w-full mt-4">
             {{ buttonText }}
-          </Button>
+          </CustomButton>
         </OrderSummary>
       </form>
     </template>

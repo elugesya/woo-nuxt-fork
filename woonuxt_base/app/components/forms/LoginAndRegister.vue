@@ -179,10 +179,10 @@ const inputPlaceholder = computed(() => {
       </Transition>
 
       <!-- Submit button -->
-      <Button type="submit" class="w-full" size="lg" :disabled="isPending">
+      <CustomButton type="submit" class="w-full" size="lg" :disabled="isPending">
         <Spinner v-if="isPending" size="sm" class="mr-2" />
         <span>{{ buttonText }}</span>
-      </Button>
+      </CustomButton>
 
       <div class="flex items-center justify-between mt-4" v-if="formView === FormView.LOGIN">
         <button

@@ -26,13 +26,13 @@ async function submitCoupon(): Promise<void> {
         :placeholder="$t('shop.couponCode')"
         class="w-full"
         required />
-      <Button
+      <CustomButton
         type="submit"
         class="min-w-20 flex items-center justify-center"
         :disabled="isUpdatingCoupon">
         <LoadingIcon v-if="isUpdatingCoupon" color="currentColor" size="16" />
         <span v-else>{{ $t('general.apply') }}</span>
-      </Button>
+      </CustomButton>
     </form>
     <Transition name="scale-y" mode="out-in">
       <div v-if="errorMessage" class="mt-2 text-xs text-red-600" v-html="errorMessage"></div>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { TaxonomyEnum } from '#woo';
+import { TaxonomyEnum } from '#gql/default';
 
 const { isFiltersActive } = useFiltering();
 const { removeBodyClass } = useHelpers();

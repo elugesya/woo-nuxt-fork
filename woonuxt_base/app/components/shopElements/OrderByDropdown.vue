@@ -16,13 +16,13 @@ watch([orderby, order], () => {
 
 <template>
   <div class="inline-flex ml-auto -space-x-px shadow-sm rounded-m isolate">
-    <Button
+    <CustomButton
       variant="outline"
       class="rounded-l-md"
       aria-label="Sort"
       @click="order = order === 'ASC' ? 'DESC' : 'ASC'">
       <Icon name="ion:filter-outline" size="18" :class="order === 'ASC' ? 'rotate-180' : ''" class="transition-transform transform transform-origin-center" />
-    </Button>
+    </CustomButton>
     <Select v-model="orderby">
       <SelectTrigger class="rounded-l-none min-w-[120px]">
         <SelectValue />

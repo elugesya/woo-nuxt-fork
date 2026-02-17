@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ProductsOrderByEnum } from '#woo';
+import { ProductsOrderByEnum } from '#gql/default';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 const siteName = process.env.NUXT_PUBLIC_GOOGLE_MERCHANT_SHOP_NAME || '';

@@ -31,10 +31,10 @@ const { cart, isUpdatingCart, isShowingCart } = useCart();
             <NuxtLink
               to="/odeme"
               @click="isShowingCart = false">
-              <Button class="w-full text-lg text-white" size="lg">
+              <CustomButton class="w-full text-lg text-white" size="lg">
                 <span class="mx-2">{{ $t('shop.checkout') }}</span>
                 <span v-html="cart.total" />
-              </Button>
+              </CustomButton>
             </NuxtLink>
           </div>
         </template>

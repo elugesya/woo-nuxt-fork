@@ -11,12 +11,12 @@ const addToCartButtonText = computed(() => (isUpdatingCart.value ? t('shop.addin
 </script>
 
 <template>
-  <Button
+  <CustomButton
     type="submit"
     :disabled="props.disabled || isUpdatingCart"
     class="min-w-[150px] text-white"
   >
     <Spinner v-if="isUpdatingCart" size="sm" class="mr-2" />
     <span>{{ addToCartButtonText }}</span>
-  </Button>
+  </CustomButton>
 </template>

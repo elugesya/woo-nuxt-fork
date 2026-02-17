@@ -464,7 +464,7 @@ const years = Array.from({ length: 10 }, (_, i) => {
       </Alert>
 
       <!-- Submit button - Desktop -->
-      <Button
+      <CustomButton
         type="submit"
         :disabled="loading"
         class="hidden md:flex w-full"
@@ -472,7 +472,7 @@ const years = Array.from({ length: 10 }, (_, i) => {
       >
         <Spinner v-if="loading" size="sm" class="mr-2" />
         <span>{{ loading ? 'İşleniyor...' : 'Ödemeyi Tamamla' }}</span>
-      </Button>
+      </CustomButton>
 
       <!-- Cancel link - Desktop -->
       <div class="hidden md:block text-center">
@@ -492,7 +492,7 @@ const years = Array.from({ length: 10 }, (_, i) => {
           <span class="text-sm text-muted-foreground">Toplam Ödeme</span>
           <span class="text-lg font-bold">{{ formatCurrency(finalTotal) }}</span>
         </div>
-        <Button
+        <CustomButton
           type="submit"
           :disabled="loading"
           @click="submitPayment"
@@ -501,7 +501,7 @@ const years = Array.from({ length: 10 }, (_, i) => {
         >
           <Spinner v-if="loading" size="sm" class="mr-2" />
           <span>{{ loading ? 'İşleniyor...' : 'Ödemeyi Tamamla' }}</span>
-        </Button>
+        </CustomButton>
         <div class="text-center">
           <NuxtLink
             :to="`/odeme?cancel_order=true`"

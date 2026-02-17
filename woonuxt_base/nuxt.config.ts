@@ -123,7 +123,6 @@ export default defineNuxtConfig({
 
   alias: {
     '#constants': resolve('./app/constants'),
-    '#woo': '../.nuxt/gql/default',
   },
 
   hooks: {

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { OrderStatusEnum } from '#woo';
+import { OrderStatusEnum } from '#gql/default';
 
 const { query, params, name } = useRoute();
 const { customer } = useAuth();

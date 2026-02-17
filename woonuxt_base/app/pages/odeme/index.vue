@@ -503,7 +503,7 @@ useSeoMeta({
         <!-- Desktop: OrderSummary with button inside -->
         <div class="hidden md:block w-full max-w-md">
           <OrderSummary>
-            <Button
+            <CustomButton
               class="w-full font-bold text-lg h-12 shadow-md text-white"
               :disabled="isCheckoutDisabled"
               size="lg"
@@ -511,7 +511,7 @@ useSeoMeta({
             >
               {{ buttonText }}
               <LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" class="ml-2" />
-            </Button>
+            </CustomButton>
           </OrderSummary>
         </div>
 
@@ -527,7 +527,7 @@ useSeoMeta({
               <span class="text-sm text-muted-foreground">{{ $t('shop.total') }}</span>
               <span class="text-lg font-bold text-foreground" v-html="cart.total" />
             </div>
-            <Button
+            <CustomButton
               class="w-full font-bold text-lg h-12 shadow-md text-white"
               :disabled="isCheckoutDisabled"
               size="lg"
@@ -535,7 +535,7 @@ useSeoMeta({
             >
               {{ buttonText }}
               <LoadingIcon v-if="isProcessingOrder" color="#fff" size="18" class="ml-2" />
-            </Button>
+            </CustomButton>
           </div>
         </div>
       </form>

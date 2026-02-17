@@ -89,7 +89,7 @@ onMounted(() => {
         </Label>
         <div class="flex flex-wrap gap-2">
           <span v-for="(term, termIndex) in attr.terms.nodes" :key="termIndex">
-            <Tooltip :text="term.name">
+            <CustomTooltip :text="term.name">
               <label :for="`${term.slug}_${termIndex}`">
                 <input
                   :id="`${term.slug}_${termIndex}`"
@@ -107,7 +107,7 @@ onMounted(() => {
                   :title="`${attr.name}: ${term.name}`">
                 </span>
               </label>
-            </Tooltip>
+            </CustomTooltip>
           </span>
         </div>
       </div>

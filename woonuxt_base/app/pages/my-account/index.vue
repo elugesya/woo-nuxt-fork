@@ -92,9 +92,9 @@ useSeoMeta({
             </NuxtLink>
           </nav>
 
-          <Button class="w-full mt-2" icon="ion:log-out" @click="logoutUser" :loading="isPending">
+          <CustomButton class="w-full mt-2" icon="ion:log-out" @click="logoutUser" :loading="isPending">
             {{ $t('account.logout') }}
-          </Button>
+          </CustomButton>
         </aside>
 
         <!-- Main Content -->

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#gql/default';
 import type { ExternalProduct, ProductDetail, SimpleProduct, VariableProduct, Variation, VariationAttribute } from '#types/gql';
-import { useProductSeo } from '~/app/composables/useProductSeo';
 
 const route = useRoute();
 const router = useRouter();
@@ -308,7 +307,7 @@ const addToCartLoading = computed(() => (isOptimisticCartMode.value ? false : is
   <main class="container relative py-6 xl:max-w-7xl">
     <div v-if="product">
       <SEOHead :info="product" />
-      <Breadcrumb :product class="mb-6" v-if="storeSettings.showBreadcrumbOnSingleProduct" />
+      <ProductBreadcrumb :product class="mb-6" v-if="storeSettings.showBreadcrumbOnSingleProduct" />
 
       <div class="flex flex-col gap-10 md:flex-row md:justify-between lg:gap-24">
         <ProductImageGallery
@@ -364,9 +363,9 @@ const addToCartLoading = computed(() => (isOptimisticCartMode.value ? false : is
                 min="1"
                 aria-label="Quantity"
                 class="flex items-center justify-center w-20 gap-4 p-2 text-left bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none dark:text-white" />
-              <Button class="flex-1 w-full" :disabled="disabledAddToCart" :loading="addToCartLoading" type="submit">
+              <CustomButton class="flex-1 w-full" :disabled="disabledAddToCart" :loading="addToCartLoading" type="submit">
                 {{ $t('shop.addToCart') }}
-              </Button>
+              </CustomButton>
             </div>
             <a
               v-if="externalProduct?.externalUrl"

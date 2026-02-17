@@ -154,7 +154,7 @@ const isSortOpen = ref(false);
             <Filters :hide-categories="true" />
           </div>
           <div class="p-4 border-t bg-background">
-            <Button class="w-full" @click="isFilterOpen = false">{{ $t('general.showResults') }}</Button>
+            <CustomButton class="w-full" @click="isFilterOpen = false">{{ $t('general.showResults') }}</CustomButton>
           </div>
         </div>
       </SheetContent>

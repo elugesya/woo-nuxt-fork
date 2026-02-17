@@ -10,7 +10,7 @@ import {
   generateSpecGroups,
   generateMetaDescription,
   type ProductSEOData,
-} from '~/app/utils/productSeoEnhancer';
+} from '../utils/productSeoEnhancer';
 
 export interface EnhancedProductSEO {
   enhancedDescription: ReturnType<typeof generateEnhancedDescription>;

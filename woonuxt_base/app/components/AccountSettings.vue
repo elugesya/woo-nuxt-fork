@@ -163,7 +163,7 @@ const deleteAccount = () => {
               </p>
             </div>
           </div>
-          <Button variant="danger" type="button" icon="ion:trash-outline" @click="deleteAccount"> Delete </Button>
+          <CustomButton variant="danger" type="button" icon="ion:trash-outline" @click="deleteAccount"> Delete </CustomButton>
         </div>
       </div>
     </div>

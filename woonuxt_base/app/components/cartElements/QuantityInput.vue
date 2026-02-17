@@ -37,7 +37,7 @@ const onFocusOut = () => {
 
 <template>
   <div class="flex items-center gap-0.5">
-    <Button
+    <CustomButton
       size="sm"
       variant="outline"
       title="Decrease Quantity"
@@ -48,7 +48,7 @@ const onFocusOut = () => {
       :disabled="isUpdatingCart || quantity <= 0"
     >
       <Icon icon="lucide:minus" class="h-3.5 w-3.5" />
-    </Button>
+    </CustomButton>
     
     <Input
       v-model.number="quantity"
@@ -60,7 +60,7 @@ const onFocusOut = () => {
       class="h-8 w-12 rounded-none border-x-0 text-center px-1 text-sm [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [-moz-appearance:textfield]"
     />
     
-    <Button
+    <CustomButton
       size="sm"
       variant="outline"
       title="Increase Quantity"
@@ -71,6 +71,6 @@ const onFocusOut = () => {
       :disabled="isUpdatingCart || hasNoMoreStock"
     >
       <Icon icon="lucide:plus" class="h-3.5 w-3.5" />
-    </Button>
+    </CustomButton>
   </div>
 </template>
