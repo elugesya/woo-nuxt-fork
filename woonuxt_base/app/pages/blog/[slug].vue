@@ -126,10 +126,10 @@ const articleJsonLd = computed(() =>
         name: siteName,
         logo: { '@type': 'ImageObject', url: logoUrl },
       },
-      keywords: post.value?.tags?.nodes?.map((tag: any) => tag.name).join(', ') || undefined,
+      keywords: post.value?.tags?.nodes?.map((tag: any) => tag.name).join(', ') || '',
       inLanguage: 'tr-TR',
     },
-    null,
+    (key, value) => (value === undefined ? null : value),
     2,
   ),
 );
