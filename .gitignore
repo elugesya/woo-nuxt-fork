@@ -36,3 +36,4 @@ woonuxt-settings
 
 # Product data exports
 products/
+.mcp.json
