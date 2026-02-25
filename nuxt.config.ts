@@ -175,12 +175,12 @@ export default defineNuxtConfig({
     routeRules: {
       '/sitemap.xml': { prerender: true },
       '/robots.txt': { prerender: true },
-      '/google-feed.xml': { prerender: true },
+      '/google-feed.xml': { isr: 3600 }, // Cache for 1 hour, regenerate on demand
     },
     prerender: {
       routes: [
         ...dynamicRoutes,
-        '/google-feed.xml',
+        // google-feed.xml is generated dynamically (not prerendered due to API rate limits)
       ],
       concurrency: 10,
       interval: 1000,

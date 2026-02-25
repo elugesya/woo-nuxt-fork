@@ -52,7 +52,7 @@ export default defineEventHandler(async (event) => {
  */
 async function fetchAllProducts() {
   const config = useRuntimeConfig()
-  const GQL_HOST = (config as any).GQL_HOST || 'http://localhost:4000/graphql'
+  const GQL_HOST = (config as any).GQL_HOST || process.env.GQL_HOST || 'https://backend.ntmc.com.tr/graphql'
   
   const allProducts: any[] = []
   let hasNextPage = true
@@ -73,6 +73,8 @@ async function fetchAllProducts() {
           description
           shortDescription
           sku
+          gtIN
+          globalUniqueId
           image {
             sourceUrl
             altText
@@ -113,6 +115,11 @@ async function fetchAllProducts() {
             length
             width
             height
+            dimensions {
+              length
+              width
+              height
+            }
           }
         }
       }
@@ -201,6 +208,42 @@ function generateProductFeedXML(
       // Condition (always new for e-commerce)
       const condition = 'new'
 
+      // Product weight for shipping
+      const weight = product.weight ? parseFloat(product.weight.replace(/[^0-9.]/g, '') || '0') : null
+
+      // Product dimensions
+      const dimensions = product.dimensions || {}
+      const length = dimensions.length ? parseFloat(String(dimensions.length).replace(/[^0-9.]/g, '')) : null
+      const width = dimensions.width ? parseFloat(String(dimensions.width).replace(/[^0-9.]/g, '')) : null
+      const height = dimensions.height ? parseFloat(String(dimensions.height).replace(/[^0-9.]/g, '')) : null
+
+      // Build additional Google Merchant fields
+      let additionalFields = ''
+
+      // identifier_exists: set to 'no' if product has no GTIN (required for custom products)
+      if (!product.gtIN && !product.globalUniqueId) {
+        additionalFields += '      <g:identifier_exists>no</g:identifier_exists>\n'
+      }
+
+      // adult: always no for regular products
+      additionalFields += '      <g:adult>no</g:adult>\n'
+
+      // shipping_weight
+      if (weight && weight > 0) {
+        additionalFields += `      <g:shipping_weight>${weight.toFixed(2)} kg</g:shipping_weight>\n`
+      }
+
+      // product dimensions
+      if (length && length > 0) {
+        additionalFields += `      <g:product_length>${length.toFixed(0)} cm</g:product_length>\n`
+      }
+      if (width && width > 0) {
+        additionalFields += `      <g:product_width>${width.toFixed(0)} cm</g:product_width>\n`
+      }
+      if (height && height > 0) {
+        additionalFields += `      <g:product_height>${height.toFixed(0)} cm</g:product_height>\n`
+      }
+
       // Generate item XML
       return `    <item>
       <g:id>${product.databaseId || product.sku}</g:id>
@@ -214,9 +257,12 @@ ${additionalImages}
       <g:price>${price.toFixed(2)} ${currencyCode}</g:price>
       ${salePrice && salePrice < price ? `<g:sale_price>${salePrice.toFixed(2)} ${currencyCode}</g:sale_price>` : ''}
       <g:brand>${brand}</g:brand>
+      ${product.gtIN ? `<g:gtin>${escapeXml(product.gtIN)}</g:gtin>` : ''}
+      ${product.globalUniqueId ? `<g:gtin>${escapeXml(product.globalUniqueId)}</g:gtin>` : ''}
       ${product.sku ? `<g:mpn>${escapeXml(product.sku)}</g:mpn>` : ''}
       <g:product_type>${escapeXml(categoryName)}</g:product_type>
       <g:google_product_category>${googleCategory}</g:google_product_category>
+${additionalFields}
       <g:shipping>
         <g:country>TR</g:country>
         <g:service>Standart</g:service>
