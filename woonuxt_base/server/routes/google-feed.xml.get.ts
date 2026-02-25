@@ -1,9 +1,9 @@
 /**
- * Google Merchant Center Product Feed
- * 
+ * Google Merchant Center Product Feed - GET Handler
+ *
  * This endpoint generates an XML feed for Google Shopping
  * according to Google Merchant Center specifications.
- * 
+ *
  * @see https://support.google.com/merchants/answer/7052112
  */
 
@@ -53,7 +53,7 @@ export default defineEventHandler(async (event) => {
 async function fetchAllProducts() {
   const config = useRuntimeConfig()
   const GQL_HOST = (config as any).GQL_HOST || process.env.GQL_HOST || 'https://backend.ntmc.com.tr/graphql'
-  
+
   const allProducts: any[] = []
   let hasNextPage = true
   let afterCursor: string | null = null
@@ -183,22 +183,22 @@ function generateProductFeedXML(
       const imageUrl = product.image?.sourceUrl || ''
       const title = escapeXml(product.name.substring(0, 150)) // Max 150 chars
       const description = escapeXml(stripHtml(product.shortDescription || product.description || '').substring(0, 5000))
-      
+
       // Price handling
       const price = parseFloat(product.price?.replace(/[^0-9.-]/g, '') || product.regularPrice?.replace(/[^0-9.-]/g, '') || '0')
       const salePrice = product.salePrice ? parseFloat(product.salePrice.replace(/[^0-9.-]/g, '') || '0') : null
-      
+
       // Stock status
       const availability = getAvailability(product.stockStatus)
-      
+
       // Category
       const category = product.productCategories?.nodes?.[0]
       const categoryName = category?.name || 'Genel'
       const googleCategory = getGoogleCategory(categoryName)
-      
+
       // Brand
       const brand = escapeXml(defaultBrand)
-      
+
       // Additional images
       const additionalImages = (product.galleryImages?.nodes || [])
         .slice(0, 10) // Max 10 additional images
@@ -314,15 +314,18 @@ function getGoogleCategory(categoryName: string): string {
     '4 Zamanli Distan Takma Motorlar': '3212',
     'Elektrikli Dıştan Takma Motorlar': '3212',
     'Elektrikli Distan Takma Motorlar': '3212',
-    
+
     // Botlar
     'Şişme Deniz Botları': '3214', // Sporting Goods > Outdoor Recreation > Boating & Water Sports > Watercraft > Boats
     'Sisme Deniz Botlari': '3214',
-    
+
     // SUP Boards
     'SUP Boardlar': '499811', // Sporting Goods > Water Sports > Stand-Up Paddleboards
     'Sup Boardlar': '499811',
-    
+
+    // Foil Board
+    'Foil Board': '499972', // Sporting Goods > Water Sports > Surfing
+
     // Genel kategoriler
     'Denizcilik Ekipmanları': '3441', // Sporting Goods > Outdoor Recreation > Boating & Water Sports
     'Denizcilik Ekipmanlari': '3441',
@@ -366,7 +369,7 @@ function getGoogleCategory(categoryName: string): string {
       .replace(/Ö/g, 'O')
       .replace(/ç/g, 'c')
       .replace(/Ç/g, 'C')
-    
+
     if (normalizedKey.toLowerCase() === normalizedCategory.toLowerCase()) {
       return value
     }

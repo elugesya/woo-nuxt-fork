@@ -9,7 +9,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev --host",
     "dev:ssl": "NODE_TLS_REJECT_UNAUTHORIZED=0 nuxt dev --https --ssl-cert localhost.pem --ssl-key localhost-key.pem",
-    "generate": "BUILD_VERSION=$(date +%s) nuxt generate",
+    "generate": "BUILD_VERSION=$(date +%s) nuxt generate && node scripts/generate-google-feed.js",
     "preview": "nuxt preview",
     "serve": "nuxi generate && npx serve .output/public -l 8080",
     "postdeploy": "bash ./scripts/purge-cloudflare-cache.sh"
