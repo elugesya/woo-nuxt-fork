@@ -1,0 +1,335 @@
+{
+  "metadata": {
+    "export_date": "2026-03-02T15:54:47.186812",
+    "source": "BTM Avrasya - btmavrasya.com.tr",
+    "brand": "NXT",
+    "category": "SUP Boards / Paddle Boards",
+    "total_products": 6,
+    "languages": [
+      "tr",
+      "en"
+    ]
+  },
+  "common_attributes": {
+    "brand": "NXT",
+    "distributor": "BTM Avrasya",
+    "warranty": "Manufacturer warranty",
+    "stock_status": "instock",
+    "product_type": "simple",
+    "shipping_class": "large-items"
+  },
+  "products": [
+    {
+      "id": "nxt-aquatic",
+      "name": {
+        "tr": "NXT AQUATIC Şişme Paddle Board - SUP-240",
+        "en": "NXT AQUATIC Inflatable Paddle Board - SUP-240"
+      },
+      "slug": "nxt-aquatic",
+      "model": "SUP-240",
+      "brand": "NXT",
+      "categories": [
+        "nxt-supboard",
+        "trolling-motors-sea-toys",
+        "sup-board",
+        "deniz-sporlari"
+      ],
+      "description": {
+        "short": {
+          "tr": "NXT AQUATIC SUP-240, su sporları tutkunları için tasarlanmış kompakt ve hafif bir şişme paddle board'dır. 240 cm uzunluğunda ve 63 cm genişliğinde bu board, yeni başlayanlar ve hafif kullanıcılar için idealdir.",
+          "en": "NXT AQUATIC SUP-240 is a compact and lightweight inflatable paddle board designed for water sports enthusiasts. At 240 cm long and 63 cm wide, this board is ideal for beginners and light users."
+        },
+        "long": {
+          "tr": "NXT AQUATIC SUP-240 Şişme Paddle Board. Su之上的 deneyiminizi en üst düzeye çıkarmak için tasarlanmıştır. Özellikler: Kompakt tasarım, kolay taşıma, yeni başlayanlar için ideal. Teknik: 240x63cm, 15cm kalınlık, 83kg kapasite, 5.5kg ağırlık. Aksesuarlar: Fin, kürek, pompa, çanta, leash, tamir takımı.",
+          "en": "NXT AQUATIC SUP-240 Inflatable Paddle Board. Designed to maximize your experience on the water. Features: Compact design, easy transport, ideal for beginners. Specs: 240x63cm, 15cm thick, 83kg capacity, 5.5kg weight. Accessories: Fins, paddle, pump, bag, leash, repair kit."
+        }
+      },
+      "specifications": {
+        "model": "SUP-240",
+        "item_size": "240 x 63 cm",
+        "thickness": "15 cm",
+        "air_chambers": "1",
+        "max_passengers": "1",
+        "max_payload": "83 kg",
+        "net_weight": "5.5 kg",
+        "max_air_pressure": "15 psi / 1 bar",
+        "fins": "3 pcs (1 center fin + 2 side fins)",
+        "standard_accessories": "Fins, paddle, pump, carry bag, leash, repair kit"
+      },
+      "images": [
+        "https://btmavrasya.com.tr/wp-content/uploads/2025/02/nxt-urun-kapaklar_aquatic.jpg"
+      ],
+      "stock_status": "instock",
+      "tags": [
+        "nxt",
+        "aquatic",
+        "sup",
+        "paddle-board",
+        "şiseme-sup",
+        "su-sporlari",
+        "yeni-baslangic"
+      ],
+      "url": "https://btmavrasya.com.tr/product/trolling-motors-sea-toys/nxt-supboard/aquatic/"
+    },
+    {
+      "id": "nxt-coral",
+      "name": {
+        "tr": "NXT CORAL Şişme Paddle Board - SUP-240",
+        "en": "NXT CORAL Inflatable Paddle Board - SUP-240"
+      },
+      "slug": "nxt-coral",
+      "model": "SUP-240",
+      "brand": "NXT",
+      "categories": [
+        "nxt-supboard",
+        "trolling-motors-sea-toys",
+        "sup-board",
+        "deniz-sporlari"
+      ],
+      "description": {
+        "short": {
+          "tr": "NXT CORAL SUP-240, şık mercan desenli tasarımı ile dikkat çeken bir şişme paddle board'dır. 240 cm boyutunda ve hafif yapısı ile hem yeni başlayanlar hem de deneyimli kullanıcılar için uygundur.",
+          "en": "NXT CORAL SUP-240 is an inflatable paddle board that stands out with its stylish coral pattern design. At 240 cm size and lightweight construction, it is suitable for both beginners and experienced users."
+        },
+        "long": {
+          "tr": "NXT CORAL SUP-240 Şişme Paddle Board. Tarzınızı su之上 yansıtmanız için tasarlanmıştır. Özellikler: Şık mercan desen, kompakt yapı, kolay set-up. Teknik: 240x63cm, 15cm kalınlık, 83kg kapasite, 5.5kg ağırlık. Aksesuarlar: Fin, kürek, pompa, çanta, leash, tamir takımı.",
+          "en": "NXT CORAL SUP-240 Inflatable Paddle Board. Designed to reflect your style on the water. Features: Stylish coral pattern, compact design, easy setup. Specs: 240x63cm, 15cm thick, 83kg capacity, 5.5kg weight. Accessories: Fins, paddle, pump, bag, leash, repair kit."
+        }
+      },
+      "specifications": {
+        "model": "SUP-240",
+        "item_size": "240 x 63 cm",
+        "thickness": "15 cm",
+        "air_chambers": "1",
+        "max_passengers": "1",
+        "max_payload": "83 kg",
+        "net_weight": "5.5 kg",
+        "max_air_pressure": "15 psi / 1 bar",
+        "fins": "3 pcs (1 center fin + 2 side fins)",
+        "standard_accessories": "Fins, paddle, pump, carry bag, leash, repair kit"
+      },
+      "images": [
+        "https://btmavrasya.com.tr/wp-content/uploads/2025/02/nxt-urun-kapaklar_coral.jpg"
+      ],
+      "stock_status": "instock",
+      "tags": [
+        "nxt",
+        "coral",
+        "sup",
+        "paddle-board",
+        "şiseme-sup",
+        "mercan-desenli",
+        "stil"
+      ],
+      "url": "https://btmavrasya.com.tr/product/trolling-motors-sea-toys/nxt-supboard/coral/"
+    },
+    {
+      "id": "nxt-floral",
+      "name": {
+        "tr": "NXT FLORAL Şişme Paddle Board - SUP-320",
+        "en": "NXT FLORAL Inflatable Paddle Board - SUP-320"
+      },
+      "slug": "nxt-floral",
+      "model": "SUP-320",
+      "brand": "NXT",
+      "categories": [
+        "nxt-supboard",
+        "trolling-motors-sea-toys",
+        "sup-board",
+        "deniz-sporlari"
+      ],
+      "description": {
+        "short": {
+          "tr": "NXT FLORAL SUP-320, geniş yüzeyi ve çiçek desenli tasarımı ile hem performans hem de tarz sunan bir şişme paddle board'dır. 320 cm uzunluğunda ve 138kg taşıma kapasitesi ile farklı seviyelerdeki kullanıcılar için uygundur.",
+          "en": "NXT FLORAL SUP-320 is an inflatable paddle board that offers both performance and style with its wide surface and floral pattern design. At 320 cm length and 138kg carrying capacity, it is suitable for users of different levels."
+        },
+        "long": {
+          "tr": "NXT FLORAL SUP-320 Şişme Paddle Board. Performans ve estetiği birleştiren premium board. Özellikler: Geniş stabil yüzey, şık çiçek desen, yüksek kapasite. Teknik: 320x75cm, 15cm kalınlık, 138kg kapasite, 7.6kg ağırlık. Aksesuarlar: Fin, kürek, pompa, çanta, leash, tamir takımı.",
+          "en": "NXT FLORAL SUP-320 Inflatable Paddle Board. Premium board combining performance and aesthetics. Features: Wide stable surface, stylish floral pattern, high capacity. Specs: 320x75cm, 15cm thick, 138kg capacity, 7.6kg weight. Accessories: Fins, paddle, pump, bag, leash, repair kit."
+        }
+      },
+      "specifications": {
+        "model": "SUP-320",
+        "item_size": "320 x 75 cm",
+        "thickness": "15 cm",
+        "air_chambers": "1",
+        "max_passengers": "1",
+        "max_payload": "138 kg",
+        "net_weight": "7.6 kg",
+        "max_air_pressure": "15 psi / 1 bar",
+        "fins": "3 pcs (1 center fin + 2 side fins)",
+        "standard_accessories": "Fins, paddle, pump, carry bag, leash, repair kit"
+      },
+      "images": [
+        "https://btmavrasya.com.tr/wp-content/uploads/2025/02/nxt-urun-kapaklar_floral.jpg"
+      ],
+      "stock_status": "instock",
+      "tags": [
+        "nxt",
+        "floral",
+        "sup",
+        "paddle-board",
+        "şiseme-sup",
+        "cicek-desenli",
+        "yoga-sup"
+      ],
+      "url": "https://btmavrasya.com.tr/product/trolling-motors-sea-toys/nxt-supboard/floral/"
+    },
+    {
+      "id": "nxt-nia",
+      "name": {
+        "tr": "NXT NIA Şişme Paddle Board - SUP-300",
+        "en": "NXT NIA Inflatable Paddle Board - SUP-300"
+      },
+      "slug": "nxt-nia",
+      "model": "SUP-300",
+      "brand": "NXT",
+      "categories": [
+        "nxt-supboard",
+        "trolling-motors-sea-toys",
+        "sup-board",
+        "deniz-sporlari"
+      ],
+      "description": {
+        "short": {
+          "tr": "NXT NIA SUP-300, 300 cm uzunluğunda ve 75 cm genişliğinde orta seviye kullanıcılar için optimize edilmiş bir şişme paddle board'dur. 130 kg taşıma kapasitesi ile farklı vücut tipleri için uygundur.",
+          "en": "NXT NIA SUP-300 is an inflatable paddle board optimized for intermediate users at 300 cm long and 75 cm wide. With 130 kg carrying capacity, it is suitable for different body types."
+        },
+        "long": {
+          "tr": "NXT NIA SUP-300 Şişme Paddle Board. Orta seviye için mükemmel denge ve performans. Özellikler: Optimize edilmiş boyut, dengeli sürüş, çok yönlü kullanım. Teknik: 300x75cm, 15cm kalınlık, 130kg kapasite, 7.3kg ağırlık. Aksesuarlar: Fin, kürek, pompa, çanta, leash, tamir takımı.",
+          "en": "NXT NIA SUP-300 Inflatable Paddle Board. Perfect balance and performance for intermediate level. Features: Optimized size, balanced ride, versatile use. Specs: 300x75cm, 15cm thick, 130kg capacity, 7.3kg weight. Accessories: Fins, paddle, pump, bag, leash, repair kit."
+        }
+      },
+      "specifications": {
+        "model": "SUP-300",
+        "item_size": "300 x 75 cm",
+        "thickness": "15 cm",
+        "air_chambers": "1",
+        "max_passengers": "1",
+        "max_payload": "130 kg",
+        "net_weight": "7.3 kg",
+        "max_air_pressure": "15 psi / 1 bar",
+        "fins": "3 pcs (1 center fin + 2 side fins)",
+        "standard_accessories": "Fins, paddle, pump, carry bag, leash, repair kit"
+      },
+      "images": [
+        "https://btmavrasya.com.tr/wp-content/uploads/2025/02/nxt-urun-kapaklar_nia.jpg"
+      ],
+      "stock_status": "instock",
+      "tags": [
+        "nxt",
+        "nia",
+        "sup",
+        "paddle-board",
+        "şiseme-sup",
+        "orta-seviye",
+        "allround"
+      ],
+      "url": "https://btmavrasya.com.tr/product/trolling-motors-sea-toys/nxt-supboard/nia/"
+    },
+    {
+      "id": "nxt-nomad-spirit",
+      "name": {
+        "tr": "NXT NOMAD SPIRIT Şişme Paddle Board - SUP-320",
+        "en": "NXT NOMAD SPIRIT Inflatable Paddle Board - SUP-320"
+      },
+      "slug": "nxt-nomad-spirit",
+      "model": "SUP-320",
+      "brand": "NXT",
+      "categories": [
+        "nxt-supboard",
+        "trolling-motors-sea-toys",
+        "sup-board",
+        "deniz-sporlari"
+      ],
+      "description": {
+        "short": {
+          "tr": "NXT NOMAD SPIRIT SUP-320, maceracı ruhlar için tasarlanmış geniş ve güvenilir bir şişme paddle board'dır. 320 cm uzunluğunda ve 138kg taşıma kapasitesi ile uzun turlar ve keşifler için idealdir.",
+          "en": "NXT NOMAD SPIRIT SUP-320 is a wide and reliable inflatable paddle board designed for adventurous souls. At 320 cm length and 138kg carrying capacity, it is ideal for long tours and explorations."
+        },
+        "long": {
+          "tr": "NXT NOMAD SPIRIT SUP-320 Şişme Paddle Board. Maceracı ruhlar için tasarlanmıştır. Özellikler: Geniş stabil yüzey, maceracı tasarım, yüksek kapasite. Teknik: 320x75cm, 15cm kalınlık, 138kg kapasite, 7.6kg ağırlık. Aksesuarlar: Fin, kürek, pompa, çanta, leash, tamir takımı.",
+          "en": "NXT NOMAD SPIRIT SUP-320 Inflatable Paddle Board. Designed for adventurous souls. Features: Wide stable surface, adventure design, high capacity. Specs: 320x75cm, 15cm thick, 138kg capacity, 7.6kg weight. Accessories: Fins, paddle, pump, bag, leash, repair kit."
+        }
+      },
+      "specifications": {
+        "model": "SUP-320",
+        "item_size": "320 x 75 cm",
+        "thickness": "15 cm",
+        "air_chambers": "1",
+        "max_passengers": "1",
+        "max_payload": "138 kg",
+        "net_weight": "7.6 kg",
+        "max_air_pressure": "15 psi / 1 bar",
+        "fins": "3 pcs (1 center fin + 2 side fins)",
+        "standard_accessories": "Fins, paddle, pump, carry bag, leash, repair kit"
+      },
+      "images": [
+        "https://btmavrasya.com.tr/wp-content/uploads/2025/02/nxt-urun-kapaklar_nomad-spirit.jpg"
+      ],
+      "stock_status": "instock",
+      "tags": [
+        "nxt",
+        "nomad-spirit",
+        "sup",
+        "paddle-board",
+        "şiseme-sup",
+        "macera",
+        "expedition"
+      ],
+      "url": "https://btmavrasya.com.tr/product/trolling-motors-sea-toys/nxt-supboard/nomad-spirit/"
+    },
+    {
+      "id": "nxt-zen",
+      "name": {
+        "tr": "NXT ZEN Şişme Paddle Board - SUP-290",
+        "en": "NXT ZEN Inflatable Paddle Board - SUP-290"
+      },
+      "slug": "nxt-zen",
+      "model": "SUP-290",
+      "brand": "NXT",
+      "categories": [
+        "nxt-supboard",
+        "trolling-motors-sea-toys",
+        "sup-board",
+        "deniz-sporlari"
+      ],
+      "description": {
+        "short": {
+          "tr": "NXT ZEN SUP-290, yoga ve meditasyon pratikleri için optimize edilmiş stabil ve geniş bir şişme paddle board'dır. 290 cm uzunluğunda ve 120kg taşıma kapasitesi ile dingin su aktiviteleri için idealdir.",
+          "en": "NXT ZEN SUP-290 is a stable and wide inflatable paddle board optimized for yoga and meditation practices. At 290 cm length and 120kg carrying capacity, it is ideal for calm water activities."
+        },
+        "long": {
+          "tr": "NXT ZEN SUP-290 Şişme Paddle Board. Yoga ve meditasyon için tasarlanmıştır. Özellikler: Geniş stabil yüzey, optimize edilmiş yoga platformu, dengeli sürüş. Teknik: 290x75cm, 15cm kalınlık, 120kg kapasite, 6.8kg ağırlık. Aksesuarlar: Fin, kürek, pompa, çanta, leash, tamir takımı.",
+          "en": "NXT ZEN SUP-290 Inflatable Paddle Board. Designed for yoga and meditation. Features: Wide stable surface, optimized yoga platform, balanced ride. Specs: 290x75cm, 15cm thick, 120kg capacity, 6.8kg weight. Accessories: Fins, paddle, pump, bag, leash, repair kit."
+        }
+      },
+      "specifications": {
+        "model": "SUP-290",
+        "item_size": "290 x 75 cm",
+        "thickness": "15 cm",
+        "air_chambers": "1",
+        "max_passengers": "1",
+        "max_payload": "120 kg",
+        "net_weight": "6.8 kg",
+        "max_air_pressure": "15 psi / 1 bar",
+        "fins": "3 pcs (1 center fin + 2 side fins)",
+        "standard_accessories": "Fins, paddle, pump, carry bag, leash, repair kit"
+      },
+      "images": [
+        "https://btmavrasya.com.tr/wp-content/uploads/2025/02/nxt-urun-kapaklar_zen.jpg"
+      ],
+      "stock_status": "instock",
+      "tags": [
+        "nxt",
+        "zen",
+        "sup",
+        "paddle-board",
+        "şiseme-sup",
+        "yoga",
+        "meditasyon"
+      ],
+      "url": "https://btmavrasya.com.tr/product/trolling-motors-sea-toys/nxt-supboard/zen/"
+    }
+  ]
+}

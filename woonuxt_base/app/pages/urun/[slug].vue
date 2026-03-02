@@ -49,8 +49,8 @@ const mergeLiveStockStatus = (payload: Product): void => {
 
 onMounted(async () => {
   try {
-    const { product } = await GqlGetStockStatus({ slug });
-    if (product) mergeLiveStockStatus(product as Product);
+    const { data } = await useAsyncGql('getStockStatus', { slug });
+    if (data.value?.product) mergeLiveStockStatus(data.value.product as Product);
   } catch (error: any) {
     const errorMessage = error?.gqlErrors?.[0].message;
     if (errorMessage) console.error(errorMessage);
@@ -88,9 +88,9 @@ const updateSelectedVariations = (variations: VariationAttribute[]): void => {
 
 const stockStatus = computed(() => {
   if (isVariableProduct.value) {
-    return activeVariation.value?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
+    return activeVariation.value?.stockStatus ?? type.value?.stockStatus ?? StockStatusEnum.OUT_OF_STOCK;
   }
-  return type.value?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
+  return type.value?.stockStatus ?? StockStatusEnum.OUT_OF_STOCK;
 });
 
 const disabledAddToCart = computed(() => {
@@ -275,7 +275,7 @@ useHead(() => ({
             <div class="flex flex-wrap items-center gap-4 text-sm">
               <StarRating :rating="product.averageRating || 0" :count="product.reviewCount || 0" v-if="storeSettings.showReviews" />
               <div v-if="!isExternalProduct" class="flex items-center gap-2 px-2 py-1 rounded bg-green-50 text-green-700 font-medium">
-                <StockStatus :stockStatus @updated="mergeLiveStockStatus" />
+                <StockStatus :stockStatus="stockStatus" />
               </div>
               <div class="flex items-center gap-1 text-muted-foreground" v-if="storeSettings.showSKU && product.sku">
                 <span>{{ $t('shop.sku') }}:</span>

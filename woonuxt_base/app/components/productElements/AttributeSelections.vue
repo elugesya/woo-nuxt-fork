@@ -30,6 +30,8 @@ const updateAttrs = () => {
     const value = radioValue?.value ?? dropdownValue?.value ?? '';
     return { name, value };
   });
+  activeVariations.value = selectedVariations;
+  emit('attrs-changed', selectedVariations);
 };
 
 const setDefaultAttributes = () => {
