@@ -48,7 +48,6 @@ const mergeLiveStockStatus = (payload: Product): void => {
   });
 };
 
-const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
 const shouldSkipStockRefresh = computed<boolean>(() => isExternalProduct.value);
 
 const refreshStockStatus = async (): Promise<void> => {
