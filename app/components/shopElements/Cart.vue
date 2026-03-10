@@ -1,0 +1,184 @@
+<script setup lang="ts">
+/**
+ * 🌊 Cart - Marine Themed
+ *
+ * Slide-out cart with ocean-inspired styling.
+ */
+import { cn } from '@/lib/utils';
+import { X, ShoppingCart, Anchor, Waves, Trash2, ArrowRight } from 'lucide-vue-next';
+import { Button } from '@/components/ui/button';
+
+const { cart, isUpdatingCart, isShowingCart } = useCart();
+</script>
+
+<template>
+  <!-- Cart Overlay -->
+  <Transition name="fade">
+    <div
+      v-if="isShowingCart"
+      class="fixed inset-0 bg-primary/30 backdrop-blur-sm z-40"
+      @click="isShowingCart = false"
+    />
+  </Transition>
+
+  <!-- Cart Panel -->
+  <Transition name="slide-from-right">
+    <div
+      v-if="isShowingCart"
+      class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col"
+    >
+      <!-- Header -->
+      <div class="relative bg-gradient-ocean text-white px-6 py-4">
+        <!-- Wave decoration -->
+        <div class="absolute bottom-0 left-0 right-0 h-4 overflow-hidden">
+          <svg viewBox="0 0 1200 40" preserveAspectRatio="none" class="w-full h-full text-white/20">
+            <path fill="currentColor" d="M0,20 Q300,40 600,20 T1200,20 L1200,40 L0,40 Z" />
+          </svg>
+        </div>
+
+        <div class="flex items-center justify-between relative z-10">
+          <div class="flex items-center gap-3">
+            <ShoppingCart class="w-5 h-5" />
+            <h2 class="text-lg font-semibold">
+              Sepetim
+              <span v-if="cart?.contents?.productCount" class="text-white/70 font-normal">
+                ({{ cart?.contents?.productCount }} ürün)
+              </span>
+            </h2>
+          </div>
+          <button
+            type="button"
+            class="p-2 hover:bg-white/10 rounded-full transition-colors"
+            @click="isShowingCart = false"
+            aria-label="Kapat"
+          >
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+
+      <!-- Cart Content -->
+      <ClientOnly>
+        <template v-if="cart && !cart.isEmpty">
+          <!-- Cart Items -->
+          <ul class="flex-1 overflow-y-auto p-4 space-y-4">
+            <CartCard v-for="item in cart.contents?.nodes" :key="item.key" :item />
+          </ul>
+
+          <!-- Footer -->
+          <div class="border-t border-border p-6 space-y-4 bg-seafoam/30">
+            <!-- Subtotal -->
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-muted-foreground">Ara Toplam</span>
+              <span class="font-medium" v-html="cart.subtotal" />
+            </div>
+
+            <!-- Shipping Notice -->
+            <div class="flex items-center gap-2 text-sm text-secondary bg-secondary/10 px-3 py-2 rounded-lg">
+              <Anchor class="w-4 h-4" />
+              <span>500₺ üzeri ücretsiz kargo!</span>
+            </div>
+
+            <!-- Total -->
+            <div class="flex items-center justify-between pt-2 border-t">
+              <span class="font-semibold">Toplam</span>
+              <span class="text-xl font-bold text-primary" v-html="cart.total" />
+            </div>
+
+            <!-- Checkout Button -->
+            <NuxtLink to="/odeme" @click="isShowingCart = false">
+              <Button
+                :class="cn(
+                  'w-full h-12 text-lg font-semibold rounded-xl',
+                  'bg-gradient-ocean text-white',
+                  'hover:shadow-ocean transition-all duration-300'
+                )"
+              >
+                Ödemeye Geç
+                <ArrowRight class="w-5 h-5 ml-2" />
+              </Button>
+            </NuxtLink>
+
+            <!-- Continue Shopping -->
+            <button
+              type="button"
+              class="w-full text-center text-sm text-muted-foreground hover:text-secondary transition-colors py-2"
+              @click="isShowingCart = false"
+            >
+              Alışverişe Devam Et
+            </button>
+          </div>
+        </template>
+
+        <!-- Empty Cart -->
+        <div v-else-if="cart && cart.isEmpty" class="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div class="relative mb-6">
+            <div class="w-24 h-24 rounded-full bg-seafoam flex items-center justify-center">
+              <ShoppingCart class="w-12 h-12 text-muted-foreground/50" />
+            </div>
+            <Waves class="absolute -bottom-2 -right-2 w-8 h-8 text-secondary/30" />
+          </div>
+          <h3 class="text-lg font-semibold text-primary mb-2">Sepetiniz Boş</h3>
+          <p class="text-muted-foreground mb-6">
+            Henüz ürün eklemediniz. Hemen keşfetmeye başlayın!
+          </p>
+          <NuxtLink to="/urunler" @click="isShowingCart = false">
+            <Button
+              :class="cn(
+                'bg-gradient-ocean text-white',
+                'hover:shadow-ocean transition-all duration-300'
+              )"
+            >
+              <Anchor class="w-4 h-4 mr-2" />
+              Ürünleri Keşfet
+            </Button>
+          </NuxtLink>
+        </div>
+
+        <!-- Loading -->
+        <div v-else class="flex-1 flex items-center justify-center">
+          <div class="relative">
+            <div class="w-12 h-12 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+            <Anchor class="absolute inset-0 m-auto w-5 h-5 text-secondary animate-pulse" />
+          </div>
+        </div>
+      </ClientOnly>
+
+      <!-- Updating Overlay -->
+      <Transition name="fade">
+        <div
+          v-if="isUpdatingCart"
+          class="absolute inset-0 bg-white/80 backdrop-blur-sm flex items-center justify-center z-10"
+        >
+          <div class="relative">
+            <div class="w-10 h-10 border-4 border-secondary border-t-transparent rounded-full animate-spin" />
+          </div>
+        </div>
+      </Transition>
+    </div>
+  </Transition>
+</template>
+
+<style lang="postcss">
+/* Slide from right */
+.slide-from-right-enter-active,
+.slide-from-right-leave-active {
+  transition: transform 300ms ease-in-out;
+}
+
+.slide-from-right-enter-from,
+.slide-from-right-leave-to {
+  transform: translateX(100%);
+}
+
+/* Fade */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 200ms ease-in-out;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

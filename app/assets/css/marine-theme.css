@@ -1,0 +1,411 @@
+/**
+ * 🌊 SEA TOYS & MARINE WEB SHOP - Custom Marine Theme Styles
+ *
+ * Premium marine/nautical theme with ocean-inspired animations,
+ * wave patterns, and subtle nautical elements.
+ */
+
+/* ========================================
+   🎨 CSS Custom Properties (Theme Variables)
+   ======================================== */
+:root {
+  /* Primary - Deep Ocean Navy */
+  --ocean-navy: #0A2540;
+  --ocean-navy-light: #1E3A5F;
+  --ocean-navy-dark: #040F1A;
+
+  /* Secondary - Vibrant Turquoise */
+  --turquoise: #00B4D8;
+  --turquoise-light: #33CFE7;
+  --turquoise-dark: #0090AD;
+
+  /* Accent - Coral */
+  --coral: #FF6B6B;
+  --coral-light: #FF8A80;
+  --coral-dark: #E53935;
+
+  /* Neutrals */
+  --seafoam: #E6F0FA;
+  --sand: #F8F9FA;
+  --wave-white: #FFFFFF;
+
+  /* Radius */
+  --radius: 0.75rem;
+
+  /* Shadows */
+  --shadow-ocean: 0 4px 20px rgba(0, 180, 216, 0.1);
+  --shadow-ocean-lg: 0 8px 30px rgba(0, 180, 216, 0.15);
+  --shadow-card: 0 2px 8px rgba(10, 37, 64, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(10, 37, 64, 0.12);
+}
+
+/* Dark mode overrides */
+.dark {
+  --ocean-navy: #0D1B2A;
+  --seafoam: #1B2838;
+  --sand: #0D1B2A;
+  --wave-white: #1B2838;
+  --shadow-ocean: 0 4px 20px rgba(0, 180, 216, 0.2);
+  --shadow-ocean-lg: 0 8px 30px rgba(0, 180, 216, 0.25);
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-card-hover: 0 8px 24px rgba(0, 180, 216, 0.2);
+}
+
+/* ========================================
+   🌊 Wave Background Patterns
+   ======================================== */
+
+/* Subtle wave pattern for backgrounds */
+.wave-bg {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2300B4D8' fill-opacity='0.05' d='M0,96L48,112C96,128,192,160,288,160C384,160,480,128,576,122.7C672,117,768,139,864,154.7C960,171,1056,181,1152,165.3C1248,149,1344,107,1392,85.3L1440,64L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: cover;
+  background-position: bottom;
+  background-repeat: no-repeat;
+}
+
+/* Animated wave pattern */
+.wave-bg-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.wave-bg-animated::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%2300B4D8' fill-opacity='0.1' d='M0,160L48,176C96,192,192,224,288,213.3C384,203,480,149,576,138.7C672,128,768,160,864,181.3C960,203,1056,213,1152,197.3C1248,181,1344,139,1392,117.3L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z'%3E%3C/path%3E%3C/svg%3E");
+  background-size: 1440px 100px;
+  animation: wave-move 10s linear infinite;
+}
+
+@keyframes wave-move {
+  0% { background-position-x: 0; }
+  100% { background-position-x: 1440px; }
+}
+
+/* ========================================
+   🎯 Product Card Styles
+   ======================================== */
+
+/* Marine-styled product card */
+.marine-product-card {
+  @apply relative overflow-hidden rounded-xl bg-white transition-all duration-300;
+  box-shadow: var(--shadow-card);
+}
+
+.marine-product-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+/* Wave shadow effect on hover */
+.wave-shadow {
+  transition: box-shadow 0.3s ease;
+}
+
+.wave-shadow:hover {
+  box-shadow: var(--shadow-ocean-lg);
+}
+
+/* Gentle float animation for featured products */
+.float-animation {
+  animation: gentle-float 3s ease-in-out infinite;
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* ========================================
+   🔘 Button Styles
+   ======================================== */
+
+/* Primary ocean button */
+.btn-ocean {
+  @apply relative overflow-hidden bg-primary text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300;
+  background: linear-gradient(135deg, var(--ocean-navy) 0%, var(--turquoise-dark) 100%);
+}
+
+.btn-ocean:hover {
+  background: linear-gradient(135deg, var(--turquoise-dark) 0%, var(--turquoise) 100%);
+  box-shadow: var(--shadow-ocean);
+}
+
+/* Coral accent button */
+.btn-coral {
+  @apply relative overflow-hidden bg-accent text-white font-semibold px-6 py-3 rounded-lg transition-all duration-300;
+  background: linear-gradient(135deg, var(--coral) 0%, var(--coral-light) 100%);
+}
+
+.btn-coral:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 20px rgba(255, 107, 107, 0.3);
+}
+
+/* Ripple effect for buttons */
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-ripple:active::after {
+  width: 200px;
+  height: 200px;
+}
+
+/* ========================================
+   📦 Card & Section Styles
+   ======================================== */
+
+/* Seafoam section background */
+.section-seafoam {
+  @apply bg-seafoam;
+  background: linear-gradient(180deg, var(--seafoam) 0%, var(--sand) 100%);
+}
+
+/* Ocean gradient section */
+.section-ocean {
+  background: linear-gradient(135deg, var(--ocean-navy) 0%, var(--ocean-navy-light) 50%, var(--turquoise-dark) 100%);
+  @apply text-white;
+}
+
+/* Glass morphism card */
+.glass-card {
+  @apply bg-white/80 backdrop-blur-md border border-white/20 rounded-xl;
+  box-shadow: var(--shadow-card);
+}
+
+.dark .glass-card {
+  @apply bg-gray-900/80 border-gray-700/30;
+}
+
+/* ========================================
+   🏷️ Badge & Tag Styles
+   ======================================== */
+
+/* Sale badge */
+.badge-sale {
+  @apply absolute top-3 left-3 z-10 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full;
+  background: linear-gradient(135deg, var(--coral) 0%, var(--coral-light) 100%);
+  @apply text-white;
+}
+
+/* New badge */
+.badge-new {
+  @apply absolute top-3 left-3 z-10 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full;
+  background: linear-gradient(135deg, var(--turquoise) 0%, var(--turquoise-light) 100%);
+  @apply text-white;
+}
+
+/* Featured badge */
+.badge-featured {
+  @apply absolute top-3 right-3 z-10 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full;
+  background: linear-gradient(135deg, var(--ocean-navy) 0%, var(--ocean-navy-light) 100%);
+  @apply text-white;
+}
+
+/* ========================================
+   📱 Loading States
+   ======================================== */
+
+/* Shimmer loading effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--seafoam) 0%,
+    var(--sand) 50%,
+    var(--seafoam) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Wave loading spinner */
+.wave-spinner {
+  display: flex;
+  gap: 4px;
+}
+
+.wave-spinner span {
+  width: 4px;
+  height: 20px;
+  background: var(--turquoise);
+  border-radius: 2px;
+  animation: wave-spinner 1s ease-in-out infinite;
+}
+
+.wave-spinner span:nth-child(2) { animation-delay: 0.1s; }
+.wave-spinner span:nth-child(3) { animation-delay: 0.2s; }
+.wave-spinner span:nth-child(4) { animation-delay: 0.3s; }
+.wave-spinner span:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes wave-spinner {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(2); }
+}
+
+/* ========================================
+   🎭 Transitions & Animations
+   ======================================== */
+
+/* Page transition */
+.page-enter-active,
+.page-leave-active {
+  transition: all 0.3s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Slide up animation for elements */
+.slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Staggered animation for lists */
+.stagger-children > * {
+  opacity: 0;
+  animation: fade-in 0.3s ease-out forwards;
+}
+
+.stagger-children > *:nth-child(1) { animation-delay: 0.05s; }
+.stagger-children > *:nth-child(2) { animation-delay: 0.1s; }
+.stagger-children > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger-children > *:nth-child(4) { animation-delay: 0.2s; }
+.stagger-children > *:nth-child(5) { animation-delay: 0.25s; }
+.stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ========================================
+   🎨 Utility Classes
+   ======================================== */
+
+/* Ocean text gradient */
+.text-gradient-ocean {
+  background: linear-gradient(135deg, var(--turquoise) 0%, var(--ocean-navy) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Coral text gradient */
+.text-gradient-coral {
+  background: linear-gradient(135deg, var(--coral) 0%, var(--coral-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Hide scrollbar but keep functionality */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth scroll */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+.focus-ocean:focus {
+  @apply outline-none ring-2 ring-offset-2;
+  --tw-ring-color: var(--turquoise);
+}
+
+/* ========================================
+   📐 Container & Layout
+   ======================================== */
+
+/* Centered container with responsive padding */
+.container-ocean {
+  @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 1400px;
+}
+
+/* Narrow container for content */
+.container-narrow {
+  @apply w-full mx-auto px-4 sm:px-6;
+  max-width: 800px;
+}
+
+/* Wide container for hero sections */
+.container-wide {
+  @apply w-full mx-auto px-4 sm:px-6 lg:px-8;
+  max-width: 1600px;
+}
+
+/* ========================================
+   🌙 Dark Mode Specific
+   ======================================== */
+
+.dark {
+  /* Ensure proper contrast in dark mode */
+  --tw-ring-color: var(--turquoise);
+}
+
+.dark .section-seafoam {
+  background: linear-gradient(180deg, #1B2838 0%, #0D1B2A 100%);
+}
+
+.dark .marine-product-card {
+  @apply bg-gray-900 border border-gray-800;
+}
+
+.dark .glass-card {
+  @apply bg-gray-900/90 border-gray-700/50;
+}

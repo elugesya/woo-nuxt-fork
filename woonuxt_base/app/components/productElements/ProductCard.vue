@@ -1,5 +1,12 @@
 <script setup lang="ts">
-import { Card, CardContent } from '@/components/ui/card'
+/**
+ * 🌊 ProductCard - Marine Themed
+ *
+ * Single product card component used across all pages.
+ * Features: Sale badge, wishlist, add to cart, hover effects
+ */
+import { cn } from '@/lib/utils';
+import { Heart, ShoppingCart, Star } from 'lucide-vue-next';
 
 const route = useRoute();
 const { storeSettings } = useAppConfig();
@@ -12,11 +19,10 @@ const props = defineProps({
 const imgWidth = 280;
 const imgHeight = Math.round(imgWidth * 1.125);
 
-// example: ?filter=pa_color[green,blue],pa_size[large]
+// Color filter handling
 const filterQuery = ref(route.query?.filter as string);
 const paColor = ref(filterQuery.value?.split('pa_color[')[1]?.split(']')[0]?.split(',') || []);
 
-// watch filterQuery
 watch(
   () => route.query,
   () => {
@@ -38,13 +44,116 @@ const imagetoDisplay = computed<string>(() => {
   return mainImage.value;
 });
 const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
+const hoverImage = computed<string | undefined>(() => props.node?.galleryImages?.nodes?.[0]?.sourceUrl);
+
+// Derived data
+const isOnSale = computed(() => props.node?.onSale);
+const inStock = computed(() => props.node?.stockStatus === 'IN_STOCK');
+const categoryName = computed(() => props.node?.productCategories?.nodes?.[0]?.name);
+
+// Parse Turkish price format (e.g., "1.299,00" or "1299,00" -> 1299.00)
+// Also handles price ranges by taking the first price
+const parseTurkishPrice = (priceStr: string | undefined | null | number): number => {
+  if (!priceStr) return 0;
+
+  // If it's already a number, return it
+  if (typeof priceStr === 'number') return priceStr;
+
+  // Handle price ranges like "18.900,00 - 21.499,00" - take the first price
+  const pricePart = priceStr.split('-')[0].trim();
+
+  // Remove thousand separators (dots) and replace comma with dot
+  const normalized = pricePart.replace(/\./g, '').replace(',', '.');
+  const parsed = parseFloat(normalized);
+  return isNaN(parsed) ? 0 : parsed;
+};
+
+const regularPrice = computed(() => {
+  // Try rawPrice first (numeric), then regularPrice, then price
+  const rawPrice = (props.node as any)?.rawPrice;
+  if (rawPrice && !isNaN(parseFloat(rawPrice))) {
+    return parseFloat(rawPrice);
+  }
+  return parseTurkishPrice(props.node?.regularPrice || props.node?.price);
+});
+
+const salePrice = computed(() => {
+  // Try rawSalePrice first (numeric), then salePrice
+  const rawSalePrice = (props.node as any)?.rawSalePrice;
+  if (rawSalePrice && !isNaN(parseFloat(rawSalePrice))) {
+    return parseFloat(rawSalePrice);
+  }
+  const sale = parseTurkishPrice(props.node?.salePrice);
+  return sale > 0 ? sale : undefined;
+});
+const savePercentage = computed(() => {
+  if (!isOnSale.value || !salePrice.value || regularPrice.value <= 0) return 0;
+  return Math.round(((regularPrice.value - salePrice.value) / regularPrice.value) * 100);
+});
+
+// Cart & Wishlist
+const { addToCart } = useCart();
+const { addToWishlist, removeFromWishlist, isInList } = useWishlist();
+
+const isHovered = ref(false);
+const isAddingToCart = ref(false);
+const isWishlisted = computed(() => isInList(props.node?.databaseId));
+
+const handleAddToCart = async (e: Event) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (!inStock.value) return;
+
+  isAddingToCart.value = true;
+  await addToCart({ productId: props.node.databaseId!, quantity: 1 });
+  setTimeout(() => { isAddingToCart.value = false; }, 500);
+};
+
+const handleWishlist = (e: Event) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const productId = props.node?.databaseId;
+  if (!productId) return;
+
+  if (isWishlisted.value) {
+    removeFromWishlist(productId);
+  } else {
+    addToWishlist({
+      databaseId: productId,
+      name: props.node.name,
+      slug: props.node.slug,
+      image: { sourceUrl: imagetoDisplay.value },
+      price: props.node.price,
+      regularPrice: props.node.regularPrice,
+    } as Product);
+  }
+};
+
+// Format price
+const formatPrice = (price: number) => {
+  return new Intl.NumberFormat('tr-TR', {
+    style: 'decimal',
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(price);
+};
 </script>
 
 <template>
-  <Card class="group bg-background border border-border rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-lg">
+  <article
+    :class="cn(
+      'group relative flex flex-col overflow-hidden rounded-xl bg-white',
+      'shadow-card hover:shadow-card-hover transition-all duration-300',
+      'hover:-translate-y-1',
+      'dark:bg-gray-900 dark:border dark:border-gray-800'
+    )"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+  >
     <NuxtLink v-if="node.slug" :to="`/urun/${decodeURIComponent(node.slug)}`" :title="node.name" class="block">
-      <div class="relative overflow-hidden">
-        <SaleBadge :node class="absolute top-2 right-2 z-10" />
+      <!-- Product Image Container -->
+      <div class="relative aspect-square overflow-hidden bg-seafoam">
+        <!-- Main Image -->
         <template v-if="imagetoDisplay && !isFallback">
           <NuxtImg
             :width="imgWidth"
@@ -54,9 +163,21 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             :title="node.image?.title || node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
             :sizes="`sm:${imgWidth / 2}px md:${imgWidth}px`"
-            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-background" 
-            placeholder
-            placeholder-class="blur-xl" />
+            :class="cn(
+              'h-full w-full object-cover transition-all duration-500',
+              isHovered && hoverImage ? 'opacity-0' : 'opacity-100'
+            )"
+          />
+          <!-- Hover Image -->
+          <NuxtImg
+            v-if="hoverImage"
+            :width="imgWidth"
+            :height="imgHeight"
+            :src="hoverImage"
+            :alt="`${node.name} - Hover`"
+            class="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 group-hover:opacity-100"
+            loading="lazy"
+          />
         </template>
         <template v-else>
           <img
@@ -66,14 +187,138 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
             :alt="node.name || 'Product image'"
             :title="node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
-            class="rounded-t-xl object-top object-cover w-full aspect-9/8 transition-transform duration-300 group-hover:scale-105 bg-background" />
+            class="h-full w-full object-cover"
+          />
         </template>
+
+        <!-- Sale Badge -->
+        <span
+          v-if="isOnSale"
+          :class="cn(
+            'absolute top-3 left-3 z-10 px-3 py-1 text-xs font-bold uppercase tracking-wide rounded-full',
+            'bg-gradient-to-r from-accent to-coral-light text-white'
+          )"
+        >
+          %{{ savePercentage }} İndirim
+        </span>
+
+        <!-- Out of Stock Overlay -->
+        <div
+          v-if="!inStock"
+          class="absolute inset-0 flex items-center justify-center bg-black/40"
+        >
+          <span class="px-4 py-2 text-sm font-bold text-white bg-gray-900/80 rounded-lg">
+            Stokta Yok
+          </span>
+        </div>
+
+        <!-- Action Buttons (appear on hover) -->
+        <div
+          :class="cn(
+            'absolute right-3 top-3 flex flex-col gap-2 transition-all duration-300',
+            isHovered ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4'
+          )"
+        >
+          <!-- Wishlist Button -->
+          <button
+            type="button"
+            :class="cn(
+              'flex h-10 w-10 items-center justify-center rounded-full',
+              'bg-white/90 backdrop-blur-sm shadow-md',
+              'transition-all duration-200 hover:scale-110',
+              'dark:bg-gray-800',
+              isWishlisted ? 'text-accent' : 'text-muted-foreground hover:text-accent'
+            )"
+            @click="handleWishlist"
+            :aria-label="isWishlisted ? 'Favorilerden çıkar' : 'Favorilere ekle'"
+          >
+            <Heart :class="cn('w-5 h-5', isWishlisted && 'fill-current')" />
+          </button>
+        </div>
+
+        <!-- Add to Cart Button (appears on hover) -->
+        <div
+          :class="cn(
+            'absolute bottom-0 left-0 right-0 p-3 transition-all duration-300',
+            isHovered && inStock ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+          )"
+        >
+          <button
+            type="button"
+            :disabled="isAddingToCart || !inStock"
+            :class="cn(
+              'flex w-full items-center justify-center gap-2 rounded-lg',
+              'bg-gradient-to-r from-secondary to-secondary-light',
+              'px-4 py-3 text-sm font-semibold text-white',
+              'transition-all duration-200 hover:shadow-ocean',
+              'disabled:opacity-50 disabled:cursor-not-allowed'
+            )"
+            @click="handleAddToCart"
+          >
+            <ShoppingCart :class="cn('w-5 h-5', isAddingToCart && 'animate-bounce')" />
+            {{ isAddingToCart ? 'Ekleniyor...' : 'Sepete Ekle' }}
+          </button>
+        </div>
       </div>
-      <CardContent class="p-4">
-        <StarRating v-if="storeSettings.showReviews" :rating="node.averageRating" :count="node.reviewCount" class="mb-2" />
-  <h2 class="mb-2 font-light leading-tight transition-colors group-hover:text-primary line-clamp-2 text-foreground">{{ node.name }}</h2>
-  <ProductPrice class="text-sm font-medium text-foreground" :sale-price="node.salePrice" :regular-price="node.regularPrice" />
-      </CardContent>
+
+      <!-- Product Info -->
+      <div class="flex flex-col p-4">
+        <!-- Category -->
+        <span
+          v-if="categoryName"
+          class="text-xs font-medium uppercase tracking-wide text-secondary mb-1"
+        >
+          {{ categoryName }}
+        </span>
+
+        <!-- Product Name -->
+        <h2 class="font-semibold text-foreground line-clamp-2 group-hover:text-secondary transition-colors">
+          {{ node.name }}
+        </h2>
+
+        <!-- Rating -->
+        <div
+          v-if="storeSettings.showReviews && node.averageRating"
+          class="flex items-center gap-1 mt-2"
+        >
+          <div class="flex items-center">
+            <Star
+              v-for="i in 5"
+              :key="i"
+              :class="cn(
+                'w-4 h-4',
+                i <= Math.floor(node.averageRating || 0)
+                  ? 'text-amber-400 fill-amber-400'
+                  : 'text-gray-300'
+              )"
+            />
+          </div>
+          <span class="text-xs text-muted-foreground">
+            ({{ node.reviewCount || 0 }})
+          </span>
+        </div>
+
+        <!-- Price -->
+        <div class="mt-3">
+          <!-- Sale Price Display -->
+          <template v-if="isOnSale && salePrice">
+            <div class="flex flex-wrap items-center gap-2">
+              <span class="text-sm text-muted-foreground line-through">
+                ₺{{ formatPrice(regularPrice) }}
+              </span>
+              <span class="text-lg font-bold text-accent">
+                ₺{{ formatPrice(salePrice) }}
+              </span>
+            </div>
+          </template>
+          <!-- Regular Price Display -->
+          <template v-else>
+            <span class="text-lg font-bold text-primary">
+              ₺{{ formatPrice(regularPrice) }}
+            </span>
+          </template>
+        </div>
+      </div>
     </NuxtLink>
-  </Card>
+  </article>
 </template>
