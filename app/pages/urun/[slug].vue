@@ -13,7 +13,7 @@ import { Heart, Share2, ShoppingCart, ShieldCheck, Truck, RotateCcw, ChevronRigh
 const route = useRoute();
 const { storeSettings, siteName } = useAppConfig();
 const { arraysEqual, formatArray, checkForVariationTypeOfAny, frontEndUrl } = useHelpers();
-const { addToCart, isUpdatingCart } = useCart();
+const { addToCart, isUpdatingCart, toggleCart, isShowingCart } = useCart();
 const { t } = useI18n();
 const { trackViewItem, trackAddToCart } = useGoogleAnalytics();
 const { trackViewContent } = useTikTokPixel();
@@ -27,22 +27,17 @@ if (!data.value?.product) {
 const product = ref<Product>(data?.value?.product);
 const quantity = ref<number>(1);
 const activeVariation = ref<Variation | null>(null);
-const variation = ref<VariationAttribute[]>([]);
-const variationId = ref<number | null>(null);
-const variationAttributes = ref<any[] | null>(null);
-const indexOfTypeAny = computed<number[]>(() => checkForVariationTypeOfAny(product.value));
 const attrValues = ref();
 const isSimpleProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.SIMPLE);
 const isVariableProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.VARIABLE);
 const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
 
-const type = computed(() => activeVariation.value || product.value);
-const selectProductInput = computed<AddToCartInput>(() => ({
-  productId: type.value?.databaseId ?? 0,
-  quantity: quantity.value,
-  variationId: variationId.value,
-  variation: variationAttributes.value
-}));
+const displayProduct = computed(() => activeVariation.value || product.value);
+const priceTarget = computed(() => activeVariation.value || product.value);
+const productImage = computed(() => product.value?.image || null);
+const productGallery = computed(() => ({ nodes: product.value?.galleryImages?.nodes ?? [] }));
+
+const selectProductInput = computed<any>(() => ({ productId: displayProduct.value?.databaseId, quantity: quantity.value })) as ComputedRef<AddToCartInput>;
 
 const mergeLiveStockStatus = (payload: Product): void => {
   product.value.stockStatus = payload.stockStatus ?? product.value?.stockStatus;
@@ -53,75 +48,162 @@ const mergeLiveStockStatus = (payload: Product): void => {
   });
 };
 
-onMounted(async () => {
+const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
+const shouldSkipStockRefresh = computed<boolean>(() => isExternalProduct.value);
+
+const refreshStockStatus = async (): Promise<void> => {
   try {
-    const { data } = await useAsyncGql('getStockStatus', { slug });
-    if (data.value?.product) mergeLiveStockStatus(data.value.product as Product);
+    const { product: liveProduct } = await GqlGetStockStatus({ slug });
+    if (liveProduct) mergeLiveStockStatus(liveProduct as Product);
   } catch (error: any) {
-    const errorMessage = error?.gqlErrors?.[0].message;
+    const errorMessage = error?.gqlErrors?.[0]?.message;
     if (errorMessage) console.error(errorMessage);
   }
+};
 
+type IdleCallback = (deadline: { didTimeout: boolean; timeRemaining: () => number }) => void;
+type IdleCallbackWindow = Window & {
+  requestIdleCallback?: (callback: IdleCallback, options?: { timeout: number }) => number;
+  cancelIdleCallback?: (handle: number) => void;
+};
+
+let stockRefreshHandle: number | null = null;
+let stockRefreshHandleType: 'idle' | 'timeout' | null = null;
+
+const scheduleStockRefresh = (): void => {
+  if (!import.meta.client || shouldSkipStockRefresh.value) return;
+
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (connection?.saveData) return;
+
+  if (stockRefreshHandle !== null) return;
+
+  const run = () => {
+    stockRefreshHandle = null;
+    stockRefreshHandleType = null;
+    void refreshStockStatus();
+  };
+
+  const idleWindow = window as IdleCallbackWindow;
+  if (idleWindow.requestIdleCallback) {
+    stockRefreshHandleType = 'idle';
+    stockRefreshHandle = idleWindow.requestIdleCallback(() => run(), { timeout: 2000 });
+  } else {
+    stockRefreshHandleType = 'timeout';
+    stockRefreshHandle = window.setTimeout(run, 900);
+  }
+};
+
+onMounted(() => {
+  scheduleStockRefresh();
   if (product.value) {
     trackViewItem(product.value);
     trackViewContent(product.value);
   }
 });
 
+onBeforeUnmount(() => {
+  if (!import.meta.client || stockRefreshHandle === null) return;
+  const idleWindow = window as IdleCallbackWindow;
+  if (stockRefreshHandleType === 'idle' && idleWindow.cancelIdleCallback) {
+    idleWindow.cancelIdleCallback(stockRefreshHandle);
+  } else {
+    clearTimeout(stockRefreshHandle);
+  }
+  stockRefreshHandle = null;
+  stockRefreshHandleType = null;
+});
+
 const updateSelectedVariations = (variations: VariationAttribute[]): void => {
-  if (!product.value.variations) return;
+  if (!product.value?.variations) return;
 
   attrValues.value = variations.map((el) => ({ attributeName: el.name, attributeValue: el.value }));
-  const clonedVariations = JSON.parse(JSON.stringify(variations));
-  const getActiveVariation = product.value.variations?.nodes.filter((variation: any) => {
-    if (variation.attributes) {
-      indexOfTypeAny.value.forEach((index) => (clonedVariations[index].value = ''));
-      return arraysEqual(formatArray(variation.attributes.nodes), formatArray(clonedVariations));
-    }
+  activeVariation.value = findMatchingVariation(variations);
+
+  selectProductInput.value.variationId = activeVariation.value?.databaseId ?? null;
+  selectProductInput.value.variation = activeVariation.value ? attrValues.value : null;
+  variation.value = variations;
+};
+
+// Helper function to find matching variation
+const findMatchingVariation = (selected: VariationAttribute[]): Variation | null => {
+  if (!selected?.length) return null;
+
+  const selectedMap: Record<string, string> = {};
+  selected.forEach((attr) => {
+    const key = toSelectionName(attr.name);
+    if (!key) return;
+    const value = normalizeMatchValue(attr.value);
+    if (!value) return;
+    selectedMap[key] = value;
   });
 
-  activeVariation.value = getActiveVariation?.[0] || null;
-  variationId.value = activeVariation.value?.databaseId ?? null;
-  variationAttributes.value = activeVariation.value ? attrValues.value : null;
-  variation.value = variations;
+  if (Object.keys(selectedMap).length === 0) return null;
+
+  const nodes = product.value?.variations?.nodes ?? [];
+  for (const node of nodes) {
+    const attrs: Record<string, string> = {};
+    node.attributes?.nodes?.forEach((attr) => {
+      const key = toSelectionName(attr.name);
+      if (!key) return;
+      const value = normalizeMatchValue(attr.value);
+      if (!value) return;
+      attrs[key] = value;
+    });
+
+    let matches = true;
+    for (const [key, value] of Object.entries(selectedMap)) {
+      if (attrs[key] !== value) {
+        matches = false;
+        break;
+      }
+    }
+
+    if (matches) return node;
+  }
+
+  return null;
+};
+
+// Helper functions
+const toSelectionName = (name?: string | null): string => {
+  if (!name) return '';
+  return name.charAt(0).toLowerCase() + name.slice(1);
+};
+
+const normalizeMatchValue = (value?: string | null): string => {
+  return (value ?? '').toString().trim().toLowerCase().replace(/[\s-_]+/g, '');
 };
 
 const stockStatus = computed(() => {
   if (isVariableProduct.value) {
-    return activeVariation.value?.stockStatus ?? type.value?.stockStatus ?? StockStatusEnum.OUT_OF_STOCK;
+    return activeVariation.value?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
   }
-  return type.value?.stockStatus ?? StockStatusEnum.OUT_OF_STOCK;
+  return (product.value as SimpleProduct | VariableProduct)?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
 });
 
 const disabledAddToCart = computed(() => {
   const isOutOfStock = stockStatus.value === StockStatusEnum.OUT_OF_STOCK;
-  const isInvalidType = !type.value;
+  const isInvalidType = !displayProduct.value;
   const isCartUpdating = isUpdatingCart.value;
   const isValidActiveVariation = isVariableProduct.value ? !!activeVariation.value : true;
   return isInvalidType || isOutOfStock || isCartUpdating || !isValidActiveVariation;
 });
 
 const handleAddToCart = async () => {
+  if (!product.value) return;
   try {
-    await addToCart(selectProductInput.value);
-    trackAddToCart(type.value, quantity.value);
+    await addToCart(selectProductInput.value, { product: product.value, variation: activeVariation.value });
+    trackAddToCart(displayProduct.value, quantity.value);
+
+    // Open cart after a short delay to show the product was added
+    setTimeout(() => {
+      isShowingCart.value = true;
+    }, 300);
   } catch (error) {
     console.error('Error adding to cart:', error);
   }
 };
-
-// Product images for gallery
-const productImages = computed(() => {
-  const images: { url: string; alt?: string }[] = [];
-  const main = (product.value as any)?.image?.sourceUrl || (product.value as any)?.image?.mediaItemUrl;
-  if (main) images.push({ url: main, alt: product.value?.name });
-  const gallery = (product.value as any)?.galleryImages?.nodes || [];
-  for (const g of gallery) {
-    const url = g?.sourceUrl || g?.mediaItemUrl;
-    if (url) images.push({ url, alt: product.value?.name });
-  }
-  return images;
-});
 
 // Reviews for display
 const productReviews = computed(() => {
@@ -170,14 +252,14 @@ const productJsonLd = computed(() =>
     '@type': 'Product',
     name: product.value?.name,
     description: stripHtml(product.value?.shortDescription || product.value?.description || ''),
-    image: productImages.value.map(i => i.url),
+    image: [product.value?.image?.sourceUrl, ...(product.value?.galleryImages?.nodes?.map((img: any) => img.sourceUrl) || [])].filter(Boolean),
     sku: product.value?.sku || undefined,
     brand: { '@type': 'Brand', name: siteName || undefined },
     offers: {
       '@type': 'Offer',
       url: productUrl.value,
       priceCurrency: currencyCode,
-      price: (type.value?.salePrice || type.value?.regularPrice || '0').toString().replace(/[^0-9.]/g, ''),
+      price: (priceTarget.value?.salePrice || priceTarget.value?.regularPrice || '0').toString().replace(/[^0-9.]/g, ''),
       availability: mapAvailability(stockStatus.value as any),
     },
     aggregateRating: product.value?.reviewCount ? {
@@ -209,28 +291,7 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
 
     <!-- 🍞 Breadcrumb -->
     <div class="container-ocean py-4">
-      <nav class="flex items-center gap-2 text-sm text-muted-foreground">
-        <NuxtLink to="/" class="hover:text-secondary transition-colors">
-          <Anchor class="w-4 h-4" />
-        </NuxtLink>
-        <ChevronRight class="w-4 h-4" />
-        <NuxtLink to="/urunler" class="hover:text-secondary transition-colors">
-          Ürünler
-        </NuxtLink>
-        <template v-if="primaryCategory">
-          <ChevronRight class="w-4 h-4" />
-          <NuxtLink
-            :to="`/urun-kategorisi/${primaryCategory.slug}`"
-            class="hover:text-secondary transition-colors"
-          >
-            {{ primaryCategory.name }}
-          </NuxtLink>
-        </template>
-        <ChevronRight class="w-4 h-4" />
-        <span class="text-foreground font-medium truncate max-w-[200px]">
-          {{ product?.name }}
-        </span>
-      </nav>
+      <ProductBreadcrumb :product="product" class="mb-6" v-if="storeSettings.showBreadcrumbOnSingleProduct" />
     </div>
 
     <div v-if="product" class="container-ocean">
@@ -238,13 +299,13 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
       <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 py-6">
         <!-- Product Gallery -->
         <div class="relative">
-          <CommerceProductProductGallery
-            v-if="productImages.length > 0"
-            :images="productImages"
-            :product-title="product.name"
-            aspect-ratio="square"
-            :show-thumbnails="true"
-            thumbnail-position="bottom"
+          <ProductImageGallery
+            v-if="product.image"
+            class="relative flex-1"
+            :main-image="product.image"
+            :gallery="productGallery"
+            :node="displayProduct"
+            :activeVariation="activeVariation || {}"
           />
           <div
             v-else
@@ -282,7 +343,7 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
 
           <!-- Product Title -->
           <h1 class="text-3xl md:text-4xl font-bold text-primary dark:text-white mb-4">
-            {{ type.name }}
+            {{ displayProduct.name }}
           </h1>
 
           <!-- Rating & Reviews -->
@@ -290,23 +351,18 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
             v-if="storeSettings.showReviews && product.reviewCount"
             class="flex items-center gap-4 mb-6"
           >
-            <CommerceSharedStarRatingBasic
-              :value="product.averageRating || 0"
-              :read-only="true"
+            <StarRating
+              :rating="product.averageRating || 0"
+              :count="product.reviewCount"
             />
-            <span class="text-muted-foreground">
-              ({{ product.reviewCount }} değerlendirme)
-            </span>
           </div>
 
           <!-- Price -->
           <div class="mb-6">
-            <CommerceSharedPriceFormatSale
-              :original-price="parseFloat(type.regularPrice || '0')"
-              :sale-price="type.salePrice ? parseFloat(type.salePrice) : undefined"
-              :show-save-percentage="true"
-              class="text-3xl"
-              class-sale-price="text-3xl font-bold text-accent"
+            <ProductPrice
+              class="text-xl"
+              :sale-price="priceTarget?.salePrice"
+              :regular-price="priceTarget?.regularPrice"
             />
           </div>
 
@@ -333,16 +389,9 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
           <!-- Stock Status -->
           <div
             v-if="!isExternalProduct"
-            :class="cn(
-              'flex items-center gap-2 px-4 py-2 rounded-lg mb-6',
-              stockStatus === 'IN_STOCK'
-                ? 'bg-secondary/10 text-secondary'
-                : 'bg-accent/10 text-accent'
-            )"
+            class="flex items-center gap-2 px-4 py-2 rounded-lg mb-6"
           >
-            <span class="font-medium">
-              {{ stockStatus === 'IN_STOCK' ? 'Stokta Mevcut' : 'Stokta Yok' }}
-            </span>
+            <StockStatus :stockStatus @updated="mergeLiveStockStatus" />
           </div>
 
           <!-- Add to Cart Section -->
@@ -353,10 +402,13 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
           >
             <!-- Quantity & Add to Cart -->
             <div class="flex items-center gap-4">
-              <CommerceSharedQuantityInputBasic
-                v-model:quantity="quantity"
-                :min="1"
-                :max="100"
+              <input
+                v-model="quantity"
+                type="number"
+                min="1"
+                max="100"
+                aria-label="Quantity"
+                class="flex items-center justify-center w-20 gap-4 p-2 text-left bg-white border border-gray-300 rounded-lg dark:bg-gray-700 dark:border-gray-600 focus:outline-none dark:text-white"
               />
               <Button
                 type="submit"
@@ -423,98 +475,8 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
       </div>
 
       <!-- 📋 Product Tabs -->
-      <div
-        v-if="product.description || productReviews.length"
-        class="py-12 border-t border-border"
-      >
-        <!-- Tab Navigation -->
-        <div class="flex gap-1 p-1 bg-seafoam rounded-xl mb-8">
-          <button
-            type="button"
-            :class="cn(
-              'flex-1 py-3 px-4 rounded-lg font-medium transition-all',
-              activeTab === 'description'
-                ? 'bg-white text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )"
-            @click="activeTab = 'description'"
-          >
-            Açıklama
-          </button>
-          <button
-            v-if="productReviews.length"
-            type="button"
-            :class="cn(
-              'flex-1 py-3 px-4 rounded-lg font-medium transition-all',
-              activeTab === 'reviews'
-                ? 'bg-white text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )"
-            @click="activeTab = 'reviews'"
-          >
-            Değerlendirmeler ({{ product.reviewCount }})
-          </button>
-          <button
-            type="button"
-            :class="cn(
-              'flex-1 py-3 px-4 rounded-lg font-medium transition-all',
-              activeTab === 'specs'
-                ? 'bg-white text-primary shadow-sm'
-                : 'text-muted-foreground hover:text-foreground'
-            )"
-            @click="activeTab = 'specs'"
-          >
-            Özellikler
-          </button>
-        </div>
-
-        <!-- Tab Content -->
-        <div class="prose prose-lg max-w-none">
-          <!-- Description Tab -->
-          <div v-show="activeTab === 'description'" v-html="product.description" />
-
-          <!-- Reviews Tab -->
-          <div v-show="activeTab === 'reviews'">
-            <CommerceProductProductReviews
-              v-if="productReviews.length"
-              :reviews="productReviews"
-              :average-rating="product.averageRating || 0"
-              :total-reviews="product.reviewCount || 0"
-            />
-            <div v-else class="text-center py-12 text-muted-foreground">
-              Henüz değerlendirme yok.
-            </div>
-          </div>
-
-          <!-- Specs Tab -->
-          <div v-show="activeTab === 'specs'">
-            <div
-              v-if="product.attributes?.nodes?.length"
-              class="grid sm:grid-cols-2 gap-4"
-            >
-              <div
-                v-for="attr in product.attributes.nodes"
-                :key="attr.id"
-                class="flex justify-between p-4 bg-seafoam rounded-lg"
-              >
-                <span class="font-medium text-muted-foreground">
-                  {{ attr.label || attr.name }}
-                </span>
-                <span class="font-semibold">
-                  <template v-if="attr.terms?.nodes?.length">
-                    {{ attr.terms.nodes.map((t: any) => t.name).join(', ') }}
-                  </template>
-                  <template v-else-if="attr.options?.length">
-                    {{ attr.options.join(', ') }}
-                  </template>
-                </span>
-              </div>
-            </div>
-            <div v-else class="text-center py-12 text-muted-foreground">
-              Özellik bilgisi mevcut değil.
-            </div>
-          </div>
-        </div>
+      <div v-if="product.description || product.reviews" class="my-32">
+        <ProductTabs :product="product" />
       </div>
 
       <!-- 🔗 Related Products -->
@@ -542,9 +504,9 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
           <p class="text-sm font-semibold text-primary truncate">
             {{ product.name }}
           </p>
-          <CommerceSharedPriceFormatBasic
-            :value="parseFloat(type.salePrice || type.regularPrice || '0')"
-            class="text-lg"
+          <ProductPrice
+            :sale-price="priceTarget?.salePrice"
+            :regular-price="priceTarget?.regularPrice"
           />
         </div>
         <Button
