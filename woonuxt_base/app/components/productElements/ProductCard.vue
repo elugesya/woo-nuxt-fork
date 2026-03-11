@@ -157,6 +157,7 @@ const formatPrice = (price: number) => {
         <!-- Main Image -->
         <template v-if="imagetoDisplay && !isFallback">
           <NuxtImg
+            :key="`main-${node.databaseId}-${imagetoDisplay}`"
             :width="imgWidth"
             :height="imgHeight"
             :src="imagetoDisplay"
@@ -172,6 +173,7 @@ const formatPrice = (price: number) => {
           <!-- Hover Image -->
           <NuxtImg
             v-if="hoverImage"
+            :key="`hover-${node.databaseId}-${hoverImage}`"
             :width="imgWidth"
             :height="imgHeight"
             :src="hoverImage"
