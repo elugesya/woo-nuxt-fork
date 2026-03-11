@@ -38,6 +38,7 @@ const props = withDefaults(defineProps<HeroBannerProps>(), {
     text: 'Kategoriler',
     href: '/kategoriler',
   }),
+  image: 'https://backend.ntmc.com.tr/wp-content/uploads/2026/03/inferno.jpg',
   overlay: true,
 });
 
