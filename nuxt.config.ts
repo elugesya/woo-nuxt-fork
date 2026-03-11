@@ -190,4 +190,14 @@ export default defineNuxtConfig({
     },
     minify: true
   },
+
+  vite: {
+    resolve: {
+      alias: {
+        // Fix reka-ui importing toValue from @vueuse/core instead of vue
+        // Vue 3.3+ has toValue built-in, so we redirect the import
+        '@vueuse/core/toValue': 'vue/toValue',
+      },
+    },
+  },
 });
