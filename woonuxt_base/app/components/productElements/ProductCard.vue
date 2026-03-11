@@ -44,7 +44,17 @@ const imagetoDisplay = computed<string>(() => {
   return mainImage.value;
 });
 const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
-const hoverImage = computed<string | undefined>(() => props.node?.galleryImages?.nodes?.[1]?.sourceUrl);
+const hoverImage = computed<string | undefined>(() => {
+  const gallery = props.node?.galleryImages?.nodes;
+  if (!gallery || gallery.length < 2) return undefined;
+
+  const hoverImg = gallery[1]?.sourceUrl;
+  // Only return hover image if it's different from the main image
+  if (hoverImg && hoverImg !== mainImage.value && hoverImg !== imagetoDisplay.value) {
+    return hoverImg;
+  }
+  return undefined;
+});
 
 // Derived data
 const isOnSale = computed(() => props.node?.onSale);
@@ -153,11 +163,12 @@ const formatPrice = (price: number) => {
   >
     <NuxtLink v-if="node.slug" :to="`/urun/${decodeURIComponent(node.slug)}`" :title="node.name" class="block">
       <!-- Product Image Container -->
-      <div class="relative aspect-square overflow-hidden bg-seafoam">
+      <div :key="`product-card-${node.databaseId}-${index}`" class="relative aspect-square overflow-hidden bg-seafoam">
         <!-- Main Image -->
         <template v-if="imagetoDisplay && !isFallback">
           <NuxtImg
-            :key="`main-${node.databaseId}-${imagetoDisplay}`"
+            :id="`main-img-${node.databaseId}-${index}`"
+            :key="`main-${node.databaseId}-${index}-${imagetoDisplay}`"
             :width="imgWidth"
             :height="imgHeight"
             :src="imagetoDisplay"
@@ -173,7 +184,8 @@ const formatPrice = (price: number) => {
           <!-- Hover Image -->
           <NuxtImg
             v-if="hoverImage"
-            :key="`hover-${node.databaseId}-${hoverImage}`"
+            :id="`hover-img-${node.databaseId}-${index}`"
+            :key="`hover-${node.databaseId}-${index}-${hoverImage}`"
             :width="imgWidth"
             :height="imgHeight"
             :src="hoverImage"
