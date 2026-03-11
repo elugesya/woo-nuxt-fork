@@ -176,7 +176,8 @@ const normalizeMatchValue = (value?: string | null): string => {
 
 const stockStatus = computed(() => {
   if (isVariableProduct.value) {
-    return activeVariation.value?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
+    // For variable products, show variation stock if selected, otherwise show parent stock
+    return activeVariation.value?.stockStatus || (product.value as VariableProduct)?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
   }
   return (product.value as SimpleProduct | VariableProduct)?.stockStatus || StockStatusEnum.OUT_OF_STOCK;
 });
