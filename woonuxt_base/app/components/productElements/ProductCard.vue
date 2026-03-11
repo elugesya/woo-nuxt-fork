@@ -48,18 +48,6 @@ const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
 const hoverImage = computed<string | undefined>(() => {
   const gallery = props.node?.galleryImages?.nodes;
 
-  // Debug: log gallery data for similar products
-  if (import.meta.client && props.index >= 0 && props.index < 5) {
-    console.log(`[ProductCard ${props.index}] ${props.node.name}:`, {
-      uniqueId: uniqueId.value,
-      databaseId: props.node.databaseId,
-      galleryImagesCount: gallery?.length || 0,
-      galleryImages: gallery?.map(g => ({ sourceUrl: g.sourceUrl, altText: g.altText })) || [],
-      hoverImage: gallery?.[1]?.sourceUrl,
-      mainImage: mainImage.value
-    });
-  }
-
   if (!gallery || gallery.length < 2) return undefined;
 
   const hoverImg = gallery[1]?.sourceUrl;
