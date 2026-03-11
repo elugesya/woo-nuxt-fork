@@ -123,9 +123,8 @@ const config = useRuntimeConfig();
 
             <Button
               as-child
-              variant="outline"
               size="lg"
-              class="border-white/30 text-white hover:bg-white/10 px-8 py-6 text-lg rounded-xl"
+              class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:border-white/50 px-8 py-6 text-lg font-semibold rounded-xl shadow-lg transition-all hover:scale-105"
             >
               <NuxtLink :to="secondaryCta.href">
                 {{ secondaryCta.text }}
