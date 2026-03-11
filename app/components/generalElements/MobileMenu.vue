@@ -64,9 +64,9 @@ const handleNavClick = (path: string) => {
         :class="cn(
           'absolute top-4 right-4 p-2 rounded-full',
           'bg-white/20 hover:bg-white/30 backdrop-blur-sm',
-          'transition-colors'
+          'transition-colors cursor-pointer z-50'
         )"
-        @click="toggleMobileMenu(false)"
+        @click.prevent.stop="toggleMobileMenu(false)"
         aria-label="Menüyü kapat"
       >
         <X class="w-5 h-5" />
