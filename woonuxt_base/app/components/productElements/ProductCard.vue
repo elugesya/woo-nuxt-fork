@@ -102,10 +102,30 @@ const salePrice = computed(() => {
   const sale = parseTurkishPrice(props.node?.salePrice);
   return sale > 0 ? sale : undefined;
 });
+
 const savePercentage = computed(() => {
   if (!isOnSale.value || !salePrice.value || regularPrice.value <= 0) return 0;
   return Math.round(((regularPrice.value - salePrice.value) / regularPrice.value) * 100);
 });
+
+// Debug: Log price data for first few products
+if (import.meta.client && props.index >= 0 && props.index < 5) {
+  watchEffect(() => {
+    console.log(`[ProductCard ${props.index}] ${props.node?.name}:`, {
+      databaseId: props.node?.databaseId,
+      rawPrice: (props.node as any)?.rawPrice,
+      rawRegularPrice: (props.node as any)?.rawRegularPrice,
+      rawSalePrice: (props.node as any)?.rawSalePrice,
+      regularPrice: props.node?.regularPrice,
+      salePrice: props.node?.salePrice,
+      price: props.node?.price,
+      onSale: isOnSale.value,
+      calculatedRegularPrice: regularPrice.value,
+      calculatedSalePrice: salePrice.value,
+      savePercentage: savePercentage.value,
+    });
+  });
+}
 
 // Cart & Wishlist
 const { addToCart } = useCart();
