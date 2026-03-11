@@ -3,6 +3,7 @@
  * 🌊 Cart - Marine Themed
  *
  * Slide-out cart with ocean-inspired styling.
+ * Uses ShadCN Sheet component for proper reactivity.
  */
 import { cn } from '@/lib/utils';
 import { X, ShoppingCart, Anchor, Waves, Trash2, ArrowRight } from 'lucide-vue-next';
@@ -12,23 +13,38 @@ const { cart, isUpdatingCart, isShowingCart } = useCart();
 </script>
 
 <template>
-  <!-- Cart Overlay -->
-  <Transition name="fade">
-    <div
-      v-if="isShowingCart"
-      class="fixed inset-0 bg-primary/30 backdrop-blur-sm z-40"
-      @click="isShowingCart = false"
-    />
-  </Transition>
-
-  <!-- Cart Panel -->
-  <Transition name="slide-from-right">
-    <div
-      v-if="isShowingCart"
-      class="fixed top-0 right-0 bottom-0 z-50 w-full max-w-md bg-white shadow-2xl flex flex-col"
-    >
+  <!-- Cart Panel using ShadCN Sheet for proper reactivity -->
+  <Sheet :open="isShowingCart" @update:open="isShowingCart = $event">
+    <SheetContent side="right" class="w-full sm:w-11/12 max-w-md p-0 flex flex-col">
       <!-- Header -->
       <div class="relative bg-gradient-ocean text-white px-6 py-4">
+        <!-- Wave decoration -->
+        <div class="absolute bottom-0 left-0 right-0 h-4 overflow-hidden">
+          <svg viewBox="0 0 1200 40" preserveAspectRatio="none" class="w-full h-full text-white/20">
+            <path fill="currentColor" d="M0,20 Q300,40 600,20 T1200,20 L1200,40 L0,40 Z" />
+          </svg>
+        </div>
+
+        <div class="flex items-center justify-between relative z-10">
+          <div class="flex items-center gap-3">
+            <ShoppingCart class="w-5 h-5" />
+            <h2 class="text-lg font-semibold">
+              Sepetim
+              <span v-if="cart?.contents?.productCount" class="text-white/70 font-normal">
+                ({{ cart?.contents?.productCount }} ürün)
+              </span>
+            </h2>
+          </div>
+          <button
+            type="button"
+            class="p-2 hover:bg-white/10 rounded-full transition-colors"
+            @click="isShowingCart = false"
+            aria-label="Kapat"
+          >
+            <X class="w-5 h-5" />
+          </button>
+        </div>
+      </div>
         <!-- Wave decoration -->
         <div class="absolute bottom-0 left-0 right-0 h-4 overflow-hidden">
           <svg viewBox="0 0 1200 40" preserveAspectRatio="none" class="w-full h-full text-white/20">

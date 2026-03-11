@@ -8,14 +8,32 @@ const { node } = defineProps({
 
 const { storeSettings } = useAppConfig()
 
+// Parse Turkish price format (e.g., "1.299,00" or "1299,00" -> 1299.00)
+const parseTurkishPrice = (priceStr: string | undefined | null | number): number => {
+  if (!priceStr) return 0
+  if (typeof priceStr === 'number') return priceStr
+  const normalized = priceStr.replace(/\./g, '').replace(',', '.')
+  return parseFloat(normalized)
+}
+
 const salePercentage = computed((): string => {
-  if (!node?.rawSalePrice || !node?.rawRegularPrice) return ''
-  const salePrice = parseFloat(node?.rawSalePrice)
-  const regularPrice = parseFloat(node?.rawRegularPrice)
-  return Math.round(((salePrice - regularPrice) / regularPrice) * 100) + ` %`
+  // Try raw prices first
+  let salePrice = node?.rawSalePrice ? parseFloat(node.rawSalePrice) : 0
+  let regularPrice = node?.rawRegularPrice ? parseFloat(node.rawRegularPrice) : 0
+
+  // Fall back to parsing string prices
+  if (!salePrice) salePrice = parseTurkishPrice(node?.salePrice)
+  if (!regularPrice) regularPrice = parseTurkishPrice(node?.regularPrice || node?.price)
+
+  if (!salePrice || !regularPrice || regularPrice <= 0) return ''
+
+  return Math.round(((regularPrice - salePrice) / regularPrice) * 100) + ` %`
 })
 
-const showSaleBadge = computed(() => node.rawSalePrice && storeSettings.saleBadge !== 'hidden')
+const showSaleBadge = computed(() => {
+  const hasSalePrice = node?.rawSalePrice || node?.salePrice
+  return hasSalePrice && storeSettings.saleBadge !== 'hidden'
+})
 
 const textToDisplay = computed(() => {
   if (storeSettings?.saleBadge === 'percent') return salePercentage.value

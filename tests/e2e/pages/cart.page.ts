@@ -42,18 +42,18 @@ export class CartPage {
   constructor(page: Page) {
     this.page = page;
 
-    // Cart Panel - matches the actual Cart.vue component structure
-    // The cart panel is a fixed div on the right side
-    this.cartPanel = page.locator('div.fixed.top-0.right-0, div[class*="fixed"][class*="right-0"], [class*="z-50"]').filter({
-      has: page.locator('text=/Sepetim|Cart/i')
-    }).first();
-    this.cartHeader = this.cartPanel.locator('div.bg-gradient-ocean, header, [class*="header"]').first();
-    this.cartTitle = this.cartPanel.locator('h2:has-text("Sepetim"), h2:has-text("Cart"), text=/sepet|cart/i').first();
-    this.closeButton = this.cartPanel.locator('button[aria-label="Kapat"], button[aria-label*="Close"], button:has(svg)').first();
+    // Cart Panel - look for any visible div containing "Sepetim" h2
+    // The cart panel is rendered with v-if="isShowingCart" so it appears when cart is open
+    this.cartPanel = page.locator('div:has(h2:has-text("Sepetim")), div:has(h2:has-text("Cart"))').first();
+    this.cartHeader = this.cartPanel.locator('div.bg-gradient-ocean, .bg-gradient-ocean, header, [class*="header"], .bg-gradient').first();
+    this.cartTitle = this.cartPanel.locator('h2').filter({ hasText: /Sepetim|Cart|My Cart/i }).first();
+    this.closeButton = this.cartPanel.locator('button[aria-label="Kapat"], button[aria-label*="Close"], button[aria-label*="close" i], button:has([class*="X"])').first();
 
-    // Cart Items - items are in an <ul> with <li> elements
-    this.cartItems = this.cartPanel.locator('ul > li, [class*="CartCard"], [class*="cart-item"]');
-    this.emptyCartMessage = page.locator('text=/sepet.*boş|cart.*empty|Sepetiniz boş/i');
+    // Cart Items - items are in a <ul> with CartCard components (li elements)
+    this.cartItems = this.cartPanel.locator('ul > li, [class*="CartCard"], [class*="cart-item"], li').filter({
+      has: page.locator('a[href*="/urun/"], a[href*="/product/"], img, [class*="product"]')
+    });
+    this.emptyCartMessage = page.locator('text=/sepet.*boş|cart.*empty|Sepetiniz Boş|Henüz ürün/i');
 
     // Cart Item Actions
     this.cartItemRemove = this.cartItems.locator('button[aria-label*="sil"], button[aria-label*="remove"], button[aria-label*="Kaldir"], button:has(svg)').first();
@@ -61,12 +61,13 @@ export class CartPage {
     this.cartItemIncrease = this.cartItems.locator('button:has-text("+")').first();
     this.cartItemDecrease = this.cartItems.locator('button:has-text("-")').first();
 
-    // Summary - matches actual implementation
-    this.subtotal = this.cartPanel.locator('text=/Ara Toplam|Subtotal/i').locator('..').locator('span').last();
+    // Summary - matches actual Cart.vue implementation
+    // Subtotal: "Ara Toplam" with span containing v-html="cart.subtotal"
+    this.subtotal = this.cartPanel.locator('.flex.items-center.justify-between').filter({ hasText: /Ara Toplam|Subtotal/i }).locator('span').last();
     this.shippingNotice = this.cartPanel.locator('text=/ücretsiz kargo|free shipping|500₺/i');
-    this.total = this.cartPanel.locator('text=/Toplam|Total/i').filter({ hasText: /₺|TL|\$/ }).first();
-    this.checkoutButton = this.cartPanel.locator('a[href*="/odeme"], a:has-text("Ödemeye"), a:has-text("Checkout"), button:has-text("Ödeme")').first();
-    this.continueShoppingButton = this.cartPanel.locator('button:has-text("Devam"), a:has-text("ürün"), button:has-text("Alışveriş")');
+    this.total = this.cartPanel.locator('.flex.items-center.justify-between .text-xl, .font-bold.text-primary').filter({ hasText: /Toplam|Total|₺|TL|\$/i }).first();
+    this.checkoutButton = this.cartPanel.locator('a[href*="/odeme"], a[href*="/checkout"], button:has-text("Ödemeye"), button:has-text("Checkout"), button:has-text("Ödeme")').first();
+    this.continueShoppingButton = this.cartPanel.locator('button:has-text("Devam"), a:has-text("ürün"), button:has-text("Alışveriş"), button:has-text("Ürünleri Keşfet")');
 
     // Checkout Page (/odeme)
     this.checkoutForm = page.locator('form');
@@ -78,31 +79,48 @@ export class CartPage {
   }
 
   async openCart() {
-    // Click cart icon in header - matches actual implementation
-    const candidates = [
-      '[aria-label="Sepet"]',
-      '[aria-label*="Cart" i]',
-      'button:has([class*="shopping-cart"])',
-      'button:has(svg[class*="ShoppingCart"])',
-    ];
+    // First check if cart is already open
+    const cartAlreadyOpen = await this.page.locator('h2:has-text("Sepetim"), h2:has-text("Cart")').isVisible().catch(() => false);
 
-    let clicked = false;
-    for (const selector of candidates) {
-      const target = this.page.locator(selector).first();
-      if (await target.isVisible().catch(() => false)) {
-        await target.click();
-        clicked = true;
-        break;
+    if (!cartAlreadyOpen) {
+      // Click cart icon in header - matches actual implementation
+      const candidates = [
+        '[aria-label="Sepet"]',
+        '[aria-label*="Cart" i]',
+        'button:has([class*="shopping-cart"])',
+        'button:has(svg[class*="ShoppingCart"])',
+      ];
+
+      let clicked = false;
+      for (const selector of candidates) {
+        const target = this.page.locator(selector).first();
+        if (await target.isVisible().catch(() => false)) {
+          await target.click();
+          clicked = true;
+          break;
+        }
       }
+
+      if (!clicked) {
+        throw new Error('No visible cart trigger found');
+      }
+
+      // Wait for Vue reactivity and transition to complete
+      // The cart uses <Transition name="slide-from-right"> which takes 300ms
+      await this.page.waitForTimeout(500);
     }
 
-    if (!clicked) {
-      throw new Error('No visible cart trigger found');
-    }
+    // Wait for cart panel to appear - look for "Sepetim" text in a visible element
+    // The cart panel has h2 with "Sepetim" text
+    await this.page.waitForSelector('h2:has-text("Sepetim"), h2:has-text("Cart"), h2:has-text("My Cart")', {
+      state: 'visible',
+      timeout: 10000
+    });
 
-    await this.page.waitForTimeout(500);
-    // Wait for cart panel to appear - it has gradient-ocean header
-    await this.page.waitForSelector('text=/Sepetim|Cart/i, div.fixed.right-0', { timeout: 10000 });
+    // Also verify the cart panel is visible
+    await this.cartPanel.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {
+      // If cartPanel selector fails, we still have verified "Sepetim" is visible
+    });
   }
 
   async closeCart() {

@@ -145,7 +145,8 @@ const formatPrice = (price: number) => {
       'group relative flex flex-col overflow-hidden rounded-xl bg-white',
       'shadow-card hover:shadow-card-hover transition-all duration-300',
       'hover:-translate-y-1',
-      'dark:bg-gray-900 dark:border dark:border-gray-800'
+      'dark:bg-gray-900 dark:border dark:border-gray-800',
+      'max-w-[320px] mx-auto w-full'
     )"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"

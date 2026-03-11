@@ -16,6 +16,7 @@ const primaryImage = computed(() => ({
 }));
 
 const imageToShow = ref(primaryImage.value);
+const selectedImageId = ref(props.mainImage.databaseId);
 
 const galleryImages = computed(() => {
   // Add the primary image to the start of the gallery and remove duplicates
@@ -87,7 +88,14 @@ onMounted(() => {
 });
 
 const changeImage = (image: any) => {
-  if (image) imageToShow.value = image;
+  if (image) {
+    imageToShow.value = image;
+    selectedImageId.value = image.databaseId;
+  }
+};
+
+const isSelected = (image: any) => {
+  return selectedImageId.value === image.databaseId;
 };
 
 watch(
@@ -107,6 +115,7 @@ const imgWidth = 640;
   <div>
     <SaleBadge :node class="absolute text-base top-4 right-4" />
     <NuxtImg
+      :key="imageToShow.sourceUrl"
       class="rounded-xl object-contain w-full min-w-[350px]"
       :width="imgWidth"
       :height="imgWidth"
@@ -114,22 +123,31 @@ const imgWidth = 640;
       :title="imageToShow.title || node.name"
       :src="imageToShow.sourceUrl || FALLBACK_IMG"
       fetchpriority="high"
-      placeholder
-      placeholder-class="blur-xl" />
+      loading="eager"
+    />
     <div v-if="gallery.nodes.length" ref="galleryContainer" class="my-4 gallery-images">
-      <NuxtImg
+      <button
         v-for="(galleryImg, index) in visibleGalleryImages"
         :key="galleryImg.databaseId"
-        class="cursor-pointer rounded-xl"
-        :width="imgWidth"
-        :height="imgWidth"
-        :src="galleryImg.sourceUrl"
-        :alt="galleryImg.altText || node.name"
-        :title="galleryImg.title || node.name"
-        placeholder
-        placeholder-class="blur-xl"
-        :loading="index < 3 ? 'eager' : 'lazy'"
-        @click.native="changeImage(galleryImg)" />
+        type="button"
+        :class="[
+          'cursor-pointer rounded-xl transition-all duration-200 overflow-hidden p-0 border-0 bg-transparent',
+          isSelected(galleryImg) ? 'ring-2 ring-secondary ring-offset-2' : 'opacity-70 hover:opacity-100'
+        ]"
+        :style="{ width: '72px', aspectRatio: '5/6' }"
+        @click.prevent="changeImage(galleryImg)"
+        :aria-label="`Show image ${index + 1}`"
+      >
+        <NuxtImg
+          :width="imgWidth"
+          :height="imgWidth"
+          :src="galleryImg.sourceUrl"
+          :alt="galleryImg.altText || node.name"
+          :title="galleryImg.title || node.name"
+          :loading="index < 3 ? 'eager' : 'lazy'"
+          class="w-full h-full object-cover pointer-events-none"
+        />
+      </button>
       <!-- Loading indicator for remaining images -->
       <div 
         v-if="hasMoreImages" 

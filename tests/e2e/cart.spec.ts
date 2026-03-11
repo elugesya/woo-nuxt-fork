@@ -98,9 +98,9 @@ test.describe('Cart - SeaShop', () => {
       await homePage.goto();
       await page.waitForSelector('article, [class*="ProductCard"]');
 
-      // Get initial cart count
-      const cartBadge = page.locator('[class*="rounded-full"][class*="absolute"]');
-      const initialCount = await cartBadge.count() > 0 ? await cartBadge.textContent() : '0';
+      // Get initial cart count - look for badge within cart icon/button
+      const cartBadge = page.locator('button[aria-label="Sepet"] [class*="rounded-full"], button[aria-label*="Cart" i] [class*="rounded-full"], [class*="cart"] [class*="rounded-full"][class*="absolute"]').first();
+      const initialCount = await cartBadge.isVisible().catch(() => false) ? await cartBadge.textContent() : '0';
 
       // Add product to cart
       await homePage.clickProductByIndex(0);
@@ -109,7 +109,7 @@ test.describe('Cart - SeaShop', () => {
       await page.waitForTimeout(1500);
 
       // Check cart badge updated
-      const newCount = await cartBadge.count() > 0 ? await cartBadge.textContent() : '0';
+      const newCount = await cartBadge.isVisible().catch(() => false) ? await cartBadge.textContent() : '0';
 
       expect(parseInt(newCount || '0')).toBeGreaterThanOrEqual(parseInt(initialCount || '0'));
     });
@@ -432,7 +432,7 @@ test.describe('Checkout - SeaShop', () => {
         await submitButton.click();
         await page.waitForTimeout(500);
 
-        const validationErrors = page.locator('[class*="error"], [class*="invalid"], text=/gerekli|required/i');
+        const validationErrors = page.locator('[class*="error"], [class*="invalid"], :has-text("gerekli"), :has-text("required")');
         const errorCount = await validationErrors.count();
 
         expect(errorCount).toBeGreaterThan(0);

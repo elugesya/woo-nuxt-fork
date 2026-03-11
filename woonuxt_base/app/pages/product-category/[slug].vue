@@ -30,10 +30,10 @@ useHead({
 </script>
 
 <template>
-  <div class="container flex items-start gap-16" v-if="productsInCategory.length">
-    <Filters v-if="storeSettings.showFilters" :hide-categories="true" />
+  <div class="container-ocean flex items-start gap-8 lg:gap-16" v-if="productsInCategory.length">
+    <Filters v-if="storeSettings.showFilters" :hide-categories="true" class="hidden md:block" />
 
-    <div class="w-full">
+    <div class="flex-1 w-full min-w-0">
       <div class="flex items-center justify-between w-full gap-4 mt-8 md:gap-8">
         <ProductResultCount />
         <OrderByDropdown class="hidden md:inline-flex" v-if="storeSettings.showOrderByDropdown" />

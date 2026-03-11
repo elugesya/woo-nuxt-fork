@@ -26,29 +26,33 @@ export default defineNuxtPlugin(async (nuxtApp) => {
       useGqlError((err: any) => {
         const serverErrors = ['The iss do not match with this server', 'Invalid session token'];
         if (serverErrors.includes(err?.gqlErrors?.[0]?.message)) {
+          console.warn('Session error - clearing auth but not reloading page');
           clearAllCookies();
           clearAllLocalStorage();
-          window.location.reload();
+          // window.location.reload(); // Disabled to prevent infinite reload loops during development
         }
       });
 
       if (!success) {
-        clearAllCookies();
-        clearAllLocalStorage();
+        // Don't reload the page on cart refresh failure - this can cause infinite loops
+        // during development when CORS blocks GraphQL requests
+        console.warn('Cart refresh failed - continuing without cart initialization');
+        // clearAllCookies();
+        // clearAllLocalStorage();
 
-        // Add a new cookie to prevent infinite reloads
-        const reloadCount = useCookie('reloadCount');
-        if (!reloadCount.value) {
-          reloadCount.value = '1';
-        } else {
-          return;
-        }
+        // // Add a new cookie to prevent infinite reloads
+        // const reloadCount = useCookie('reloadCount');
+        // if (!reloadCount.value) {
+        //   reloadCount.value = '1';
+        // } else {
+        //   return;
+        // }
 
-        // Log out the user
-        const { logoutUser } = useAuth();
-        await logoutUser();
+        // // Log out the user
+        // const { logoutUser } = useAuth();
+        // await logoutUser();
 
-        if (!reloadCount.value) window.location.reload();
+        // if (!reloadCount.value) window.location.reload();
       }
     }
 

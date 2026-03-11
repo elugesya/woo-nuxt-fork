@@ -10,7 +10,7 @@ const { isShowingMobileMenu, toggleMobileMenu, addBodyClass, removeBodyClass } =
 const runtimeConfig = useRuntimeConfig();
 import AppHeader from './components/generalElements/AppHeader.vue';
 import AppFooter from './components/generalElements/AppFooter.vue';
-import Cart from './components/shopElements/Cart.vue';
+// Cart is auto-imported from base theme
 import MobileMenu from './components/generalElements/MobileMenu.vue';
 // FloatingWhatsAppButton is auto-imported from base theme
 
