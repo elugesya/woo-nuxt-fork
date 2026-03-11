@@ -34,76 +34,6 @@ const isSimpleProduct = computed<boolean>(() => product.value?.type === ProductT
 const isVariableProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.VARIABLE);
 const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
 
-// Pre-select variation based on URL query params or default attributes
-const queryParams = route.query;
-
-const findVariationById = (value?: string | number | null): Variation | null => {
-  if (!value || !product.value?.variations?.nodes?.length) return null;
-  const parsed = typeof value === 'string' ? Number.parseInt(value, 10) : value;
-  if (!parsed || Number.isNaN(parsed)) return null;
-  return product.value?.variations?.nodes?.find((node: Variation) => node.databaseId === parsed) ?? null;
-};
-
-const buildQuerySelections = (): VariationAttribute[] => {
-  if (!product.value?.attributes?.nodes?.length) return [];
-
-  const selections: VariationAttribute[] = [];
-  for (const attr of product.value.attributes.nodes) {
-    const key = toSelectionName(attr?.name);
-    if (!key) continue;
-
-    const rawQueryValue = queryParams[key];
-    if (!rawQueryValue) continue;
-
-    const value = Array.isArray(rawQueryValue) ? rawQueryValue[0] : rawQueryValue;
-    const normalizedValue = normalizeMatchValue(value);
-    if (!normalizedValue) continue;
-
-    const isValidValue =
-      attr.scope === 'LOCAL'
-        ? (attr.options ?? []).some((option: string | null) => normalizeMatchValue(option ?? '') === normalizedValue)
-        : 'terms' in attr && (attr.terms?.nodes ?? []).some((term) => normalizeMatchValue(term?.slug ?? '') === normalizedValue);
-
-    if (!isValidValue) continue;
-
-    selections.push({ name: key, value: String(value) });
-  }
-
-  return selections;
-};
-
-const queryVariationId = queryParams.variationId ?? queryParams.variation;
-const variationFromQuery = findVariationById(Array.isArray(queryVariationId) ? queryVariationId[0] : queryVariationId);
-
-if (variationFromQuery?.attributes?.nodes?.length) {
-  variation.value = variationFromQuery.attributes.nodes.map((attr: VariationAttribute) => ({
-    name: attr.name || '',
-    value: attr.value || '',
-  }));
-  activeVariation.value = variationFromQuery;
-} else {
-  const initialSelections = buildQuerySelections();
-  if (initialSelections.length > 0) {
-    const matched = findMatchingVariation(initialSelections);
-    if (matched?.attributes?.nodes?.length) {
-      variation.value = matched.attributes.nodes.map((attr: VariationAttribute) => ({
-        name: attr.name || '',
-        value: attr.value || '',
-      }));
-      activeVariation.value = matched;
-    } else {
-      variation.value = initialSelections;
-    }
-  }
-}
-
-const defaultAttributes = computed<{ nodes: VariationAttribute[] } | null>(() => {
-  if (variation.value.length > 0) {
-    return { nodes: variation.value };
-  }
-  return product.value?.defaultAttributes ? { nodes: product.value.defaultAttributes.nodes ?? [] } : null;
-});
-
 const displayProduct = computed(() => activeVariation.value || product.value);
 const priceTarget = computed(() => activeVariation.value || product.value);
 const productImage = computed(() => product.value?.image || null);
@@ -245,6 +175,76 @@ const toSelectionName = (name?: string | null): string => {
 const normalizeMatchValue = (value?: string | null): string => {
   return (value ?? '').toString().trim().toLowerCase().replace(/[\s-_]+/g, '');
 };
+
+// Pre-select variation based on URL query params or default attributes
+const queryParams = route.query;
+
+const findVariationById = (value?: string | number | null): Variation | null => {
+  if (!value || !product.value?.variations?.nodes?.length) return null;
+  const parsed = typeof value === 'string' ? Number.parseInt(value, 10) : value;
+  if (!parsed || Number.isNaN(parsed)) return null;
+  return product.value?.variations?.nodes?.find((node: Variation) => node.databaseId === parsed) ?? null;
+};
+
+const buildQuerySelections = (): VariationAttribute[] => {
+  if (!product.value?.attributes?.nodes?.length) return [];
+
+  const selections: VariationAttribute[] = [];
+  for (const attr of product.value.attributes.nodes) {
+    const key = toSelectionName(attr?.name);
+    if (!key) continue;
+
+    const rawQueryValue = queryParams[key];
+    if (!rawQueryValue) continue;
+
+    const value = Array.isArray(rawQueryValue) ? rawQueryValue[0] : rawQueryValue;
+    const normalizedValue = normalizeMatchValue(value);
+    if (!normalizedValue) continue;
+
+    const isValidValue =
+      attr.scope === 'LOCAL'
+        ? (attr.options ?? []).some((option: string | null) => normalizeMatchValue(option ?? '') === normalizedValue)
+        : 'terms' in attr && (attr.terms?.nodes ?? []).some((term) => normalizeMatchValue(term?.slug ?? '') === normalizedValue);
+
+    if (!isValidValue) continue;
+
+    selections.push({ name: key, value: String(value) });
+  }
+
+  return selections;
+};
+
+const queryVariationId = queryParams.variationId ?? queryParams.variation;
+const variationFromQuery = findVariationById(Array.isArray(queryVariationId) ? queryVariationId[0] : queryVariationId);
+
+if (variationFromQuery?.attributes?.nodes?.length) {
+  variation.value = variationFromQuery.attributes.nodes.map((attr: VariationAttribute) => ({
+    name: attr.name || '',
+    value: attr.value || '',
+  }));
+  activeVariation.value = variationFromQuery;
+} else {
+  const initialSelections = buildQuerySelections();
+  if (initialSelections.length > 0) {
+    const matched = findMatchingVariation(initialSelections);
+    if (matched?.attributes?.nodes?.length) {
+      variation.value = matched.attributes.nodes.map((attr: VariationAttribute) => ({
+        name: attr.name || '',
+        value: attr.value || '',
+      }));
+      activeVariation.value = matched;
+    } else {
+      variation.value = initialSelections;
+    }
+  }
+}
+
+const defaultAttributes = computed<{ nodes: VariationAttribute[] } | null>(() => {
+  if (variation.value.length > 0) {
+    return { nodes: variation.value };
+  }
+  return product.value?.defaultAttributes ? { nodes: product.value.defaultAttributes.nodes ?? [] } : null;
+});
 
 const stockStatus = computed(() => {
   if (isVariableProduct.value) {
