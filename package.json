@@ -6,6 +6,7 @@
     "pnpm": "10.18.3"
   },
   "scripts": {
+    "postinstall": "node scripts/patch-reka-ui.js",
     "build": "nuxt build",
     "dev": "nuxt dev --host 0.0.0.0",
     "dev:ssl": "NODE_TLS_REJECT_UNAUTHORIZED=0 nuxt dev --https --ssl-cert localhost.pem --ssl-key localhost-key.pem",

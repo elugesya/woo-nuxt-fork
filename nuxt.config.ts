@@ -192,12 +192,48 @@ export default defineNuxtConfig({
   },
 
   vite: {
-    resolve: {
-      alias: {
-        // Fix reka-ui importing toValue from @vueuse/core instead of vue
-        // Vue 3.3+ has toValue built-in, so we redirect the import
-        '@vueuse/core/toValue': 'vue/toValue',
+    plugins: [
+      {
+        name: 'fix-vueuse-tovalue-import',
+        enforce: 'pre', // Run before other transforms
+        transform(code, id) {
+          // Fix reka-ui and any package importing toValue from @vueuse/core
+          // Matches: import { toValue as alias, ... } from "@vueuse/core"
+          // Or: import { toValue, ... } from '@vueuse/core'
+          if (code.includes('@vueuse/core') && code.includes('toValue')) {
+            // Pattern to match imports containing toValue from @vueuse/core
+            const pattern = /import\s*{\s*([^}]+toValue[^}]*)}\s*from\s*['"]@vueuse\/core['"]/g;
+            if (pattern.test(code)) {
+              return code.replace(pattern, (match, importsStr) => {
+                // Parse all imports
+                const imports = importsStr.split(',').map(i => i.trim());
+                const toValueImports = [];
+                const otherImports = [];
+
+                imports.forEach(imp => {
+                  if (imp.includes('toValue')) {
+                    // Remove the "as alias" part if present
+                    const baseName = imp.split(/\s+as\s+/)[0].trim();
+                    toValueImports.push(baseName);
+                  } else {
+                    otherImports.push(imp);
+                  }
+                });
+
+                let result = '';
+                if (toValueImports.length > 0) {
+                  result += `import { ${toValueImports.join(', ')} } from 'vue';\n`;
+                }
+                if (otherImports.length > 0) {
+                  result += `import { ${otherImports.join(', ')} } from '@vueuse/core';`;
+                }
+                return result;
+              });
+            }
+          }
+          return null;
+        },
       },
-    },
+    ],
   },
 });
