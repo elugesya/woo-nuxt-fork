@@ -11,11 +11,14 @@ interface Props {
   class?: HTMLAttributes["class"]
   as?: string
   asChild?: boolean
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
   as: "button",
   asChild: false,
+  type: "button",
 })
 </script>
 
@@ -23,6 +26,8 @@ const props = withDefaults(defineProps<Props>(), {
   <Primitive
     :as="as"
     :as-child="asChild"
+    :type="type"
+    :disabled="disabled"
     :class="cn(buttonVariants({ variant, size }), props.class)"
   >
     <slot />
