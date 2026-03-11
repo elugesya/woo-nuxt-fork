@@ -44,7 +44,7 @@ const imagetoDisplay = computed<string>(() => {
   return mainImage.value;
 });
 const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
-const hoverImage = computed<string | undefined>(() => props.node?.galleryImages?.nodes?.[0]?.sourceUrl);
+const hoverImage = computed<string | undefined>(() => props.node?.galleryImages?.nodes?.[1]?.sourceUrl);
 
 // Derived data
 const isOnSale = computed(() => props.node?.onSale);
