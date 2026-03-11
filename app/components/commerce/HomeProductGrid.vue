@@ -17,6 +17,12 @@ const props = withDefaults(defineProps<HomeProductGridProps>(), {
   columns: 4,
 });
 
+// Filter out out-of-stock products from promotional areas
+const inStockProducts = computed(() => {
+  if (!props.products) return [];
+  return props.products.filter((product: Product) => product?.stockStatus === 'IN_STOCK');
+});
+
 // Column classes for responsive grid
 const columnClasses: Record<number, string> = {
   2: 'grid-cols-1 sm:grid-cols-2',
@@ -35,7 +41,7 @@ const columnClasses: Record<number, string> = {
     )"
   >
     <ProductCard
-      v-for="(product, index) in products"
+      v-for="(product, index) in inStockProducts"
       :key="product.databaseId || product.id || product.slug || `product-${index}`"
       :node="product"
       :index="index"
