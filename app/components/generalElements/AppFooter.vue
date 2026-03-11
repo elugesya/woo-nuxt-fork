@@ -14,6 +14,14 @@ const runtimeConfig = useRuntimeConfig();
 const email = ref('');
 const isSubscribing = ref(false);
 
+// Get contact info from runtime config (.env)
+const orgPhone = runtimeConfig.public.ORGANIZATION_PHONE || '+90 533 6045002';
+const orgEmail = runtimeConfig.public.ORGANIZATION_CONTACT_EMAIL || 'info@ntmc.com.tr';
+const orgAddress = runtimeConfig.public.ORGANIZATION_ADDRESS || 'İstanbul, Türkiye';
+const orgFacebook = runtimeConfig.public.ORGANIZATION_SOCIAL_FACEBOOK || '#';
+const orgTwitter = runtimeConfig.public.ORGANIZATION_SOCIAL_TWITTER || '#';
+const orgInstagram = runtimeConfig.public.ORGANIZATION_SOCIAL_INSTAGRAM || '#';
+
 const handleSubscribe = async () => {
   if (!email.value) return;
   isSubscribing.value = true;
@@ -130,17 +138,17 @@ const footerLinks = {
           </p>
           <!-- Contact Info -->
           <div class="space-y-3 text-sm">
-            <a href="tel:+908501234567" class="flex items-center gap-2 text-white/70 hover:text-secondary transition-colors">
+            <a :href="`tel:${orgPhone.replace(/\s/g, '')}`" class="flex items-center gap-2 text-white/70 hover:text-secondary transition-colors">
               <Phone class="w-4 h-4" />
-              0850 123 45 67
+              {{ orgPhone }}
             </a>
-            <a href="mailto:info@netamarine.com" class="flex items-center gap-2 text-white/70 hover:text-secondary transition-colors">
+            <a :href="`mailto:${orgEmail}`" class="flex items-center gap-2 text-white/70 hover:text-secondary transition-colors">
               <Mail class="w-4 h-4" />
-              info@netamarine.com
+              {{ orgEmail }}
             </a>
             <div class="flex items-center gap-2 text-white/70">
               <MapPin class="w-4 h-4" />
-              İstanbul, Türkiye
+              {{ orgAddress }}
             </div>
           </div>
         </div>
@@ -179,14 +187,14 @@ const footerLinks = {
 
           <!-- Social Icons -->
           <div class="flex items-center gap-4">
-            <a href="#" class="text-white/50 hover:text-secondary transition-colors" aria-label="Facebook">
+            <a :href="orgFacebook" target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-secondary transition-colors" aria-label="Facebook">
               <Facebook class="w-5 h-5" />
             </a>
-            <a href="#" class="text-white/50 hover:text-secondary transition-colors" aria-label="Instagram">
-              <Instagram class="w-5 h-5" />
-            </a>
-            <a href="#" class="text-white/50 hover:text-secondary transition-colors" aria-label="Twitter">
+            <a :href="orgTwitter" target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-secondary transition-colors" aria-label="Twitter">
               <Twitter class="w-5 h-5" />
+            </a>
+            <a :href="orgInstagram" target="_blank" rel="noopener noreferrer" class="text-white/50 hover:text-secondary transition-colors" aria-label="Instagram">
+              <Instagram class="w-5 h-5" />
             </a>
             <a href="#" class="text-white/50 hover:text-secondary transition-colors" aria-label="Youtube">
               <Youtube class="w-5 h-5" />

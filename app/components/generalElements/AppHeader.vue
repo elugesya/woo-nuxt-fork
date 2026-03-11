@@ -13,7 +13,11 @@ const { isShowingCart, cart } = useCart();
 const { wishlistLink, navigateToLogin } = useAuth();
 const { toggleMobileMenu } = useHelpers();
 const route = useRoute();
+const runtimeConfig = useRuntimeConfig();
 const isScrolled = ref(false);
+
+// Get phone from runtime config (.env)
+const orgPhone = runtimeConfig.public.ORGANIZATION_PHONE || '+90 533 6045002';
 
 // Track scroll for header background change
 onMounted(() => {
@@ -54,8 +58,8 @@ const isActive = (path: string) => route.path === path;
           </div>
         </div>
         <div class="flex items-center gap-4">
-          <a href="tel:+908501234567" class="hover:text-secondary transition-colors">
-            📞 0850 123 45 67
+          <a :href="`tel:${orgPhone.replace(/\s/g, '')}`" class="hover:text-secondary transition-colors">
+            📞 {{ orgPhone }}
           </a>
         </div>
       </div>

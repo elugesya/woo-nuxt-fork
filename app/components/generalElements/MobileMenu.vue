@@ -10,6 +10,11 @@ import { Anchor, Waves, X, Home, Package, Grid, BookOpen, Mail, Heart, User, Che
 const { toggleMobileMenu, wooNuxtVersionInfo } = useHelpers();
 const { wishlistLink, navigateToLogin } = useAuth();
 const route = useRoute();
+const runtimeConfig = useRuntimeConfig();
+
+// Get contact info from runtime config (.env)
+const orgPhone = runtimeConfig.public.ORGANIZATION_PHONE || '+90 533 6045002';
+const orgEmail = runtimeConfig.public.ORGANIZATION_CONTACT_EMAIL || 'info@ntmc.com.tr';
 
 const navItems = [
   { to: '/', label: 'Ana Sayfa', icon: Home },
@@ -147,8 +152,8 @@ const handleNavClick = (path: string) => {
     <div class="border-t border-border p-4">
       <!-- Contact Info -->
       <div class="text-center text-sm text-muted-foreground mb-4">
-        <p class="mb-1">📞 0850 123 45 67</p>
-        <p>📧 info@netamarine.com</p>
+        <p class="mb-1">📞 {{ orgPhone }}</p>
+        <p>📧 {{ orgEmail }}</p>
       </div>
 
       <!-- Version Info -->
