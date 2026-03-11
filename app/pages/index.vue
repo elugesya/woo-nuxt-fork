@@ -45,6 +45,46 @@ useSeoMeta({
   title: 'Deniz Tutkusu - Premium Deniz Malzemeleri',
   description: 'Deniz sporları ve eğlence için en kaliteli ürünler. Güvenli alışveriş, hızlı kargo.',
 });
+
+// Structured Data: CollectionPage for featured products + WebSite schema
+const { frontEndUrl } = useHelpers();
+const runtimeConfig = useRuntimeConfig();
+const siteName = runtimeConfig.public.SITE_NAME || 'Deniz Tutkusu';
+
+// Featured products for CollectionPage schema
+const featuredProductsJsonLd = computed(() => {
+  const items = bestsellers.value.slice(0, 8).map((p: any, idx: number) => ({
+    '@type': 'ListItem',
+    position: idx + 1,
+    url: `${frontEndUrl}/urun/${p.slug}`,
+    name: p.name,
+    image: p.image?.sourceUrl,
+    price: p.rawPrice || p.price,
+  }));
+  return JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      name: 'Deniz Tutkusu - Ana Sayfa',
+      description: 'Deniz sporları ve eğlence için en kaliteli ürünler. Güvenli alışveriş, hızlı kargo.',
+      url: frontEndUrl,
+      mainEntity: {
+        '@type': 'ItemList',
+        name: 'Çok Satanlar',
+        itemListOrder: 'http://schema.org/ItemListOrderDescending',
+        itemListElement: items,
+      },
+    },
+    null,
+    2,
+  );
+});
+
+useHead(() => ({
+  script: [
+    { type: 'application/ld+json', innerHTML: featuredProductsJsonLd.value },
+  ],
+}));
 </script>
 
 <template>

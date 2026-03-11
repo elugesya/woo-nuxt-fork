@@ -290,68 +290,8 @@ const productReviews = computed(() => {
   }));
 });
 
-// JSON-LD
-const { stripHtml } = useHelpers();
-const currencyCode = useRuntimeConfig().public?.CURRENCY_CODE || 'TRY';
-
-const mapAvailability = (status?: StockStatusEnum | string) => {
-  switch (status) {
-    case StockStatusEnum.IN_STOCK: return 'https://schema.org/InStock';
-    case StockStatusEnum.ON_BACKORDER: return 'https://schema.org/PreOrder';
-    default: return 'https://schema.org/OutOfStock';
-  }
-};
-
+// Primary category for display purposes (SEO handled by SEOHead component)
 const primaryCategory = computed(() => product.value?.productCategories?.nodes?.[0] || null);
-const productUrl = computed(() => `${frontEndUrl}/urun/${product.value?.slug}`);
-const categoryUrl = computed(() => (primaryCategory.value ? `${frontEndUrl}/urun-kategorisi/${primaryCategory.value.slug}` : `${frontEndUrl}/urunler`));
-
-const breadcrumbJsonLd = computed(() =>
-  JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Ana Sayfa', item: frontEndUrl },
-      { '@type': 'ListItem', position: 2, name: primaryCategory.value?.name || 'Ürünler', item: categoryUrl.value },
-      { '@type': 'ListItem', position: 3, name: product.value?.name, item: productUrl.value },
-    ],
-  }, null, 2)
-);
-
-const productJsonLd = computed(() =>
-  JSON.stringify({
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.value?.name,
-    description: stripHtml(product.value?.shortDescription || product.value?.description || ''),
-    image: [product.value?.image?.sourceUrl, ...(product.value?.galleryImages?.nodes?.map((img: any) => img.sourceUrl) || [])].filter(Boolean),
-    sku: product.value?.sku || undefined,
-    brand: { '@type': 'Brand', name: siteName || undefined },
-    offers: {
-      '@type': 'Offer',
-      url: productUrl.value,
-      priceCurrency: currencyCode,
-      price: (priceTarget.value?.salePrice || priceTarget.value?.regularPrice || '0').toString().replace(/[^0-9.]/g, ''),
-      availability: mapAvailability(stockStatus.value as any),
-    },
-    aggregateRating: product.value?.reviewCount ? {
-      '@type': 'AggregateRating',
-      ratingValue: product.value.averageRating || 0,
-      reviewCount: product.value.reviewCount,
-    } : undefined,
-  }, null, 2)
-);
-
-useHead(() => ({
-  title: `${product.value?.name} - ${siteName}`,
-  meta: [
-    { name: 'description', content: stripHtml(product.value?.shortDescription || product.value?.description || '') },
-  ],
-  script: [
-    { type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
-    { type: 'application/ld+json', innerHTML: productJsonLd.value },
-  ],
-}));
 
 // Active tab state
 const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
