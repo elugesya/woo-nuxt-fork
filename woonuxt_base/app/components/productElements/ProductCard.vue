@@ -81,7 +81,11 @@ const parseTurkishPrice = (priceStr: string | undefined | null | number): number
 };
 
 const regularPrice = computed(() => {
-  // Try rawPrice first (numeric), then regularPrice, then price
+  // Try rawRegularPrice first (numeric), then rawPrice, then regularPrice string
+  const rawRegularPrice = (props.node as any)?.rawRegularPrice;
+  if (rawRegularPrice && !isNaN(parseFloat(rawRegularPrice))) {
+    return parseFloat(rawRegularPrice);
+  }
   const rawPrice = (props.node as any)?.rawPrice;
   if (rawPrice && !isNaN(parseFloat(rawPrice))) {
     return parseFloat(rawPrice);
@@ -90,7 +94,7 @@ const regularPrice = computed(() => {
 });
 
 const salePrice = computed(() => {
-  // Try rawSalePrice first (numeric), then salePrice
+  // Try rawSalePrice first (numeric), then salePrice string
   const rawSalePrice = (props.node as any)?.rawSalePrice;
   if (rawSalePrice && !isNaN(parseFloat(rawSalePrice))) {
     return parseFloat(rawSalePrice);
