@@ -81,8 +81,8 @@ const isActive = (path: string) => route.path === path;
             <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-accent rounded-full" />
           </div>
           <div class="hidden sm:block">
-            <span class="text-xl font-bold text-primary">Sea</span>
-            <span class="text-xl font-bold text-secondary">Shop</span>
+            <span class="text-xl font-bold text-primary">Neta</span>
+            <span class="text-xl font-bold text-secondary">Marine</span>
           </div>
         </NuxtLink>
 

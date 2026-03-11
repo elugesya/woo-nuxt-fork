@@ -120,8 +120,8 @@ const footerLinks = {
           <NuxtLink to="/" class="inline-flex items-center gap-2 mb-4">
             <Anchor class="w-8 h-8 text-secondary" />
             <div>
-              <span class="text-xl font-bold">Sea</span>
-              <span class="text-xl font-bold text-secondary">Shop</span>
+              <span class="text-xl font-bold">Neta</span>
+              <span class="text-xl font-bold text-secondary">Marine</span>
             </div>
           </NuxtLink>
           <p class="text-white/70 text-sm mb-6">
@@ -134,9 +134,9 @@ const footerLinks = {
               <Phone class="w-4 h-4" />
               0850 123 45 67
             </a>
-            <a href="mailto:info@seashop.com" class="flex items-center gap-2 text-white/70 hover:text-secondary transition-colors">
+            <a href="mailto:info@netamarine.com" class="flex items-center gap-2 text-white/70 hover:text-secondary transition-colors">
               <Mail class="w-4 h-4" />
-              info@seashop.com
+              info@netamarine.com
             </a>
             <div class="flex items-center gap-2 text-white/70">
               <MapPin class="w-4 h-4" />
@@ -170,7 +170,7 @@ const footerLinks = {
         <div class="flex flex-col md:flex-row items-center justify-between gap-4">
           <!-- Copyright -->
           <div class="text-sm text-white/50 text-center md:text-left">
-            © {{ new Date().getFullYear() }} SeaShop. Tüm hakları saklıdır.
+            © {{ new Date().getFullYear() }} NetaMarine. Tüm hakları saklıdır.
             <span class="mx-2">|</span>
             <a href="https://netasolutions.com" class="hover:text-secondary">
               NetaCommerce v{{ wooNuxtVersionInfo }}

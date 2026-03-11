@@ -74,8 +74,8 @@ const handleNavClick = (path: string) => {
           <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-accent rounded-full" />
         </div>
         <div>
-          <span class="text-2xl font-bold">Sea</span>
-          <span class="text-2xl font-bold text-secondary-light">Shop</span>
+          <span class="text-2xl font-bold">Neta</span>
+          <span class="text-2xl font-bold text-secondary-light">Marine</span>
         </div>
       </div>
 
@@ -148,7 +148,7 @@ const handleNavClick = (path: string) => {
       <!-- Contact Info -->
       <div class="text-center text-sm text-muted-foreground mb-4">
         <p class="mb-1">📞 0850 123 45 67</p>
-        <p>📧 info@seashop.com</p>
+        <p>📧 info@netamarine.com</p>
       </div>
 
       <!-- Version Info -->
