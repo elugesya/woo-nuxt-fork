@@ -6,6 +6,7 @@
  * Uses existing WooNuxt composables for backend logic.
  */
 import { StockStatusEnum, ProductTypesEnum, type AddToCartInput } from '#gql/default';
+import type { Variation, VariationAttribute } from '#types/gql';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Heart, Share2, ShoppingCart, ShieldCheck, Truck, RotateCcw, ChevronRight, Anchor, Waves } from 'lucide-vue-next';
@@ -27,10 +28,81 @@ if (!data.value?.product) {
 const product = ref<Product>(data?.value?.product);
 const quantity = ref<number>(1);
 const activeVariation = ref<Variation | null>(null);
+const variation = ref<VariationAttribute[]>([]);
 const attrValues = ref();
 const isSimpleProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.SIMPLE);
 const isVariableProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.VARIABLE);
 const isExternalProduct = computed<boolean>(() => product.value?.type === ProductTypesEnum.EXTERNAL);
+
+// Pre-select variation based on URL query params or default attributes
+const queryParams = route.query;
+
+const findVariationById = (value?: string | number | null): Variation | null => {
+  if (!value || !product.value?.variations?.nodes?.length) return null;
+  const parsed = typeof value === 'string' ? Number.parseInt(value, 10) : value;
+  if (!parsed || Number.isNaN(parsed)) return null;
+  return product.value?.variations?.nodes?.find((node: Variation) => node.databaseId === parsed) ?? null;
+};
+
+const buildQuerySelections = (): VariationAttribute[] => {
+  if (!product.value?.attributes?.nodes?.length) return [];
+
+  const selections: VariationAttribute[] = [];
+  for (const attr of product.value.attributes.nodes) {
+    const key = toSelectionName(attr?.name);
+    if (!key) continue;
+
+    const rawQueryValue = queryParams[key];
+    if (!rawQueryValue) continue;
+
+    const value = Array.isArray(rawQueryValue) ? rawQueryValue[0] : rawQueryValue;
+    const normalizedValue = normalizeMatchValue(value);
+    if (!normalizedValue) continue;
+
+    const isValidValue =
+      attr.scope === 'LOCAL'
+        ? (attr.options ?? []).some((option: string | null) => normalizeMatchValue(option ?? '') === normalizedValue)
+        : 'terms' in attr && (attr.terms?.nodes ?? []).some((term) => normalizeMatchValue(term?.slug ?? '') === normalizedValue);
+
+    if (!isValidValue) continue;
+
+    selections.push({ name: key, value: String(value) });
+  }
+
+  return selections;
+};
+
+const queryVariationId = queryParams.variationId ?? queryParams.variation;
+const variationFromQuery = findVariationById(Array.isArray(queryVariationId) ? queryVariationId[0] : queryVariationId);
+
+if (variationFromQuery?.attributes?.nodes?.length) {
+  variation.value = variationFromQuery.attributes.nodes.map((attr: VariationAttribute) => ({
+    name: attr.name || '',
+    value: attr.value || '',
+  }));
+  activeVariation.value = variationFromQuery;
+} else {
+  const initialSelections = buildQuerySelections();
+  if (initialSelections.length > 0) {
+    const matched = findMatchingVariation(initialSelections);
+    if (matched?.attributes?.nodes?.length) {
+      variation.value = matched.attributes.nodes.map((attr: VariationAttribute) => ({
+        name: attr.name || '',
+        value: attr.value || '',
+      }));
+      activeVariation.value = matched;
+    } else {
+      variation.value = initialSelections;
+    }
+  }
+}
+
+const defaultAttributes = computed<{ nodes: VariationAttribute[] } | null>(() => {
+  if (variation.value.length > 0) {
+    return { nodes: variation.value };
+  }
+  return product.value?.defaultAttributes ? { nodes: product.value.defaultAttributes.nodes ?? [] } : null;
+});
 
 const displayProduct = computed(() => activeVariation.value || product.value);
 const priceTarget = computed(() => activeVariation.value || product.value);
@@ -380,7 +452,7 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
           >
             <AttributeSelections
               :attributes="product.attributes.nodes"
-              :default-attributes="product.defaultAttributes"
+              :default-attributes="defaultAttributes"
               :variations="product.variations.nodes"
               @attrs-changed="updateSelectedVariations"
             />
