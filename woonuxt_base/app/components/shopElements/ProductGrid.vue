@@ -17,7 +17,7 @@ const props = defineProps({
   <Transition name="fade" mode="out-in">
     <section v-if="!!products.length" class="relative w-full">
       <TransitionGroup name="shrink" tag="div" mode="in-out" class="product-grid" :class="gridClass">
-        <ProductCard v-for="(node, i) in productsToShow" :key="node.id || i" :node :index="i" />
+        <ProductCard v-for="(node, i) in productsToShow" :key="node.databaseId || node.id || node.slug || `product-${i}`" :node :index="i" />
       </TransitionGroup>
       <ProductPagination />
     </section>

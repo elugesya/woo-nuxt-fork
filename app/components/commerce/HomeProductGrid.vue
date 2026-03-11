@@ -36,7 +36,7 @@ const columnClasses: Record<number, string> = {
   >
     <ProductCard
       v-for="(product, index) in products"
-      :key="product.databaseId || product.id"
+      :key="product.databaseId || product.id || product.slug || `product-${index}`"
       :node="product"
       :index="index"
     />
