@@ -438,6 +438,9 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
             </div>
           </form>
 
+          <!-- WhatsApp Order Button -->
+          <WhatsAppOrderButton v-if="product" :product="product" class="mb-6" />
+
           <!-- External Product -->
           <a
             v-if="isExternalProduct && product.externalUrl"
