@@ -19,7 +19,8 @@ const props = defineProps({
 const imgWidth = 280;
 const imgHeight = Math.round(imgWidth * 1.125);
 
-// Color filter handling
+// Unique ID for keys (handles products without databaseId)
+const uniqueId = computed(() => props.node?.databaseId || props.node?.id || props.node?.slug || `product-${props.index}`);
 const filterQuery = ref(route.query?.filter as string);
 const paColor = ref(filterQuery.value?.split('pa_color[')[1]?.split(']')[0]?.split(',') || []);
 
@@ -50,6 +51,7 @@ const hoverImage = computed<string | undefined>(() => {
   // Debug: log gallery data for similar products
   if (import.meta.client && props.index >= 0 && props.index < 5) {
     console.log(`[ProductCard ${props.index}] ${props.node.name}:`, {
+      uniqueId: uniqueId.value,
       databaseId: props.node.databaseId,
       galleryImagesCount: gallery?.length || 0,
       galleryImages: gallery?.map(g => ({ sourceUrl: g.sourceUrl, altText: g.altText })) || [],
@@ -175,12 +177,12 @@ const formatPrice = (price: number) => {
   >
     <NuxtLink v-if="node.slug" :to="`/urun/${decodeURIComponent(node.slug)}`" :title="node.name" class="block">
       <!-- Product Image Container -->
-      <div :key="`product-card-${node.databaseId}-${index}`" class="relative aspect-square overflow-hidden bg-seafoam">
+      <div :key="`product-card-${uniqueId}-${index}`" class="relative aspect-square overflow-hidden bg-seafoam">
         <!-- Main Image -->
         <template v-if="imagetoDisplay && !isFallback">
           <NuxtImg
-            :id="`main-img-${node.databaseId}-${index}`"
-            :key="`main-${node.databaseId}-${index}-${imagetoDisplay}`"
+            :id="`main-img-${uniqueId}-${index}`"
+            :key="`main-${uniqueId}-${index}-${imagetoDisplay}`"
             :width="imgWidth"
             :height="imgHeight"
             :src="imagetoDisplay"
@@ -196,8 +198,8 @@ const formatPrice = (price: number) => {
           <!-- Hover Image -->
           <NuxtImg
             v-if="hoverImage"
-            :id="`hover-img-${node.databaseId}-${index}`"
-            :key="`hover-${node.databaseId}-${index}-${hoverImage}`"
+            :id="`hover-img-${uniqueId}-${index}`"
+            :key="`hover-${uniqueId}-${index}-${hoverImage}`"
             :width="imgWidth"
             :height="imgHeight"
             :src="hoverImage"
