@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue"
 import type { ButtonVariants } from "."
-import { Primitive } from "reka-ui"
+import { Primitive } from "radix-vue"
 import { cn } from '@/lib/utils'
 import { buttonVariants } from "."
 
