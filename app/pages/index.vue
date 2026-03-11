@@ -179,7 +179,7 @@ useHead(() => ({
             </div>
             <div>
               <h3 class="font-semibold text-primary dark:text-white mb-1">Ücretsiz Kargo</h3>
-              <p class="text-sm text-muted-foreground">200₺ üzeri siparişlerde</p>
+              <p class="text-sm text-muted-foreground">5000₺ üzeri siparişlerde</p>
             </div>
           </div>
 

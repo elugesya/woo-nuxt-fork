@@ -144,7 +144,7 @@ const handleNavClick = (path: string) => {
       <!-- Promo Banner -->
       <div class="mx-4 p-4 bg-gradient-ocean rounded-xl text-white">
         <p class="font-semibold mb-1">Ücretsiz Kargo!</p>
-        <p class="text-sm text-white/80">500₺ üzeri siparişlerde</p>
+        <p class="text-sm text-white/80">5000₺ üzeri siparişlerde</p>
       </div>
     </nav>
 

@@ -54,7 +54,7 @@ const isActive = (path: string) => route.path === path;
         <div class="flex items-center gap-4">
           <div class="flex items-center gap-2">
             <Waves class="w-4 h-4" />
-            <span>Ücretsiz Kargo - 500₺ Üzeri</span>
+            <span>Ücretsiz Kargo - 5000₺ Üzeri</span>
           </div>
         </div>
         <div class="flex items-center gap-4">
