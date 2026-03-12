@@ -79,14 +79,14 @@ const isActive = (path: string) => route.path === path;
         </button>
 
         <!-- Logo -->
-        <NuxtLink to="/" class="flex items-center gap-2 group">
+        <NuxtLink to="/" class="flex items-center gap-1.5 sm:gap-2 group">
           <div class="relative">
-            <Anchor class="w-8 h-8 text-secondary group-hover:rotate-12 transition-transform duration-300" />
-            <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-accent rounded-full" />
+            <Anchor class="w-7 h-7 sm:w-8 sm:h-8 text-secondary group-hover:rotate-12 transition-transform duration-300" />
+            <div class="absolute -bottom-1 -right-1 w-2.5 h-2.5 sm:w-3 sm:h-3 bg-accent rounded-full" />
           </div>
-          <div class="hidden sm:block">
-            <span class="text-xl font-bold text-primary">Neta</span>
-            <span class="text-xl font-bold text-secondary">Marine</span>
+          <div class="flex flex-col">
+            <span class="text-base sm:text-xl font-bold text-primary leading-none">Neta</span>
+            <span class="text-base sm:text-xl font-bold text-secondary leading-none">Marine</span>
           </div>
         </NuxtLink>
 
