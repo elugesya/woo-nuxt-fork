@@ -310,10 +310,10 @@ const activeTab = ref<'description' | 'reviews' | 'specs'>('description');
       <!-- 🖼️ Product Hero Section -->
       <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 py-6">
         <!-- Product Gallery -->
-        <div class="relative">
+        <div class="relative w-full overflow-hidden">
           <ProductImageGallery
             v-if="product.image"
-            class="relative flex-1"
+            class="w-full"
             :main-image="product.image"
             :gallery="productGallery"
             :node="displayProduct"

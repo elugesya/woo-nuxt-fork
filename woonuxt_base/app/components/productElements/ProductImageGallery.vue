@@ -116,7 +116,7 @@ const imgWidth = 640;
     <SaleBadge :node class="absolute text-base top-4 right-4" />
     <NuxtImg
       :key="imageToShow.sourceUrl"
-      class="rounded-xl object-contain w-full min-w-[350px]"
+      class="rounded-xl object-contain w-full h-auto max-w-full"
       :width="imgWidth"
       :height="imgWidth"
       :alt="imageToShow.altText || node.name"
@@ -124,6 +124,11 @@ const imgWidth = 640;
       :src="imageToShow.sourceUrl || FALLBACK_IMG"
       fetchpriority="high"
       loading="eager"
+      sizes="xs:100vw sm:100vw md:50vw lg:50vw"
+      :modulations="{
+        format: ['webp', 'jpg'],
+        quality: 80
+      }"
     />
     <div v-if="gallery.nodes.length" ref="galleryContainer" class="my-4 gallery-images">
       <button
@@ -131,28 +136,34 @@ const imgWidth = 640;
         :key="galleryImg.databaseId"
         type="button"
         :class="[
-          'cursor-pointer rounded-xl transition-all duration-200 overflow-hidden p-0 border-0 bg-transparent',
+          'cursor-pointer rounded-xl transition-all duration-200 overflow-hidden p-0 border-0 bg-transparent flex-shrink-0',
           isSelected(galleryImg) ? 'ring-2 ring-secondary ring-offset-2' : 'opacity-70 hover:opacity-100'
         ]"
-        :style="{ width: '72px', aspectRatio: '5/6' }"
+        style="width: 72px; aspect-ratio: 5/6;"
         @click.prevent="changeImage(galleryImg)"
         :aria-label="`Show image ${index + 1}`"
       >
         <NuxtImg
-          :width="imgWidth"
-          :height="imgWidth"
+          width="144"
+          height="173"
           :src="galleryImg.sourceUrl"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"
           class="w-full h-full object-cover pointer-events-none"
+          sizes="72px"
+          :modulations="{
+            format: ['webp', 'jpg'],
+            quality: 70
+          }"
         />
       </button>
       <!-- Loading indicator for remaining images -->
-      <div 
-        v-if="hasMoreImages" 
-        class="flex items-center justify-center rounded-xl bg-muted text-muted-foreground text-xs"
-        style="width: 72px; aspect-ratio: 5/6;">
+      <div
+        v-if="hasMoreImages"
+        class="flex items-center justify-center rounded-xl bg-muted text-muted-foreground text-xs flex-shrink-0"
+        style="width: 72px; aspect-ratio: 5/6;"
+      >
         +{{ galleryImages.length - visibleThumbnailCount }}
       </div>
     </div>
