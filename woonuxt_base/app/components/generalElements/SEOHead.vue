@@ -35,7 +35,52 @@ const availabilityMap: Record<string, string> = {
   OUT_OF_STOCK: 'https://schema.org/OutOfStock',
   ON_BACKORDER: 'https://schema.org/PreOrder',
 };
-const price = computed(() => (info as any)?.rawSalePrice || (info as any)?.rawPrice || (info as any)?.rawRegularPrice || null);
+
+/**
+ * Clean and format price for Google Schema
+ * Converts Turkish format (1.234,56) to standard format (1234.56)
+ * Removes currency symbols, thousand separators, and ensures period as decimal
+ */
+const cleanPrice = (priceValue: string | number | null | undefined): string | null => {
+  if (priceValue === null || priceValue === undefined) return null;
+
+  // Convert to string if not already
+  let priceStr = String(priceValue);
+
+  // Remove any currency symbols and whitespace
+  priceStr = priceStr.replace(/[^\d.,-]/g, '');
+
+  // Check if using comma as decimal separator (Turkish format)
+  // If comma is present and there's a period, the period is likely thousand separator
+  if (priceStr.includes(',') && priceStr.includes('.')) {
+    // Turkish format: 1.234,56 -> remove thousand separators (periods), replace comma with period
+    priceStr = priceStr.replace(/\./g, '').replace(',', '.');
+  } else if (priceStr.includes(',')) {
+    // Only comma present, likely decimal separator: 1234,56 -> 1234.56
+    priceStr = priceStr.replace(',', '.');
+  } else if (priceStr.includes('.')) {
+    // Period present, check if it's a valid decimal or thousand separator
+    // If there are multiple periods, remove all but the last one
+    const parts = priceStr.split('.');
+    if (parts.length > 2) {
+      // Multiple periods - thousand separators: 1.234.56 -> 1234.56
+      priceStr = parts.slice(0, -1).join('') + '.' + parts[parts.length - 1];
+    }
+    // If only one period, it's already correct format (e.g., 1234.56)
+  }
+
+  // Parse as number and validate
+  const num = parseFloat(priceStr);
+  if (isNaN(num)) return null;
+
+  // Return as string with proper decimal format
+  return num.toFixed(2);
+};
+
+const price = computed(() => {
+  const rawPrice = (info as any)?.rawSalePrice || (info as any)?.rawPrice || (info as any)?.rawRegularPrice || null;
+  return cleanPrice(rawPrice);
+});
 // Build unique image list (main + gallery) with absolute URLs
 const images = computed(() => {
   const set = new Set<string>();
