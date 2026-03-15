@@ -19,6 +19,10 @@
           <span>{{ $t('general.shipping') }}</span>
           <span class="text-foreground tabular-nums font-medium"> {{ parseFloat(cart.shippingTotal) > 0 ? '+' : '' }} <span v-html="cart.shippingTotal"></span> </span>
         </div>
+        <div class="flex justify-between text-muted-foreground">
+          <span>{{ $t('general.tax') }}</span>
+          <span class="text-foreground tabular-nums font-medium" v-html="cart.totalTax" />
+        </div>
         <Transition name="scale-y" mode="out-in">
           <div v-if="cart && cart.appliedCoupons" class="flex justify-between text-muted-foreground">
             <span>{{ $t('shop.discount') }}</span>

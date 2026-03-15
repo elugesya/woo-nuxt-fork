@@ -45,3 +45,7 @@ products/
 # Dolt database files (added by bd init)
 .dolt/
 *.db
+all_products.json
+.gitignore
+more_products.json
+products_7700_7800.json
