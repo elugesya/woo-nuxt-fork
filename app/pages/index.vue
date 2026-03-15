@@ -159,7 +159,7 @@ useHead(() => ({
 
     <!-- 🎁 Promo Banner -->
     <PromoBanner
-      title="İlk Siparişe Özel %15 İndirim!"
+      title="İkinci Siparişe Özel %5 İndirim!"
       description="Yeni üyelerimize özel indirim ve ücretsiz kargo fırsatını kaçırmayın"
       cta-text="Fırsatı Yakala"
       cta-href="/urunler?filter=on-sale"
