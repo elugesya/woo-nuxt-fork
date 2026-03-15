@@ -301,6 +301,149 @@ const disabledAddToCart = computed(() => {
 });
 
 const addToCartLoading = computed(() => (isOptimisticCartMode.value ? false : isUpdatingCart.value));
+
+// Product JSON-LD structured data for Google Shopping
+const runtimeConfig = useRuntimeConfig();
+const siteName = computed(() => runtimeConfig.public?.SITE_NAME || 'Neta Marine');
+const currencyCode = computed(() => runtimeConfig.public?.CURRENCY_CODE || 'TRY');
+const { path } = useRoute();
+
+const mapAvailability = (status?: StockStatusEnum | string) => {
+  switch (status) {
+    case StockStatusEnum.IN_STOCK:
+      return 'https://schema.org/InStock';
+    case StockStatusEnum.ON_BACKORDER:
+      return 'https://schema.org/PreOrder';
+    case StockStatusEnum.OUT_OF_STOCK:
+    default:
+      return 'https://schema.org/OutOfStock';
+  }
+};
+
+const cleanPrice = (priceValue: string | number | null | undefined): string | null => {
+  if (priceValue === null || priceValue === undefined) return null;
+  let priceStr = String(priceValue);
+  priceStr = priceStr.replace(/[^\d.,-]/g, '');
+  if (priceStr.includes(',') && priceStr.includes('.')) {
+    priceStr = priceStr.replace(/\./g, '').replace(',', '.');
+  } else if (priceStr.includes(',')) {
+    priceStr = priceStr.replace(',', '.');
+  } else if (priceStr.includes('.')) {
+    const parts = priceStr.split('.');
+    if (parts.length > 2) {
+      priceStr = parts.slice(0, -1).join('') + '.' + parts[parts.length - 1];
+    }
+  }
+  const num = parseFloat(priceStr);
+  if (isNaN(num)) return null;
+  return num.toFixed(2);
+};
+
+const stripHtml = (html: string) => {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+};
+
+const productImages = computed<string[]>(() => {
+  const images: string[] = [];
+  if (product.value?.image?.sourceUrl) images.push(product.value.image.sourceUrl);
+  if (product.value?.galleryImages?.nodes) {
+    for (const g of product.value.galleryImages.nodes) {
+      if (g?.sourceUrl && !images.includes(g.sourceUrl)) images.push(g.sourceUrl);
+    }
+  }
+  return images;
+});
+
+const primaryCategory = computed(() => product.value?.productCategories?.nodes?.[0] || null);
+
+const offers = computed(() => ({
+  '@type': 'Offer',
+  url: `${frontEndUrl}/product/${product.value?.slug}`,
+  priceCurrency: currencyCode.value,
+  price: cleanPrice(priceTarget.value?.salePrice || priceTarget.value?.regularPrice || '0') || '0.00',
+  availability: mapAvailability(stockStatus.value as any),
+}));
+
+const aggregateRating = computed(() => {
+  const rating = parseFloat(String(averageRating.value) || '0');
+  const count = Number(reviewCount.value || 0);
+  if (count === 0) return undefined;
+  return {
+    '@type': 'AggregateRating',
+    ratingValue: rating,
+    reviewCount: count,
+    bestRating: 5,
+    worstRating: 1,
+  } as Record<string, any>;
+});
+
+const validSku = computed(() => {
+  const sku = product.value?.sku;
+  return sku && typeof sku === 'string' && sku.trim().length > 0 ? sku.trim() : undefined;
+});
+
+const productJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: product.value?.name,
+      description: stripHtml(product.value?.shortDescription || product.value?.description || ''),
+      image: productImages.value,
+      sku: validSku.value,
+      category: primaryCategory.value?.name || undefined,
+      brand: {
+        '@type': 'Brand',
+        name: siteName.value || undefined,
+      },
+      offers: offers.value,
+      aggregateRating: aggregateRating.value,
+    },
+    null,
+    2,
+  ),
+);
+
+const breadcrumbJsonLd = computed(() =>
+  JSON.stringify(
+    {
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: frontEndUrl,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: primaryCategory.value?.name || 'Products',
+          item: primaryCategory.value ? `${frontEndUrl}/product-category/${primaryCategory.value.slug}` : `${frontEndUrl}/shop`,
+        },
+        {
+          '@type': 'ListItem',
+          position: 3,
+          name: product.value?.name,
+          item: `${frontEndUrl}${path}`,
+        },
+      ],
+    },
+    null,
+    2,
+  ),
+);
+
+useHead(() => ({
+  script: [
+    // Product JSON-LD schema - must be in page-level useHead for static generation
+    { key: 'product-jsonld', type: 'application/ld+json', innerHTML: productJsonLd.value },
+    // BreadcrumbList schema for the product page
+    { key: 'breadcrumb-jsonld', type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
+  ],
+}));
 </script>
 
 <template>

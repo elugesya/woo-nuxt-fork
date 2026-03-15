@@ -349,14 +349,10 @@ const jsonLd = computed(() =>
 );
 
 // Inject JSON-LD via head manager with innerHTML for proper rendering
+// Note: Product JSON-LD is now injected at page level for proper static generation
+// This component only injects FAQ schema (if available) to avoid duplicates
 useHead(() => {
-  const scripts: any[] = [
-    {
-      key: 'product-jsonld',
-      type: 'application/ld+json',
-      innerHTML: jsonLd.value,
-    },
-  ];
+  const scripts: any[] = [];
 
   // Add FAQ schema if available
   if (faqSchema.value) {
@@ -366,13 +362,6 @@ useHead(() => {
       innerHTML: JSON.stringify(faqSchema.value),
     });
   }
-
-  // Add Breadcrumb schema
-  scripts.push({
-    key: 'breadcrumb-jsonld',
-    type: 'application/ld+json',
-    innerHTML: JSON.stringify(breadcrumbSchema.value),
-  });
 
   return { script: scripts };
 });
