@@ -16,8 +16,10 @@ const props = defineProps({
   index: { type: Number, default: 1 },
 });
 
-const imgWidth = 280;
-const imgHeight = Math.round(imgWidth * 1.125);
+// Use responsive image sizing based on actual display dimensions
+// Product cards display at ~280px on desktop, ~140px on mobile
+const imgWidth = 320; // Slightly larger for retina displays
+const imgHeight = imgWidth; // Square aspect ratio for product images
 
 // Unique ID for keys (handles products without databaseId)
 const uniqueId = computed(() => props.node?.databaseId || props.node?.id || props.node?.slug || `product-${props.index}`);
@@ -182,7 +184,7 @@ const formatPrice = (price: number) => {
             :alt="node.image?.altText || node.name || 'Product image'"
             :title="node.image?.title || node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
-            :sizes="`sm:${imgWidth / 2}px md:${imgWidth}px`"
+            :sizes="'(max-width: 640px) 50vw, (max-width: 768px) 33vw, 280px'"
             :class="cn(
               'h-full w-full object-cover transition-all duration-500',
               isHovered && hoverImage ? 'opacity-0' : 'opacity-100'

@@ -108,7 +108,9 @@ watch(
   },
 );
 
-const imgWidth = 640;
+// Main product image - responsive sizing based on actual display dimensions
+// Display size varies: ~380px on mobile, up to 600px on desktop
+const imgWidth = 800; // Generate up to 800px for retina displays
 </script>
 
 <template>
@@ -124,7 +126,7 @@ const imgWidth = 640;
       :src="imageToShow.sourceUrl || FALLBACK_IMG"
       fetchpriority="high"
       loading="eager"
-      sizes="xs:100vw sm:100vw md:50vw lg:50vw"
+      sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px"
       :modulations="{
         format: ['webp', 'jpg'],
         quality: 80
@@ -144,14 +146,14 @@ const imgWidth = 640;
         :aria-label="`Show image ${index + 1}`"
       >
         <NuxtImg
-          width="144"
-          height="173"
+          width="172"
+          height="206"
           :src="galleryImg.sourceUrl"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"
           class="w-full h-full object-cover pointer-events-none"
-          sizes="72px"
+          sizes="86px"
           :modulations="{
             format: ['webp', 'jpg'],
             quality: 70
