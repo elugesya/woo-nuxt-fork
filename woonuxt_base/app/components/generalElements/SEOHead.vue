@@ -390,5 +390,7 @@ useHead(() => {
     <Meta v-if="price" property="product:price:currency" hid="product:price:currency" :content="currency" />
     <Meta property="product:availability" hid="product:availability" :content="(info as any)?.stockStatus || 'IN_STOCK'" />
     <Link rel="canonical" hid="canonical" :href="canonical" />
+    <!-- Product JSON-LD structured data for Google Shopping -->
+    <script type="application/ld+json" v-html="jsonLd" />
   </Head>
 </template>

@@ -241,14 +241,6 @@ const breadcrumbJsonLd = computed(() =>
     2,
   ),
 );
-useHead(() => ({
-  script: [
-    // Product JSON-LD schema - must be in page-level useHead for static generation
-    { key: 'product-jsonld', type: 'application/ld+json', innerHTML: productJsonLd.value },
-    // BreadcrumbList schema for the product page
-    { key: 'breadcrumb-jsonld', type: 'application/ld+json', innerHTML: breadcrumbJsonLd.value },
-  ],
-}));
 </script>
 
 <template>
