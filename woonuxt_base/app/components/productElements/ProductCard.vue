@@ -39,6 +39,26 @@ const mainImage = computed<string>(() => props.node?.image?.woocommerceThumbnail
 // srcSet would include larger sizes that waste bandwidth
 const mainImageSrcSet = computed<string>(() => ''); // No srcSet for small thumbnails
 
+// Helper to construct thumbnail URL if WordPress didn't generate one
+const constructThumbnailUrl = (url: string, width: number, height: number): string => {
+  if (!url) return '';
+  const match = url.match(/(.+)(\.[a-z]+)$/i);
+  if (match) {
+    return `${match[1]}-${width}x${height}${match[2]}`;
+  }
+  return url;
+};
+
+// Get thumbnail URL with fallback to constructed URL
+const getThumbnailUrl = (img: any): string => {
+  return img?.woocommerceGalleryThumbnailSourceUrl
+    || img?.woocommerceThumbnailSourceUrl
+    || img?.thumbnailSourceUrl
+    || constructThumbnailUrl(img?.sourceUrl, 150, 150)
+    || img?.sourceUrl
+    || '';
+};
+
 const imagetoDisplay = computed<string>(() => {
   if (paColor.value.length) {
     const activeColorImage = props.node?.variations?.nodes.filter((variation) => {
@@ -57,7 +77,7 @@ const hoverImage = computed<{ sourceUrl: string } | undefined>(() => {
   if (!gallery || gallery.length < 2) return undefined;
 
   const hoverImg = gallery[1];
-  const hoverSrcUrl = hoverImg?.woocommerceGalleryThumbnailSourceUrl || hoverImg?.woocommerceThumbnailSourceUrl || hoverImg?.thumbnailSourceUrl || hoverImg?.sourceUrl;
+  const hoverSrcUrl = getThumbnailUrl(hoverImg);
   // Only return hover image if it's different from the main image
   if (hoverSrcUrl && hoverSrcUrl !== mainImage.value && hoverSrcUrl !== imagetoDisplay.value) {
     return {

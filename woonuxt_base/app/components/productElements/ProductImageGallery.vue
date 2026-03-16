@@ -115,6 +115,28 @@ watch(
 // Use WordPress srcSet for static builds (IPX doesn't work for remote images)
 const mainImageSrcSet = computed(() => imageToShow.value?.srcSet || '');
 const mainImageSizes = '(max-width: 640px) 40vw, (max-width: 1024px) 30vw, 400px';
+
+// Helper to construct thumbnail URL if WordPress didn't generate one
+const constructThumbnailUrl = (url: string, width: number, height: number): string => {
+  if (!url) return '';
+  // Try to insert WordPress thumbnail size before extension
+  // e.g., "image.jpg" → "image-150x150.jpg"
+  const match = url.match(/(.+)(\.[a-z]+)$/i);
+  if (match) {
+    return `${match[1]}-${width}x${height}${match[2]}`;
+  }
+  return url;
+};
+
+// Get thumbnail URL with fallback to constructed URL
+const getThumbnailUrl = (img: any): string => {
+  return img?.woocommerceGalleryThumbnailSourceUrl
+    || img?.woocommerceThumbnailSourceUrl
+    || img?.thumbnailSourceUrl
+    || constructThumbnailUrl(img?.sourceUrl, 150, 150)
+    || img?.sourceUrl
+    || '';
+};
 </script>
 
 <template>
@@ -145,7 +167,7 @@ const mainImageSizes = '(max-width: 640px) 40vw, (max-width: 1024px) 30vw, 400px
         :aria-label="`Show image ${index + 1}`"
       >
         <img
-          :src="galleryImg.woocommerceGalleryThumbnailSourceUrl || galleryImg.woocommerceThumbnailSourceUrl || galleryImg.thumbnailSourceUrl || galleryImg.sourceUrl"
+          :src="getThumbnailUrl(galleryImg)"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"
