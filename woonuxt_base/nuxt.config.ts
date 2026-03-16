@@ -67,7 +67,8 @@ export default defineNuxtConfig({
       product: { modifiers: { format: 'webp', quality: 80, width: 800, height: 800, fit: 'contain' } },
       thumbnail: { modifiers: { format: 'webp', quality: 70, width: 300, height: 300, fit: 'cover' } },
     },
-    // Ensure IPX resolves assets from this layer's public/ directory during prerender
+    // For static generation, use WPGraphQL's srcSet instead of IPX processing
+    // IPX doesn't work for remote images in static builds
     ipx: {
       dir: resolve('./public'),
     },

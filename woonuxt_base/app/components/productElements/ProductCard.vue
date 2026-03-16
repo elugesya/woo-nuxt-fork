@@ -35,6 +35,10 @@ watch(
 );
 
 const mainImage = computed<string>(() => props.node?.image?.producCardSourceUrl || props.node?.image?.sourceUrl || '/images/placeholder.jpg');
+// Use WordPress srcSet for responsive images (works with static builds)
+const mainImageSrcSet = computed<string>(() => props.node?.image?.srcSet || '');
+const mainImageSizes = computed<string>(() => props.node?.image?.sizes || '(max-width: 640px) 50vw, (max-width: 768px) 33vw, 280px');
+
 const imagetoDisplay = computed<string>(() => {
   if (paColor.value.length) {
     const activeColorImage = props.node?.variations?.nodes.filter((variation) => {
@@ -175,28 +179,25 @@ const formatPrice = (price: number) => {
       <div :key="`product-card-${uniqueId}-${index}`" class="relative aspect-square overflow-hidden bg-seafoam">
         <!-- Main Image -->
         <template v-if="imagetoDisplay && !isFallback">
-          <NuxtImg
+          <img
             :id="`main-img-${uniqueId}-${index}`"
             :key="`main-${uniqueId}-${index}-${imagetoDisplay}`"
-            :width="imgWidth"
-            :height="imgHeight"
             :src="imagetoDisplay"
+            :srcset="mainImageSrcSet"
+            :sizes="mainImageSizes"
             :alt="node.image?.altText || node.name || 'Product image'"
             :title="node.image?.title || node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
-            :sizes="'(max-width: 640px) 50vw, (max-width: 768px) 33vw, 280px'"
             :class="cn(
               'h-full w-full object-cover transition-all duration-500',
               isHovered && hoverImage ? 'opacity-0' : 'opacity-100'
             )"
           />
           <!-- Hover Image -->
-          <NuxtImg
+          <img
             v-if="hoverImage"
             :id="`hover-img-${uniqueId}-${index}`"
             :key="`hover-${uniqueId}-${index}-${hoverImage}`"
-            :width="imgWidth"
-            :height="imgHeight"
             :src="hoverImage"
             :alt="`${node.name} - Hover`"
             class="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 group-hover:opacity-100"

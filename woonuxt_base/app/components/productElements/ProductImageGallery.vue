@@ -110,27 +110,24 @@ watch(
 
 // Main product image - responsive sizing based on actual display dimensions
 // Display size varies: ~380px on mobile, up to 600px on desktop
-const imgWidth = 800; // Generate up to 800px for retina displays
+// Use WordPress srcSet for static builds (IPX doesn't work for remote images)
+const mainImageSrcSet = computed(() => imageToShow.value?.srcSet || '');
+const mainImageSizes = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px';
 </script>
 
 <template>
   <div>
     <SaleBadge :node class="absolute text-base top-4 right-4" />
-    <NuxtImg
+    <img
       :key="imageToShow.sourceUrl"
       class="rounded-xl object-contain w-full h-auto max-w-full"
-      :width="imgWidth"
-      :height="imgWidth"
+      :src="imageToShow.sourceUrl || FALLBACK_IMG"
+      :srcset="mainImageSrcSet"
+      :sizes="mainImageSizes"
       :alt="imageToShow.altText || node.name"
       :title="imageToShow.title || node.name"
-      :src="imageToShow.sourceUrl || FALLBACK_IMG"
       fetchpriority="high"
       loading="eager"
-      sizes="(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px"
-      :modulations="{
-        format: ['webp', 'jpg'],
-        quality: 80
-      }"
     />
     <div v-if="gallery.nodes.length" ref="galleryContainer" class="my-4 gallery-images">
       <button
@@ -145,19 +142,14 @@ const imgWidth = 800; // Generate up to 800px for retina displays
         @click.prevent="changeImage(galleryImg)"
         :aria-label="`Show image ${index + 1}`"
       >
-        <NuxtImg
-          width="172"
-          height="206"
+        <img
           :src="galleryImg.sourceUrl"
+          :srcset="galleryImg.srcSet"
+          :sizes="galleryImg.sizes || '86px'"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"
           class="w-full h-full object-cover pointer-events-none"
-          sizes="86px"
-          :modulations="{
-            format: ['webp', 'jpg'],
-            quality: 70
-          }"
         />
       </button>
       <!-- Loading indicator for remaining images -->

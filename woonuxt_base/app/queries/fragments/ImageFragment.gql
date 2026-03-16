@@ -3,4 +3,6 @@ fragment Image on MediaItem {
   altText
   title
   databaseId
+  srcSet(size: LARGE)
+  sizes
 }
