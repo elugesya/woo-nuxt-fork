@@ -16,6 +16,8 @@ fragment ProductVariation on ProductVariation {
     altText
     title
     databaseId
+    srcSet(size: LARGE)
+    sizes
     cartSourceUrl: sourceUrl(size: THUMBNAIL)
     producCardSourceUrl: sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
   }

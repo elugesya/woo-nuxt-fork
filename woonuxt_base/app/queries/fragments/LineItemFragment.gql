@@ -3,6 +3,8 @@ fragment LineItemProduct on Product {
   slug
   image {
     sourceUrl(size: THUMBNAIL)
+    srcSet(size: LARGE)
+    sizes
     altText
     title
   }
@@ -11,6 +13,8 @@ fragment LineItemVariation on ProductVariation {
   name
   image {
     sourceUrl(size: THUMBNAIL)
+    srcSet(size: LARGE)
+    sizes
     altText
     title
   }
