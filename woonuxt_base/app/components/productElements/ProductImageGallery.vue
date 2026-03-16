@@ -13,6 +13,8 @@ const primaryImage = computed(() => ({
   title: props.mainImage.title,
   altText: props.mainImage.altText,
   databaseId: props.mainImage.databaseId,
+  srcSet: props.mainImage.srcSet || '',
+  sizes: props.mainImage.sizes || '',
 }));
 
 const imageToShow = ref(primaryImage.value);
@@ -144,8 +146,8 @@ const mainImageSizes = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px
       >
         <img
           :src="galleryImg.sourceUrl"
-          :srcset="galleryImg.srcSet"
-          :sizes="galleryImg.sizes || '86px'"
+          :srcset="galleryImg.srcSetSmall || galleryImg.srcSet"
+          :sizes="'100px'"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"

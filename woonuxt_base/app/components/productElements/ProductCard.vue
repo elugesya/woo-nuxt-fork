@@ -51,18 +51,23 @@ const imagetoDisplay = computed<string>(() => {
   return mainImage.value;
 });
 const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
-const hoverImage = computed<string | undefined>(() => {
+const hoverImage = computed<{ sourceUrl: string; srcSet?: string } | undefined>(() => {
   const gallery = props.node?.galleryImages?.nodes;
 
   if (!gallery || gallery.length < 2) return undefined;
 
-  const hoverImg = gallery[1]?.sourceUrl;
+  const hoverImg = gallery[1];
+  const hoverSrcUrl = hoverImg?.sourceUrl;
   // Only return hover image if it's different from the main image
-  if (hoverImg && hoverImg !== mainImage.value && hoverImg !== imagetoDisplay.value) {
-    return hoverImg;
+  if (hoverSrcUrl && hoverSrcUrl !== mainImage.value && hoverSrcUrl !== imagetoDisplay.value) {
+    return {
+      sourceUrl: hoverSrcUrl,
+      srcSet: hoverImg?.srcSet || '',
+    };
   }
   return undefined;
 });
+const hoverImageSrcSet = computed(() => hoverImage.value?.srcSet || '');
 
 // Derived data
 const isOnSale = computed(() => props.node?.onSale);
@@ -197,8 +202,10 @@ const formatPrice = (price: number) => {
           <img
             v-if="hoverImage"
             :id="`hover-img-${uniqueId}-${index}`"
-            :key="`hover-${uniqueId}-${index}-${hoverImage}`"
-            :src="hoverImage"
+            :key="`hover-${uniqueId}-${index}-${hoverImage.sourceUrl}`"
+            :src="hoverImage.sourceUrl"
+            :srcset="hoverImage.srcSet"
+            :sizes="mainImageSizes"
             :alt="`${node.name} - Hover`"
             class="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 group-hover:opacity-100"
             loading="lazy"

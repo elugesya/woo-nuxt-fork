@@ -4,5 +4,6 @@ fragment Image on MediaItem {
   title
   databaseId
   srcSet(size: LARGE)
+  srcSetSmall: srcSet(size: THUMBNAIL)
   sizes
 }
