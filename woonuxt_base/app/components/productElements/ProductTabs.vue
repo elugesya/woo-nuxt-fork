@@ -96,30 +96,33 @@ const getTabIndex = (key: string): number => {
 
 <template>
   <div>
-    <nav class="border-b flex gap-8 tabs">
-      <button v-if="product.description" type="button" :class="show === getTabIndex('description') ? 'active' : ''" @click.prevent="show = getTabIndex('description')">
-        {{ $t('shop.productDescription') }}
-      </button>
-      <button v-if="productInfoTabs?.usageMaintenance" type="button" :class="show === getTabIndex('usage-maintenance') ? 'active' : ''" @click.prevent="show = getTabIndex('usage-maintenance')">
-        {{ $t('shop.usageMaintenance') }}
-      </button>
-      <button v-if="productInfoTabs?.repairInstructions" type="button" :class="show === getTabIndex('repair-instructions') ? 'active' : ''" @click.prevent="show = getTabIndex('repair-instructions')">
-        {{ $t('shop.repairInstructions') }}
-      </button>
-      <button v-if="productInfoTabs?.warrantyConditions" type="button" :class="show === getTabIndex('warranty-conditions') ? 'active' : ''" @click.prevent="show = getTabIndex('warranty-conditions')">
-        {{ $t('shop.warrantyConditions') }}
-      </button>
-      <button
-        v-for="(tab, index) in customTabs"
-        :key="`custom-${index}`"
-        type="button"
-        :class="show === getTabIndex(`custom-${index}`) ? 'active' : ''"
-        @click.prevent="show = getTabIndex(`custom-${index}`)">
-        {{ tab.title }}
-      </button>
-      <button v-if="storeSettings.showReviews" type="button" :class="show === getTabIndex('reviews') ? 'active' : ''" @click.prevent="show = getTabIndex('reviews')">
-        {{ $t('shop.reviews') }} ({{ product.reviewCount }})
-      </button>
+    <nav class="border-b tabs-wrapper">
+      <div class="tabs flex">
+        <button v-if="product.description" type="button" :class="show === getTabIndex('description') ? 'active' : ''" @click.prevent="show = getTabIndex('description')" class="tab-button">
+          {{ $t('shop.productDescription') }}
+        </button>
+        <button v-if="productInfoTabs?.usageMaintenance" type="button" :class="show === getTabIndex('usage-maintenance') ? 'active' : ''" @click.prevent="show = getTabIndex('usage-maintenance')" class="tab-button">
+          {{ $t('shop.usageMaintenance') }}
+        </button>
+        <button v-if="productInfoTabs?.repairInstructions" type="button" :class="show === getTabIndex('repair-instructions') ? 'active' : ''" @click.prevent="show = getTabIndex('repair-instructions')" class="tab-button">
+          {{ $t('shop.repairInstructions') }}
+        </button>
+        <button v-if="productInfoTabs?.warrantyConditions" type="button" :class="show === getTabIndex('warranty-conditions') ? 'active' : ''" @click.prevent="show = getTabIndex('warranty-conditions')" class="tab-button">
+          {{ $t('shop.warrantyConditions') }}
+        </button>
+        <button
+          v-for="(tab, index) in customTabs"
+          :key="`custom-${index}`"
+          type="button"
+          :class="show === getTabIndex(`custom-${index}`) ? 'active' : ''"
+          @click.prevent="show = getTabIndex(`custom-${index}`)"
+          class="tab-button">
+          {{ tab.title }}
+        </button>
+        <button v-if="storeSettings.showReviews" type="button" :class="show === getTabIndex('reviews') ? 'active' : ''" @click.prevent="show = getTabIndex('reviews')" class="tab-button">
+          {{ $t('shop.reviews') }} ({{ product.reviewCount }})
+        </button>
+      </div>
     </nav>
     <div class="tab-contents">
       <div v-if="show === getTabIndex('description') && product.description" class="font-light mt-8 prose" v-html="product.description" />
@@ -135,12 +138,39 @@ const getTabIndex = (key: string): number => {
 </template>
 
 <style lang="postcss" scoped>
-.tabs button {
-  @apply border-transparent border-b-2 text-lg pb-8;
-  margin-bottom: -1px;
+.tabs-wrapper {
+  @apply overflow-x-auto overflow-y-hidden;
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
 }
 
-.tabs button.active {
+.tabs-wrapper::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabs-wrapper::-webkit-scrollbar-track {
+  @apply bg-secondary/30;
+}
+
+.tabs-wrapper::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+}
+
+.tabs {
+  @apply gap-4 md:gap-8 min-w-max;
+}
+
+.tab-button {
+  @apply border-transparent border-b-2 text-base md:text-lg pb-4 md:pb-8 whitespace-nowrap;
+  margin-bottom: -1px;
+  transition: color 150ms ease, border-color 150ms ease;
+}
+
+.tab-button.active {
   @apply border-primary text-primary;
+}
+
+.tab-button:hover:not(.active) {
+  @apply text-foreground/80;
 }
 </style>
