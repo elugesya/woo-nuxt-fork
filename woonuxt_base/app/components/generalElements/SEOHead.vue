@@ -348,11 +348,17 @@ const jsonLd = computed(() =>
   )
 );
 
-// Inject JSON-LD via head manager with innerHTML for proper rendering
-// Note: Product JSON-LD is now injected at page level for proper static generation
-// This component only injects FAQ schema (if available) to avoid duplicates
+// Inject JSON-LD via head manager for proper rendering
+// Note: Product JSON-LD is injected here for proper static generation
 useHead(() => {
   const scripts: any[] = [];
+
+  // Add Product JSON-LD schema
+  scripts.push({
+    key: 'product-jsonld',
+    type: 'application/ld+json',
+    innerHTML: jsonLd.value,
+  });
 
   // Add FAQ schema if available
   if (faqSchema.value) {
@@ -362,6 +368,13 @@ useHead(() => {
       innerHTML: JSON.stringify(faqSchema.value),
     });
   }
+
+  // Add Breadcrumb schema
+  scripts.push({
+    key: 'breadcrumb-jsonld',
+    type: 'application/ld+json',
+    innerHTML: JSON.stringify(breadcrumbSchema.value),
+  });
 
   return { script: scripts };
 });
@@ -390,7 +403,5 @@ useHead(() => {
     <Meta v-if="price" property="product:price:currency" hid="product:price:currency" :content="currency" />
     <Meta property="product:availability" hid="product:availability" :content="(info as any)?.stockStatus || 'IN_STOCK'" />
     <Link rel="canonical" hid="canonical" :href="canonical" />
-    <!-- Product JSON-LD structured data for Google Shopping -->
-    <script type="application/ld+json" v-html="jsonLd" />
   </Head>
 </template>
