@@ -111,10 +111,10 @@ watch(
 );
 
 // Main product image - responsive sizing based on actual display dimensions
-// Display size varies: ~380px on mobile, up to 600px on desktop
+// Display size varies: ~220px on mobile, up to 400px on desktop
 // Use WordPress srcSet for static builds (IPX doesn't work for remote images)
 const mainImageSrcSet = computed(() => imageToShow.value?.srcSet || '');
-const mainImageSizes = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px';
+const mainImageSizes = '(max-width: 640px) 40vw, (max-width: 1024px) 30vw, 400px';
 </script>
 
 <template>
@@ -145,7 +145,7 @@ const mainImageSizes = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px
         :aria-label="`Show image ${index + 1}`"
       >
         <img
-          :src="galleryImg.woocommerceThumbnailSourceUrl || galleryImg.thumbnailSourceUrl || galleryImg.sourceUrl"
+          :src="galleryImg.woocommerceGalleryThumbnailSourceUrl || galleryImg.woocommerceThumbnailSourceUrl || galleryImg.thumbnailSourceUrl || galleryImg.sourceUrl"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"

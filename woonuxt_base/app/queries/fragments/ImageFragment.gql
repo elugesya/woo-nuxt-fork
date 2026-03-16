@@ -8,4 +8,5 @@ fragment Image on MediaItem {
   # Direct URLs for small thumbnails (no srcSet needed)
   thumbnailSourceUrl: sourceUrl(size: THUMBNAIL)
   woocommerceThumbnailSourceUrl: sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
+  woocommerceGalleryThumbnailSourceUrl: sourceUrl(size: WOOCOMMERCE_GALLERY_THUMBNAIL)
 }

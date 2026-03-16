@@ -57,7 +57,7 @@ const hoverImage = computed<{ sourceUrl: string } | undefined>(() => {
   if (!gallery || gallery.length < 2) return undefined;
 
   const hoverImg = gallery[1];
-  const hoverSrcUrl = hoverImg?.woocommerceThumbnailSourceUrl || hoverImg?.thumbnailSourceUrl || hoverImg?.sourceUrl;
+  const hoverSrcUrl = hoverImg?.woocommerceGalleryThumbnailSourceUrl || hoverImg?.woocommerceThumbnailSourceUrl || hoverImg?.thumbnailSourceUrl || hoverImg?.sourceUrl;
   // Only return hover image if it's different from the main image
   if (hoverSrcUrl && hoverSrcUrl !== mainImage.value && hoverSrcUrl !== imagetoDisplay.value) {
     return {
