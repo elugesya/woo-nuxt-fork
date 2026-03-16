@@ -20,6 +20,7 @@ fragment ProductVariation on ProductVariation {
     sizes
     cartSourceUrl: sourceUrl(size: THUMBNAIL)
     producCardSourceUrl: sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
+    woocommerceThumbnailSourceUrl: sourceUrl(size: WOOCOMMERCE_THUMBNAIL)
   }
   attributes {
     nodes {

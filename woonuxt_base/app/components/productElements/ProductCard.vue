@@ -34,10 +34,10 @@ watch(
   },
 );
 
-const mainImage = computed<string>(() => props.node?.image?.producCardSourceUrl || props.node?.image?.sourceUrl || '/images/placeholder.jpg');
-// Use WordPress srcSet for responsive images (works with static builds)
-const mainImageSrcSet = computed<string>(() => props.node?.image?.srcSet || '');
-const mainImageSizes = computed<string>(() => props.node?.image?.sizes || '(max-width: 640px) 50vw, (max-width: 768px) 33vw, 280px');
+const mainImage = computed<string>(() => props.node?.image?.woocommerceThumbnailSourceUrl || props.node?.image?.producCardSourceUrl || props.node?.image?.sourceUrl || '/images/placeholder.jpg');
+// For product cards, use direct thumbnail URL without srcSet (thumbnails are small, ~100px)
+// srcSet would include larger sizes that waste bandwidth
+const mainImageSrcSet = computed<string>(() => ''); // No srcSet for small thumbnails
 
 const imagetoDisplay = computed<string>(() => {
   if (paColor.value.length) {
@@ -51,23 +51,21 @@ const imagetoDisplay = computed<string>(() => {
   return mainImage.value;
 });
 const isFallback = computed(() => imagetoDisplay.value === FALLBACK_IMG);
-const hoverImage = computed<{ sourceUrl: string; srcSet?: string } | undefined>(() => {
+const hoverImage = computed<{ sourceUrl: string } | undefined>(() => {
   const gallery = props.node?.galleryImages?.nodes;
 
   if (!gallery || gallery.length < 2) return undefined;
 
   const hoverImg = gallery[1];
-  const hoverSrcUrl = hoverImg?.sourceUrl;
+  const hoverSrcUrl = hoverImg?.woocommerceThumbnailSourceUrl || hoverImg?.thumbnailSourceUrl || hoverImg?.sourceUrl;
   // Only return hover image if it's different from the main image
   if (hoverSrcUrl && hoverSrcUrl !== mainImage.value && hoverSrcUrl !== imagetoDisplay.value) {
     return {
       sourceUrl: hoverSrcUrl,
-      srcSet: hoverImg?.srcSet || '',
     };
   }
   return undefined;
 });
-const hoverImageSrcSet = computed(() => hoverImage.value?.srcSet || '');
 
 // Derived data
 const isOnSale = computed(() => props.node?.onSale);
@@ -188,8 +186,6 @@ const formatPrice = (price: number) => {
             :id="`main-img-${uniqueId}-${index}`"
             :key="`main-${uniqueId}-${index}-${imagetoDisplay}`"
             :src="imagetoDisplay"
-            :srcset="mainImageSrcSet"
-            :sizes="mainImageSizes"
             :alt="node.image?.altText || node.name || 'Product image'"
             :title="node.image?.title || node.name"
             :loading="index <= 3 ? 'eager' : 'lazy'"
@@ -204,8 +200,6 @@ const formatPrice = (price: number) => {
             :id="`hover-img-${uniqueId}-${index}`"
             :key="`hover-${uniqueId}-${index}-${hoverImage.sourceUrl}`"
             :src="hoverImage.sourceUrl"
-            :srcset="hoverImage.srcSet"
-            :sizes="mainImageSizes"
             :alt="`${node.name} - Hover`"
             class="absolute inset-0 h-full w-full object-cover opacity-0 transition-all duration-500 group-hover:opacity-100"
             loading="lazy"

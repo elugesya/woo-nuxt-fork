@@ -145,9 +145,7 @@ const mainImageSizes = '(max-width: 640px) 90vw, (max-width: 1024px) 50vw, 600px
         :aria-label="`Show image ${index + 1}`"
       >
         <img
-          :src="galleryImg.sourceUrl"
-          :srcset="galleryImg.srcSetSmall || galleryImg.srcSet"
-          :sizes="'100px'"
+          :src="galleryImg.woocommerceThumbnailSourceUrl || galleryImg.thumbnailSourceUrl || galleryImg.sourceUrl"
           :alt="galleryImg.altText || node.name"
           :title="galleryImg.title || node.name"
           :loading="index < 3 ? 'eager' : 'lazy'"
