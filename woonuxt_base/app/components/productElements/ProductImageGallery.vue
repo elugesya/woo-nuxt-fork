@@ -133,7 +133,7 @@ const getThumbnailUrl = (img: any): string => {
   return img?.woocommerceGalleryThumbnailSourceUrl
     || img?.woocommerceThumbnailSourceUrl
     || img?.thumbnailSourceUrl
-    || constructThumbnailUrl(img?.sourceUrl, 150, 150)
+    || constructThumbnailUrl(img?.sourceUrl, 100, 100)
     || img?.sourceUrl
     || '';
 };
