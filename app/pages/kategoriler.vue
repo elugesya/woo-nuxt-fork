@@ -37,7 +37,7 @@ useSeoMeta({
 });
 
 // Column classes for responsive grid
-const columnClasses = 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4';
+const columnClasses = 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-4';
 </script>
 
 <template>

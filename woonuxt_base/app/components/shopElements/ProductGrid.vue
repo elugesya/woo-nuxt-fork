@@ -8,7 +8,7 @@ const productsToShow = computed(() => products.value.slice((page.value - 1) * pr
 const props = defineProps({
   gridClass: {
     type: String,
-    default: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5',
+    default: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4',
   },
 });
 </script>
