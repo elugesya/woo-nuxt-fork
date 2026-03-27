@@ -7,7 +7,6 @@
  */
 import { cn } from '@/lib/utils';
 import { Anchor, Waves, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube, Send } from 'lucide-vue-next';
-import EtbisQr from '~/components/generalElements/EtbisQr.vue';
 
 const { wooNuxtVersionInfo } = useHelpers();
 const { wishlistLink } = useAuth();
