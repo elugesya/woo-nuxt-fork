@@ -114,7 +114,7 @@ const config = useRuntimeConfig();
 
           <!-- Bot Image -->
           <div class="relative w-full h-full rounded-full bg-white/10 backdrop-blur-sm p-1 shadow-2xl border-2 border-white/30 transition-all duration-300 group-hover:scale-110 group-hover:border-accent/50">
-            <NuxtImg
+            <img
               src="/images/kampanyabot.png"
               alt="Kampanya Botu"
               class="w-full h-full object-cover rounded-full"
