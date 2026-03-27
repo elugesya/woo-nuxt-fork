@@ -23,6 +23,9 @@ interface HeroBannerProps {
   };
   image?: string;
   overlay?: boolean;
+  showCampaignBot?: boolean;
+  campaignBotMessage?: string;
+  campaignBotLink?: string;
   class?: string;
 }
 
@@ -40,6 +43,9 @@ const props = withDefaults(defineProps<HeroBannerProps>(), {
   }),
   image: 'https://backend.ntmc.com.tr/wp-content/uploads/2026/03/inferno.jpg',
   overlay: true,
+  showCampaignBot: true,
+  campaignBotMessage: 'Fırsatları Kaçırma! 👋',
+  campaignBotLink: '/urunler?filter=on-sale',
 });
 
 const config = useRuntimeConfig();
@@ -84,6 +90,45 @@ const config = useRuntimeConfig();
       <div class="absolute top-20 left-10 w-32 h-32 rounded-full bg-white/5 animate-pulse" />
       <div class="absolute top-40 right-20 w-24 h-24 rounded-full bg-secondary/10 animate-pulse" style="animation-delay: 1s" />
       <div class="absolute bottom-40 left-1/4 w-16 h-16 rounded-full bg-white/5 animate-pulse" style="animation-delay: 2s" />
+
+      <!-- 🤖 Campaign Bot Mascot -->
+      <NuxtLink
+        v-if="showCampaignBot"
+        :to="campaignBotLink"
+        class="absolute bottom-8 right-8 md:bottom-12 md:right-12 z-20 group"
+      >
+        <!-- Speech Bubble -->
+        <div class="relative mb-3 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0">
+          <div class="bg-white/95 backdrop-blur-sm text-primary px-4 py-2 rounded-2xl shadow-lg whitespace-nowrap">
+            <span class="text-sm font-semibold">{{ campaignBotMessage }}</span>
+            <!-- Speech bubble tail -->
+            <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-white/95 rotate-45" />
+          </div>
+        </div>
+
+        <!-- Bot Image Container -->
+        <div class="relative w-20 h-20 md:w-24 md:h-24">
+          <!-- Glowing ring animation -->
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-accent to-secondary animate-ping opacity-20" />
+          <div class="absolute inset-0 rounded-full bg-gradient-to-r from-accent to-secondary animate-pulse opacity-40" />
+
+          <!-- Bot Image -->
+          <div class="relative w-full h-full rounded-full bg-white/10 backdrop-blur-sm p-1 shadow-2xl border-2 border-white/30 transition-all duration-300 group-hover:scale-110 group-hover:border-accent/50">
+            <NuxtImg
+              src="/images/kampanyabot.png"
+              alt="Kampanya Botu"
+              class="w-full h-full object-cover rounded-full"
+              width="96"
+              height="96"
+            />
+          </div>
+
+          <!-- Notification Badge -->
+          <div class="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center animate-bounce">
+            <span class="text-white text-xs font-bold">!</span>
+          </div>
+        </div>
+      </NuxtLink>
     </div>
 
     <!-- Content -->

@@ -96,6 +96,9 @@ useHead(() => ({
       description="Deniz sporları ve eğlence için en kaliteli ürünler. Güvenli alışveriş, hızlı kargo."
       :primary-cta="{ text: 'Alışverişe Başla', href: '/urunler' }"
       :secondary-cta="{ text: 'Kategoriler', href: '/kategoriler' }"
+      :show-campaign-bot="true"
+      campaign-bot-message="Fırsatları Kaçırma! 🔥"
+      campaign-bot-link="/urunler?filter=on-sale"
     />
 
     <!-- 🏷️ Featured Categories -->
