@@ -39,44 +39,44 @@ const props = withDefaults(defineProps<HeroBannerProps>(), {
 <template>
   <section
     :class="cn(
-      'relative overflow-hidden min-h-[500px] lg:min-h-[600px]',
+      'relative overflow-hidden',
       props.class
     )"
   >
     <!-- Background Image -->
-    <div class="absolute inset-0">
+    <div class="absolute inset-0 bg-gray-900">
       <img
         src="/images/kampanyabot.png"
         alt="Kampanya"
-        class="w-full h-full object-cover"
+        class="w-full h-full object-cover object-center"
       />
       <!-- Gradient Overlay -->
-      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent" />
+      <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
     </div>
 
     <!-- Content -->
-    <div class="relative container mx-auto px-4 py-16 md:py-24 lg:py-32">
+    <div class="relative container mx-auto px-4 py-12 md:py-16 lg:py-24 min-h-[400px] md:min-h-[500px] flex items-center">
       <div class="max-w-2xl">
         <!-- Main Title -->
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4">
           {{ title }}
         </h1>
 
         <!-- Description -->
-        <p class="text-lg md:text-xl text-white/90 mb-8 max-w-xl">
+        <p class="text-base md:text-lg text-white/90 mb-6 max-w-xl">
           {{ description }}
         </p>
 
         <!-- CTA Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4">
+        <div class="flex flex-col sm:flex-row gap-3">
           <Button
             as-child
             size="lg"
-            class="bg-accent hover:bg-accent/90 text-white px-8 py-6 text-lg font-semibold rounded-xl shadow-lg transition-all hover:scale-105"
+            class="bg-accent hover:bg-accent/90 text-white px-6 py-5 text-base font-semibold rounded-lg shadow-lg transition-all hover:scale-105"
           >
             <NuxtLink :to="primaryCta.href">
               {{ primaryCta.text }}
-              <ArrowRight class="ml-2 w-5 h-5" />
+              <ArrowRight class="ml-2 w-4 h-4" />
             </NuxtLink>
           </Button>
 
@@ -84,7 +84,7 @@ const props = withDefaults(defineProps<HeroBannerProps>(), {
             as-child
             size="lg"
             variant="outline"
-            class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:border-white/50 px-8 py-6 text-lg font-semibold rounded-xl transition-all hover:scale-105"
+            class="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white border-2 border-white/30 hover:border-white/50 px-6 py-5 text-base font-semibold rounded-lg transition-all hover:scale-105"
           >
             <NuxtLink :to="secondaryCta.href">
               {{ secondaryCta.text }}
