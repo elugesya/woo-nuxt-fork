@@ -91,14 +91,10 @@ useHead(() => ({
   <div class="min-h-screen">
     <!-- 🌊 Hero Section -->
     <HeroBanner
-      title="Deniz Tutkusu"
-      subtitle="Premium Deniz Malzemeleri"
-      description="Deniz sporları ve eğlence için en kaliteli ürünler. Güvenli alışveriş, hızlı kargo."
-      :primary-cta="{ text: 'Alışverişe Başla', href: '/urunler' }"
-      :secondary-cta="{ text: 'Kategoriler', href: '/kategoriler' }"
-      :show-campaign-bot="true"
-      campaign-bot-message="Fırsatları Kaçırma! 🔥"
-      campaign-bot-link="/urunler?filter=on-sale"
+      title="Özel Kampanya!"
+      description="Sınırlı süreli indirimleri kaçırma. Hemen alışverişe başla!"
+      :primary-cta="{ text: 'Fırsatları Yakala', href: '/urunler?filter=on-sale' }"
+      :secondary-cta="{ text: 'Tüm Ürünler', href: '/urunler' }"
     />
 
     <!-- 🏷️ Featured Categories -->
