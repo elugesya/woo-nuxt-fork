@@ -65,13 +65,6 @@ export const useAuth = () => {
       if (login?.user && login?.authToken) {
         useGqlToken(login.authToken);
         await refreshCart();
-
-        // TikTok Pixel Identify
-        const { identify } = useTikTokPixel();
-        identify({
-          email: login.user.email || undefined,
-          // phone_number: login.user.phone || undefined, // Add if available in GQL response
-        });
       }
 
       isPending.value = false;
@@ -99,12 +92,6 @@ export const useAuth = () => {
       if (response.login?.authToken) {
         useGqlToken(response.login.authToken);
         await refreshCart();
-
-        // TikTok Pixel Identify
-        const { identify } = useTikTokPixel();
-        identify({
-          email: (response.login as any).user?.email || undefined,
-        });
 
         if (viewer.value === null) {
           return {
@@ -159,14 +146,6 @@ export const useAuth = () => {
     isPending.value = true;
     try {
       const { registerCustomer } = await GqlRegisterCustomer({ input: userInfo });
-
-      // TikTok Pixel Identify & CompleteRegistration
-      const { identify, trackCompleteRegistration } = useTikTokPixel();
-      identify({
-        email: userInfo.email || undefined,
-      });
-      trackCompleteRegistration();
-
       return { success: true };
     } catch (error: any) {
       const errorMsg = getErrorMessage(error);

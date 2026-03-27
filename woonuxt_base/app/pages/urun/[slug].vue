@@ -9,7 +9,6 @@ const { arraysEqual, formatArray, checkForVariationTypeOfAny, frontEndUrl } = us
 const { addToCart, isUpdatingCart } = useCart();
 const { t } = useI18n();
 const { trackViewItem, trackAddToCart } = useGoogleAnalytics();
-const { trackViewContent } = useTikTokPixel();
 const slug = route.params.slug as string;
 
 const { data } = await useAsyncGql('getProduct', { slug });
@@ -59,7 +58,6 @@ onMounted(async () => {
   // Track product view
   if (product.value) {
     trackViewItem(product.value);
-    trackViewContent(product.value);
   }
 });
 

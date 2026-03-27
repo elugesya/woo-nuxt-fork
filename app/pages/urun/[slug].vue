@@ -17,7 +17,6 @@ const { arraysEqual, formatArray, checkForVariationTypeOfAny, frontEndUrl } = us
 const { addToCart, isUpdatingCart, toggleCart, isShowingCart } = useCart();
 const { t } = useI18n();
 const { trackViewItem, trackAddToCart } = useGoogleAnalytics();
-const { trackViewContent } = useTikTokPixel();
 const slug = route.params.slug as string;
 
 const { data } = await useAsyncGql('getProduct', { slug });
@@ -99,7 +98,6 @@ onMounted(() => {
   scheduleStockRefresh();
   if (product.value) {
     trackViewItem(product.value);
-    trackViewContent(product.value);
   }
 });
 

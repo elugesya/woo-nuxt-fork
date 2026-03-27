@@ -17,12 +17,6 @@ import MobileMenu from './components/generalElements/MobileMenu.vue';
 const siteName = runtimeConfig.public.SITE_NAME || 'Deniz Tutkusu';
 const frontEndUrl = runtimeConfig.public.FRONT_END_URL || 'http://localhost:3000';
 
-const { init: initTikTok } = useTikTokPixel();
-
-onMounted(() => {
-  initTikTok();
-});
-
 const closeMobileMenu = () => {
   toggleMobileMenu(false);
 };

@@ -90,8 +90,6 @@ onBeforeMount(async () => {
   // Track begin checkout
   if (cart.value) {
     trackBeginCheckout(cart.value);
-    const { trackInitiateCheckout } = useTikTokPixel();
-    trackInitiateCheckout(cart.value);
   }
 });
 
