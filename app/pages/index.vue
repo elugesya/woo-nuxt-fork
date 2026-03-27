@@ -94,7 +94,7 @@ useHead(() => ({
       title="Kampanya Botu"
       description="Sana özel fırsatları keşfet!"
       button-text="İncele"
-      button-link="/urunler?filter=on-sale"
+      button-link="/urun/aquadeep-sp300-parsun-6hp-kampanya"
     />
 
     <!-- 🏷️ Featured Categories -->
