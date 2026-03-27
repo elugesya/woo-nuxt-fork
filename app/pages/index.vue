@@ -91,10 +91,10 @@ useHead(() => ({
   <div class="min-h-screen">
     <!-- 🌊 Hero Section -->
     <HeroBanner
-      title="Özel Kampanya!"
-      description="Sınırlı süreli indirimleri kaçırma. Hemen alışverişe başla!"
-      :primary-cta="{ text: 'Fırsatları Yakala', href: '/urunler?filter=on-sale' }"
-      :secondary-cta="{ text: 'Tüm Ürünler', href: '/urunler' }"
+      title="Kampanya Botu"
+      description="Sana özel fırsatları keşfet!"
+      button-text="İncele"
+      button-link="/urunler?filter=on-sale"
     />
 
     <!-- 🏷️ Featured Categories -->
