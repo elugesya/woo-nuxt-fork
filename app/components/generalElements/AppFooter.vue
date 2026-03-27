@@ -7,6 +7,7 @@
  */
 import { cn } from '@/lib/utils';
 import { Anchor, Waves, Mail, Phone, MapPin, Facebook, Instagram, Twitter, Youtube, Send } from 'lucide-vue-next';
+import EtbisQr from '~/components/generalElements/EtbisQr.vue';
 
 const { wooNuxtVersionInfo } = useHelpers();
 const { wishlistLink } = useAuth();
@@ -210,6 +211,9 @@ const footerLinks = {
               <span class="px-2 py-1 bg-white/10 rounded">Troy</span>
             </div>
           </div>
+
+          <!-- Etbis QR -->
+          <EtbisQr />
         </div>
       </div>
     </div>
