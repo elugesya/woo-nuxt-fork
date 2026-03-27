@@ -117,6 +117,8 @@ export default defineNuxtConfig({
       RETURN_POLICY_URL: process.env.NUXT_PUBLIC_RETURN_POLICY_URL || '/iade-ve-degisim',
       ORGANIZATION_RATING_VALUE: process.env.NUXT_PUBLIC_ORGANIZATION_RATING_VALUE || '',
       ORGANIZATION_REVIEW_COUNT: process.env.NUXT_PUBLIC_ORGANIZATION_REVIEW_COUNT || '',
+      // Installment (Taksit) Settings
+      taksit: process.env.NUXT_PUBLIC_TAKSIT || '0',
     },
   },
 

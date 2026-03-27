@@ -14,8 +14,8 @@ const route = useRoute();
 const { storeSettings } = useAppConfig();
 const runtimeConfig = useRuntimeConfig();
 
-// ...existing code...
-// ...existing code...
+// TAKSIT feature flag from environment variable
+const taksitEnabled = computed(() => runtimeConfig.public.taksit === '1' || runtimeConfig.public.taksit === 1);
 
 // Order verification
 const orderId = computed(() => route.query.order_id as string);
@@ -77,7 +77,7 @@ watch(cardBin, async (bin) => {
 const fetchInstallments = async (bin: string) => {
   loadingInstallments.value = true;
   errorMessage.value = '';
-  
+
   try {
     const response = await $fetch(`${runtimeConfig.public.wpUrl}/wp-json/tosla/v1/installments`, {
       method: 'POST',
@@ -86,9 +86,29 @@ const fetchInstallments = async (bin: string) => {
         orderTotal: orderTotal.value
       }
     });
-    
+
     if (response.success) {
-      const opts = Array.isArray(response.installments) ? response.installments : [];
+      let opts = Array.isArray(response.installments) ? response.installments : [];
+
+      // Apply commission logic: no commission for 1-3 installments, exact commission from API for 4+
+      opts = opts.map((opt: any) => {
+        const installmentCount = Number(opt.count);
+        const modifiedOpt = { ...opt };
+
+        // Zero out commission for installments 1-3
+        if (installmentCount <= 3) {
+          modifiedOpt.commissionFee = 0;
+          modifiedOpt.totalAmount = Number(orderTotal.value);
+          if (installmentCount > 1) {
+            modifiedOpt.monthlyPayment = Number(orderTotal.value) / installmentCount;
+          } else {
+            modifiedOpt.monthlyPayment = Number(orderTotal.value);
+          }
+        }
+
+        return modifiedOpt;
+      });
+
       // Ensure Tek Çekim (single payment) option always exists
       const hasSingle = opts.some((opt: any) => Number(opt.count) === 1);
       if (!hasSingle) {
