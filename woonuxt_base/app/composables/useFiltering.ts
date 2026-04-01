@@ -119,7 +119,7 @@ export function useFiltering() {
 
       // Brand filter
       const brand = getFilter('product_brand') || [];
-      const brandCondition = brand.length ? product.terms?.nodes?.find((node: any) => node.taxonomyName === 'product_brand' && brand.includes(node.slug)) : true;
+      const brandCondition = brand.length ? (product as any).brands?.nodes?.find((node: any) => brand.includes(node.slug)) : true;
 
       // Power (pa_guc) filter - numeric range filter
       const powerRange = getFilter('pa_guc') || [];
