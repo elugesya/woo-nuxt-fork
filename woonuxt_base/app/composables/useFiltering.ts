@@ -119,7 +119,12 @@ export function useFiltering() {
 
       // Brand filter
       const brand = getFilter('product_brand') || [];
-      const brandCondition = brand.length ? (product as any).brands?.nodes?.find((node: any) => brand.includes(node.slug)) : true;
+      let brandCondition = true;
+      if (brand.length) {
+        const inBrandsNodes = ((product as any).brands?.nodes ?? []).some((node: any) => brand.includes(node.slug));
+        const inTermsNodes = (product.terms?.nodes ?? []).some((node: any) => node.taxonomyName === 'product_brand' && brand.includes(node.slug));
+        brandCondition = inBrandsNodes || inTermsNodes;
+      }
 
       // Power (pa_guc) filter - numeric range filter
       const powerRange = getFilter('pa_guc') || [];
@@ -149,7 +154,14 @@ export function useFiltering() {
         ...(runtimeConfig?.public?.GLOBAL_PRODUCT_ATTRIBUTES?.map((attribute: any) => attribute.slug) || []),
         ...extraAttributes
       ];
+      // Exclude brand taxonomies (handled by brandCondition) and pa_guc (handled by range-based powerCondition)
+      // to prevent the generic slug-match from incorrectly filtering them out
+      const brandTaxonomies = new Set(
+        String(runtimeConfig?.public?.BRAND_TAXONOMIES || 'product_brand,pa_brand,brand')
+          .split(',').map((s: string) => s.trim()).filter(Boolean)
+      );
       const attributeCondition = allAttributes
+        .filter((attribute: string) => !brandTaxonomies.has(attribute) && attribute !== 'pa_guc')
         .map((attribute: string) => {
           const attributeValues = getFilter(attribute) || [];
           if (!attributeValues.length) return true;
