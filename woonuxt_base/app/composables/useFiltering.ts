@@ -125,9 +125,6 @@ export function useFiltering() {
       let brandCondition = true;
       if (brand.length) {
         const selectedBrands = brand.map((slug) => String(slug).toLowerCase());
-        const productBrands = (product as any).brands;
-        const brandNodes = Array.isArray(productBrands) ? productBrands : (productBrands?.nodes ?? []);
-        const inBrandsNodes = brandNodes.some((node: any) => selectedBrands.includes(String(node?.slug || '').toLowerCase()));
 
         const brandTaxonomies = new Set(
           String(runtimeConfig?.public?.BRAND_TAXONOMIES || 'product_brand,pa_brand,brand')
@@ -135,11 +132,10 @@ export function useFiltering() {
             .map((s: string) => normalizeTaxonomy(s))
             .filter(Boolean),
         );
-        const inTermsNodes = (product.terms?.nodes ?? []).some((node: any) => {
+        brandCondition = (product.terms?.nodes ?? []).some((node: any) => {
           const taxonomy = normalizeTaxonomy(node?.taxonomyName);
           return brandTaxonomies.has(taxonomy) && selectedBrands.includes(String(node?.slug || '').toLowerCase());
         });
-        brandCondition = inBrandsNodes || inTermsNodes;
       }
 
       // Power (pa_guc) filter - numeric range filter
@@ -191,7 +187,7 @@ export function useFiltering() {
   const stockFilter = getFilter('stock');
   const inStockOnlyCondition = stockFilter.length ? product.stockStatus === 'IN_STOCK' : true;
 
-  return ratingCondition && priceCondition && attributeCondition && categoryCondition && brandCondition && powerCondition && shaftCondition && inStockOnlyCondition;
+      return ratingCondition && priceCondition && attributeCondition && categoryCondition && brandCondition && powerCondition && shaftCondition && inStockOnlyCondition;
     });
   }
 
