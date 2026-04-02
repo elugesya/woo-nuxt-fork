@@ -6,6 +6,14 @@ const { removeBodyClass } = useHelpers();
 const runtimeConfig = useRuntimeConfig();
 const { storeSettings } = useAppConfig();
 
+const normalizeTaxonomy = (value: string | undefined | null): string => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+const brandTaxonomies = new Set(
+  String(runtimeConfig?.public?.BRAND_TAXONOMIES || 'product_brand,pa_brand,brand')
+    .split(',')
+    .map((s) => normalizeTaxonomy(s))
+    .filter(Boolean),
+);
+
 // hide-categories prop is used to hide the category filter on the product category page
 const { hideCategories } = defineProps({ hideCategories: { type: Boolean, default: false } });
 
@@ -40,16 +48,16 @@ const { data } = await useAsyncGql('getAllTerms', { taxonomies: [...taxonomies, 
 const terms = data.value?.terms?.nodes;
 
 // Filter out the product category terms and the global product attributes with their terms
-const productCategoryTerms = terms?.filter((term) => term.taxonomyName === 'product_cat');
+const productCategoryTerms = terms?.filter((term) => normalizeTaxonomy(term.taxonomyName) === normalizeTaxonomy('product_cat'));
 
 // Get brand and shaft terms separately for dedicated filters
-const brandTerms = terms?.filter((term) => term.taxonomyName === 'product_brand');
-const shaftTerms = terms?.filter((term) => term.taxonomyName === 'pa_saft');
+const brandTerms = terms?.filter((term) => brandTaxonomies.has(normalizeTaxonomy(term.taxonomyName)));
+const shaftTerms = terms?.filter((term) => normalizeTaxonomy(term.taxonomyName) === normalizeTaxonomy('pa_saft'));
 
 // Filter out the color attribute and the rest of the global product attributes
 const attributesWithTerms = attributesForQuery
   .filter((attr): attr is WooNuxtFilter => !!attr && attr.slug !== 'product_brand' && attr.slug !== 'pa_saft')
-  .map((attr) => ({ ...attr, terms: terms?.filter((term) => term.taxonomyName === attr.slug) }));
+  .map((attr) => ({ ...attr, terms: terms?.filter((term) => normalizeTaxonomy(term.taxonomyName) === normalizeTaxonomy(attr.slug)) }));
 </script>
 
 <template>

@@ -37,7 +37,8 @@ const checkboxChanged = () => {
             if (val) {
               if (!selectedTerms.includes(term.slug)) selectedTerms.push(term.slug)
             } else {
-              selectedTerms = selectedTerms.filter(s => s !== term.slug)
+              const idx = selectedTerms.indexOf(term.slug)
+              if (idx !== -1) selectedTerms.splice(idx, 1)
             }
             checkboxChanged()
           }"

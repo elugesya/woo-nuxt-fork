@@ -13,6 +13,9 @@ export function useFiltering() {
 
   filterQuery.value = route.query.filter as string;
 
+  // Normalizes taxonomy names like product_brand, PRODUCTBRAND, Product-Brand to the same key.
+  const normalizeTaxonomy = (value: string | undefined | null): string => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+
   /**
    * Get the filter value from the url
    * @param {string} filterName
@@ -121,8 +124,21 @@ export function useFiltering() {
       const brand = getFilter('product_brand') || [];
       let brandCondition = true;
       if (brand.length) {
-        const inBrandsNodes = ((product as any).brands?.nodes ?? []).some((node: any) => brand.includes(node.slug));
-        const inTermsNodes = (product.terms?.nodes ?? []).some((node: any) => node.taxonomyName === 'product_brand' && brand.includes(node.slug));
+        const selectedBrands = brand.map((slug) => String(slug).toLowerCase());
+        const productBrands = (product as any).brands;
+        const brandNodes = Array.isArray(productBrands) ? productBrands : (productBrands?.nodes ?? []);
+        const inBrandsNodes = brandNodes.some((node: any) => selectedBrands.includes(String(node?.slug || '').toLowerCase()));
+
+        const brandTaxonomies = new Set(
+          String(runtimeConfig?.public?.BRAND_TAXONOMIES || 'product_brand,pa_brand,brand')
+            .split(',')
+            .map((s: string) => normalizeTaxonomy(s))
+            .filter(Boolean),
+        );
+        const inTermsNodes = (product.terms?.nodes ?? []).some((node: any) => {
+          const taxonomy = normalizeTaxonomy(node?.taxonomyName);
+          return brandTaxonomies.has(taxonomy) && selectedBrands.includes(String(node?.slug || '').toLowerCase());
+        });
         brandCondition = inBrandsNodes || inTermsNodes;
       }
 
@@ -158,14 +174,16 @@ export function useFiltering() {
       // to prevent the generic slug-match from incorrectly filtering them out
       const brandTaxonomies = new Set(
         String(runtimeConfig?.public?.BRAND_TAXONOMIES || 'product_brand,pa_brand,brand')
-          .split(',').map((s: string) => s.trim()).filter(Boolean)
+          .split(',').map((s: string) => normalizeTaxonomy(s)).filter(Boolean)
       );
       const attributeCondition = allAttributes
-        .filter((attribute: string) => !brandTaxonomies.has(attribute) && attribute !== 'pa_guc')
+        .filter((attribute: string) => !brandTaxonomies.has(normalizeTaxonomy(attribute)) && normalizeTaxonomy(attribute) !== normalizeTaxonomy('pa_guc'))
         .map((attribute: string) => {
           const attributeValues = getFilter(attribute) || [];
           if (!attributeValues.length) return true;
-          return product.terms?.nodes?.find((node: any) => node.taxonomyName === attribute && attributeValues.includes(node.slug));
+          return product.terms?.nodes?.find(
+            (node: any) => normalizeTaxonomy(node.taxonomyName) === normalizeTaxonomy(attribute) && attributeValues.includes(node.slug),
+          );
         })
         .every((condition: any) => condition);
 
